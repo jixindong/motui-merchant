@@ -2,11 +2,13 @@ import Vue from 'vue';
 import App from './App.vue';
 import router from './router/index.js'; // 路由配置
 import store from './store/index.js'; // Vuex
+import Cookies from 'js-cookie'; // js-cookie
 import ElementUI from 'element-ui'; // ElementUI
 import 'element-ui/lib/theme-chalk/index.css';
 import './style/common.scss'; // 公共样式
 
 Vue.config.productionTip = false; // 关闭生产提示
+Vue.prototype.$Cookies = Cookies;
 Vue.use(ElementUI);
 
 new Vue({
