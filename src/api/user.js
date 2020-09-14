@@ -1,16 +1,10 @@
 import request from '@/utils/request.js';
 
-export function fetchValCodeImg(data){
+// 商家登录
+export function requestLogin(data){
 	return request({
-		url:`captcha.jpg?uuid=${data}`,
-		method:'GET'
+		url:'sys/login',
+		method:'POST',
+		data
 	});
 }
-
-// export function test(data) {
-// 	return request({
-// 		url: 'home/syList',
-// 		method: 'POST',
-// 		data
-// 	});
-// }
