@@ -8,7 +8,7 @@
 				<el-dropdown trigger="click" @command="setting">
 					<img src="@/assets/images/setting.png" class="setting" />
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="0">个人中心</el-dropdown-item>
+						<el-dropdown-item command="0">账户设置</el-dropdown-item>
 						<el-dropdown-item command="1">修改密码</el-dropdown-item>
 						<el-dropdown-item command="2">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
@@ -20,9 +20,14 @@
 		<div class="bd">
 			<div class="container d-flex align-items-start">
 				<el-menu default-active="0" class="aside-menu" @select="asideMenuSelect">
+					<el-menu-item index="0">
+						<i class="el-icon-receiving"></i>
+						<span slot="title">控制台</span>
+					</el-menu-item>
+
 					<el-menu-item index="1">
-						<i class="el-icon-box"></i>
-						<span slot="title">商品管理</span>
+						<i class="el-icon-present"></i>
+						<span slot="title">宝贝管理</span>
 					</el-menu-item>
 
 					<el-submenu index="2">
@@ -67,16 +72,6 @@
 						<i class="el-icon-chat-line-square"></i>
 						<span slot="title">消息中心</span>
 					</el-menu-item>
-
-					<el-menu-item index="7">
-						<i class="el-icon-setting"></i>
-						<span slot="title">账户设置</span>
-					</el-menu-item>
-
-					<el-menu-item index="0">
-						<i class="el-icon-receiving"></i>
-						<span slot="title">控制台</span>
-					</el-menu-item>
 				</el-menu>
 
 				<div class="main"><router-view /></div>
@@ -84,7 +79,26 @@
 		</div>
 
 		<!-- 底部 -->
-		<div class="ft">© 2018-2020 瓦艾斯 All rights reserved.</div>
+		<div class="ft">© 2018-2020 山东瓦艾斯科技 All rights reserved.</div>
+
+		<!-- 修改密码对话框 -->
+		<el-dialog title="修改密码" width="1000px" :visible.sync="modifyPasswordDV" :before-close="cPDClose">
+			<el-form :model="iPassword" :rules="passwordRules" ref="passwordRef" label-width="100px" status-icon>
+				<el-form-item label="原密码" prop="iOPassword" required>
+					<el-input type="password" placeholder="请输入原密码" v-model="iPassword.iOPassword"></el-input>
+				</el-form-item>
+				<el-form-item label="新密码" prop="iNPassword" required>
+					<el-input type="password" placeholder="请输入新密码" v-model="iPassword.iNPassword"></el-input>
+				</el-form-item>
+				<el-form-item label="确认密码" prop="iCNPassword" required>
+					<el-input type="password" placeholder="请输入确认密码" v-model="iPassword.iCNPassword"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" size="medium" @click="submitPF">确认修改</el-button>
+					<el-button size="medium" @click="resetPF">重置</el-button>
+				</el-form-item>
+			</el-form>
+		</el-dialog>
 	</div>
 </template>
 
@@ -92,17 +106,83 @@
 export default {
 	name: 'index',
 	data() {
-		return {};
+		// 原密码 用户输入 校验规则
+		let vOP = (rule, value, callback) => {
+			if (value === '') {
+				callback(new Error('请输入原密码'));
+			} else if (value != this.oPassword) {
+				callback(new Error('原密码错误'));
+			} else {
+				callback();
+			}
+		};
+		// 新密码 用户输入 校验规则
+		let vNP = (rule, value, callback) => {
+			if (value === '') {
+				callback(new Error('请输入新密码'));
+			} else if (value.length < 6 || value.length > 16) {
+				callback(new Error('密码长度应为6到16位'));
+			} else if (value == this.oPassword) {
+				callback(new Error('新旧密码不能一样'));
+			} else {
+				callback();
+			}
+		};
+		// 确认密码 用户输入 校验规则
+		let vCNP = (rule, value, callback) => {
+			if (value === '') {
+				callback(new Error('请输入确认密码'));
+			} else if (value != this.iPassword.iNPassword) {
+				callback(new Error('两次输入不一致'));
+			} else {
+				callback();
+			}
+		};
+		return {
+			modifyPasswordDV: false, // 修改密码对话框 显示隐藏
+			oPassword:'123456',// 原密码
+			// 密码 用户输入
+			iPassword: {
+				iOPassword: '', // 原密码
+				iNPassword: '', // 新密码
+				iCNPassword: '' // 确认密码
+			},
+			// 密码校验规则
+			passwordRules: {
+				iOPassword: [{ required: true, message: '请输入原密码', trigger: 'change' }, { validator: vOP, trigger: 'blur' }], // 原密码
+				iNPassword: [{ required: true, message: '请输入新密码', trigger: 'change' }, { validator: vNP, trigger: 'blur' }], // 新密码
+				iCNPassword: [{ required: true, message: '请输入确认密码', trigger: 'change' }, { validator: vCNP, trigger: 'blur' }] // 确认密码
+			}
+		};
 	},
 	methods: {
 		// 设置
 		setting(e) {
-			console.log(e);
+			if (e === '0') {
+				this.$router.push({ name: 'accountSetting' }); // 账户设置
+			} else if (e === '1') {
+				this.modifyPasswordDV = true;// 修改密码对话框 显示
+			} else if (e === '2') {
+				// 退出登录
+				this.$confirm('确认退出？', '退出登录', {
+					confirmButtonText: '退出',
+					cancelButtonText: '取消',
+					type: 'info'
+				})
+					.then(() => {
+						this.$message.success('退出成功');
+						this.$router.push({ name: 'login' });
+						localStorage.removeItem('token');
+					})
+					.catch(() => {
+						this.$message.info('操作已取消');
+					});
+			}
 		},
 		// 侧边栏菜单激活回调
 		asideMenuSelect(e) {
 			if (e === '1') {
-				this.$router.push({ name: 'commodityManage' }); // 商品管理
+				this.$router.push({ name: 'commodityManage' }); // 宝贝管理
 			} else if (e === '2-1') {
 				this.$router.push({ name: 'svMissionManage' }); // 拍摄视频/任务管理
 			} else if (e === '3-1') {
@@ -117,11 +197,40 @@ export default {
 				this.$router.push({ name: 'scOpenRecord' }); // 套餐充值/开通记录
 			} else if (e === '6') {
 				this.$router.push({ name: 'messageCenter' }); // 消息中心
-			} else if (e === '7') {
-				this.$router.push({ name: 'accountSetting' }); // 账户设置
 			} else if (e === '0') {
 				this.$router.push({ name: 'console' }); // 控制台
 			}
+		},
+		// 修改密码对话框 确认修改
+		submitPF() {
+			this.$refs.passwordRef.validate(valid => {
+				if (valid) {
+					this.modifyPasswordDV = false; // 修改密码对话框 隐藏
+					this.$message.success('修改密码成功，请重新登录');
+					this.$router.push({name:'login'});
+					localStorage.removeItem('token');
+				} else {
+					this.$message.warning('修改密码失败');
+				}
+			});
+		},
+		// 修改密码对话框 重置
+		resetPF() {
+			this.$refs['passwordRef'].resetFields();
+			this.$message.success('输入信息已重置');
+		},
+		// 修改密码对话框 关闭
+		cPDClose(done) {
+			this.$confirm('确认关闭？', '提示', {
+				confirmButtonText: '关闭',
+				cancelButtonText: '取消',
+				type: 'info'
+			})
+				.then(() => {
+					this.$refs['passwordRef'].resetFields();
+					done();
+				})
+				.catch(() => {});
 		}
 	}
 };
@@ -164,6 +273,7 @@ export default {
 		.main {
 			flex: 1;
 			margin-left: 20px;
+			padding: 20px;
 			min-height: 800px;
 			background-color: #fff;
 			box-shadow: 0 0 5px #cccccc66;
@@ -171,7 +281,7 @@ export default {
 	}
 	// 底部
 	.ft {
-		padding: 4px 0;
+		padding: 5px 0;
 		color: #fff;
 		font-size: 14px;
 		text-align: center;
