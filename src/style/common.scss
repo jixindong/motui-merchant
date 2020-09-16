@@ -52,6 +52,23 @@ body {
 }
 
 /* ======================== Defined Style ======================== */
+// 文字颜色
+.text-primary{
+	color: #409EFF;
+}
+.text-success{
+	color: #67C23A;
+}
+.text-warning{
+	color: #E6A23C;
+}
+.text-danger{
+	color: #F56C6C;
+}
+// 文字尺寸
+.text-1{
+	font-size: 1rem;
+}
 // 版心
 .container {
 	margin: 0 auto;
@@ -74,6 +91,7 @@ body {
 	}
 	&:hover{
 		margin-left: 24px;
+		opacity: .7;
 	}
 }
 // 图片上传

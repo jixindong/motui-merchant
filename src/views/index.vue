@@ -140,7 +140,7 @@ export default {
 		};
 		return {
 			modifyPasswordDV: false, // 修改密码对话框 显示隐藏
-			oPassword:'123456',// 原密码
+			oPassword: '123456', // 原密码
 			// 密码 用户输入
 			iPassword: {
 				iOPassword: '', // 原密码
@@ -161,7 +161,7 @@ export default {
 			if (e === '0') {
 				this.$router.push({ name: 'accountSetting' }); // 账户设置
 			} else if (e === '1') {
-				this.modifyPasswordDV = true;// 修改密码对话框 显示
+				this.modifyPasswordDV = true; // 修改密码对话框 显示
 			} else if (e === '2') {
 				// 退出登录
 				this.$confirm('确认退出？', '退出登录', {
@@ -207,7 +207,7 @@ export default {
 				if (valid) {
 					this.modifyPasswordDV = false; // 修改密码对话框 隐藏
 					this.$message.success('修改密码成功，请重新登录');
-					this.$router.push({name:'login'});
+					this.$router.push({ name: 'login' });
 					localStorage.removeItem('token');
 				} else {
 					this.$message.warning('修改密码失败');

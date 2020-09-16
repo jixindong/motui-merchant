@@ -4,7 +4,7 @@ import {
 } from 'element-ui';
 
 const request = axios.create({
-	baseURL: 'http://192.168.1.249:8001/',
+	baseURL: 'http://192.168.1.22:8001/',
 	// baseURL: 'http://mtht.waszn.com:8001/',
 	headers: {
 		'Content-Type': 'application/json; charset=utf-8'

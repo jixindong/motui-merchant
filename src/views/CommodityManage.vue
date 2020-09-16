@@ -4,10 +4,10 @@
 		<div class="headline">宝贝管理</div>
 
 		<!-- 功能区域 -->
-		<div class="d-flex mt-4 mb-4">
-			<el-input placeholder="请输入搜索内容" size="small" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
-			<el-button type="primary" size="small" @click="commodityAddDV = true">增加宝贝</el-button>
-			<el-button type="danger" size="small" plain @click="commodityBatchDelete">批量删除</el-button>
+		<div class="d-flex justify-content-end mt-4 mb-4">
+			<el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
+			<el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" @click="commodityAddDV = true">增加宝贝</el-button>
+			<el-button type="danger" size="medium" icon="el-icon-delete" plain @click="commodityBatchDelete">批量删除</el-button>
 		</div>
 
 		<!-- 商品列表 -->
@@ -370,7 +370,7 @@ export default {
 				if (valid) {
 					console.log(1);
 					// commodity.handleCommodityAdd().then(res => {
-		
+
 					// }).catch(() => {});
 				}
 			});
@@ -381,7 +381,7 @@ export default {
 			this.$message.success('输入信息已重置');
 		},
 		// 关闭
-		cADClose(done){
+		cADClose(done) {
 			this.$confirm('确认关闭？', '提示', {
 				confirmButtonText: '关闭',
 				cancelButtonText: '取消',
@@ -411,7 +411,7 @@ export default {
 			this.$message.success('输入信息已重置');
 		},
 		// 关闭
-		cEDClose(done){
+		cEDClose(done) {
 			this.$confirm('确认关闭？', '提示', {
 				confirmButtonText: '关闭',
 				cancelButtonText: '取消',
