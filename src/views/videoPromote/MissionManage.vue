@@ -2,13 +2,13 @@
 	<div>
 		<!-- 大标题 -->
 		<div class="headline">任务管理</div>
-		
+
 		<!-- 功能区域 -->
 		<div class="d-flex justify-content-end mt-4 mb-4">
 			<el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
 			<el-button type="primary" size="medium" icon="el-icon-s-promotion" @click="publicMissionDV = true">发布任务</el-button>
 		</div>
-		
+
 		<!-- 任务列表 -->
 		<div>
 			<el-table :data="missionList" stripe border>
@@ -37,7 +37,7 @@
 				></el-pagination>
 			</div>
 		</div>
-		
+
 		<!-- 发布任务对话框 -->
 		<el-dialog title="发布任务" :visible.sync="publicMissionDV" :before-close="pMDClose">
 			<el-form :model="publicMissionForm" :rules="publicMissionRules" ref="publicMissionFormRef" size="medium" label-width="100px" status-icon>
@@ -84,37 +84,37 @@
 <script>
 export default {
 	name: 'MissionManage',
-	data(){
-		return{
+	data() {
+		return {
 			/* ======================== 任务 ======================== */
 			// 列表
-			missionList:[
+			missionList: [
 				{
-					commodityClassify:'分类一',
-					commodityName:'宝贝一',
-					promoteType:'普通推广',
-					promoteNum:50,
-					missionDemand:'要求要求要求要求',
-					missionProcess:0,
-					missionStatus:0
+					commodityClassify: '分类一',
+					commodityName: '宝贝一',
+					promoteType: '普通推广',
+					promoteNum: 50,
+					missionDemand: '要求要求要求要求',
+					missionProcess: 0,
+					missionStatus: 0
 				},
 				{
-					commodityClassify:'分类一',
-					commodityName:'宝贝二',
-					promoteType:'普通推广',
-					promoteNum:50,
-					missionDemand:'要求要求要求要求',
-					missionProcess:1,
-					missionStatus:1
+					commodityClassify: '分类一',
+					commodityName: '宝贝二',
+					promoteType: '普通推广',
+					promoteNum: 50,
+					missionDemand: '要求要求要求要求',
+					missionProcess: 1,
+					missionStatus: 1
 				},
 				{
-					commodityClassify:'分类一',
-					commodityName:'宝贝三',
-					promoteType:'普通推广',
-					promoteNum:50,
-					missionDemand:'要求要求要求要求',
-					missionProcess:1,
-					missionStatus:2
+					commodityClassify: '分类一',
+					commodityName: '宝贝三',
+					promoteType: '普通推广',
+					promoteNum: 50,
+					missionDemand: '要求要求要求要求',
+					missionProcess: 1,
+					missionStatus: 2
 				}
 			],
 			// 分页
@@ -133,11 +133,11 @@ export default {
 			commodityList: ['宝贝一', '宝贝二'],
 			// 表单
 			publicMissionForm: {
-				commodityClassify:null,
-				commodityName:null,
-				promoteType:null,
-				promoteNum:1,
-				missionDemand:null
+				commodityClassify: null,
+				commodityName: null,
+				promoteType: null,
+				promoteNum: 1,
+				missionDemand: null
 			},
 			// 表单校验规则
 			publicMissionRules: {
@@ -149,7 +149,7 @@ export default {
 			}
 		};
 	},
-	methods:{
+	methods: {
 		/* ======================== 任务 ======================== */
 		// 任务列表当前页切换
 		missionListCurrentChange(currentPage) {

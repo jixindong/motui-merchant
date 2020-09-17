@@ -4,8 +4,9 @@
 		<div class="headline">宝贝管理</div>
 
 		<!-- 功能区域 -->
-		<div class="d-flex justify-content-end mt-4 mb-4">
-			<el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
+		<div class="d-flex mt-4 mb-4">
+			<!-- <el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input> -->
+			<el-input size="medium" class="mr-4 w-25" placeholder="请输入宝贝名称"></el-input>
 			<el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" @click="commodityAddDV = true">增加宝贝</el-button>
 			<el-button type="danger" size="medium" icon="el-icon-delete" plain @click="commodityBatchDelete">批量删除</el-button>
 		</div>
@@ -24,7 +25,14 @@
 				<el-table-column prop="price" label="价格" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="yhq" label="优惠券" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="yj" label="佣金比例" show-overflow-tooltip></el-table-column>
-				<el-table-column label="操作" align="center">
+				<el-table-column label="状态">
+					<template slot-scope="scope">
+						<span class="text-primary" v-if="scope.row.status === 0">待审核</span>
+						<span class="text-success" v-else-if="scope.row.status === 1">审核通过</span>
+						<span class="text-danger" v-else>审核失败</span>
+					</template>
+				</el-table-column>
+				<el-table-column label="操作" width="120" align="center">
 					<template slot-scope="scope">
 						<el-button type="primary" size="mini" icon="el-icon-edit" plain @click="commodityEdit(scope.row)"></el-button>
 						<el-button type="danger" size="mini" icon="el-icon-delete" plain @click="commodityDelete(scope.row)"></el-button>
@@ -214,7 +222,8 @@ export default {
 					lj: 'http://www.baidu.com',
 					price: '150元',
 					yhq: '1个',
-					yj: '1'
+					yj: '1',
+					status:0
 				},
 				{
 					id: '2',
@@ -225,7 +234,20 @@ export default {
 					lj: 'www.baidu.com',
 					price: '150元',
 					yhq: '1个',
-					yj: '1'
+					yj: '1',
+					status:1
+				},
+				{
+					id: '3',
+					name: '商品3',
+					pt: '淘宝',
+					typeName: '自营',
+					tp: 'https://www.baidu.com/img/sjdhdong_2f0815641b0fb86e10289d06a632f3f1.gif',
+					lj: 'www.baidu.com',
+					price: '150元',
+					yhq: '1个',
+					yj: '1',
+					status:2
 				}
 			],
 			// 分页

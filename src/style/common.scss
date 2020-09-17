@@ -21,7 +21,6 @@ a {
 body {
 	font-size: 16px;
 	font-family: 'PingFang SC';
-	cursor: url(~@/assets/images/rose.png), auto;
 }
 
 ::-webkit-scrollbar {
@@ -36,14 +35,16 @@ body {
 
 ::-webkit-scrollbar-thumb {
 	background-color: #49b1f5;
-	background-image: -webkit-linear-gradient(45deg,
-			rgba(255, 255, 255, 0.4) 25%,
-			transparent 25%,
-			transparent 50%,
-			rgba(255, 255, 255, 0.4) 50%,
-			rgba(255, 255, 255, 0.4) 75%,
-			transparent 75%,
-			transparent);
+	background-image: -webkit-linear-gradient(
+		45deg,
+		rgba(255, 255, 255, 0.4) 25%,
+		transparent 25%,
+		transparent 50%,
+		rgba(255, 255, 255, 0.4) 50%,
+		rgba(255, 255, 255, 0.4) 75%,
+		transparent 75%,
+		transparent
+	);
 	border-radius: 32px;
 }
 
@@ -53,21 +54,36 @@ body {
 
 /* ======================== Defined Style ======================== */
 // 文字颜色
-.text-primary{
-	color: #409EFF;
+.text-primary {
+	color: #409eff;
 }
-.text-success{
-	color: #67C23A;
+.text-success {
+	color: #67c23a;
 }
-.text-warning{
-	color: #E6A23C;
+.text-warning {
+	color: #e6a23c;
 }
-.text-danger{
-	color: #F56C6C;
+.text-danger {
+	color: #f56c6c;
+}
+.text-info {
+	color: #909399;
 }
 // 文字尺寸
-.text-1{
+.text-1 {
 	font-size: 1rem;
+}
+.text-2 {
+	font-size: 2rem;
+}
+// 文字流光
+@keyframes hue {
+	from {
+		filter: hue-rotate(0);
+	}
+	to {
+		filter: hue-rotate(360deg);
+	}
 }
 // 版心
 .container {
@@ -75,13 +91,13 @@ body {
 	width: 1200px;
 }
 // 大标题
-.headline{
+.headline {
 	position: relative;
 	margin: 0 0 20px 10px;
 	color: #333;
 	font-size: 20px;
-	transition: margin .5s ease-in-out;
-	&::before{
+	transition: margin 0.5s ease-in-out;
+	&::before {
 		position: absolute;
 		left: -15px;
 		width: 5px;
@@ -89,13 +105,13 @@ body {
 		content: '';
 		background-color: #0094ff;
 	}
-	&:hover{
+	&:hover {
 		margin-left: 24px;
-		opacity: .7;
+		opacity: 0.7;
 	}
 }
 // 图片上传
-.img-uploader{
+.img-uploader {
 	position: relative;
 	width: 178px;
 	height: 178px;
@@ -103,14 +119,14 @@ body {
 	border-radius: 6px;
 	overflow: hidden;
 	cursor: pointer;
-	&:hover{
-		border-color: #409EFF;
+	&:hover {
+		border-color: #409eff;
 	}
-	img{
+	img {
 		width: 178px;
 		height: 178px;
 	}
-	.img-uploader-icon{
+	.img-uploader-icon {
 		width: 178px;
 		line-height: 178px;
 		color: #8c939d;

@@ -8,7 +8,7 @@
 				<el-dropdown trigger="click" @command="setting">
 					<img src="@/assets/images/setting.png" class="setting" />
 					<el-dropdown-menu slot="dropdown">
-						<el-dropdown-item command="0">账户设置</el-dropdown-item>
+						<el-dropdown-item command="0">账户信息</el-dropdown-item>
 						<el-dropdown-item command="1">修改密码</el-dropdown-item>
 						<el-dropdown-item command="2">退出登录</el-dropdown-item>
 					</el-dropdown-menu>
@@ -159,7 +159,7 @@ export default {
 		// 设置
 		setting(e) {
 			if (e === '0') {
-				this.$router.push({ name: 'accountSetting' }); // 账户设置
+				this.$router.push({ name: 'accountSetting' }); // 账户信息
 			} else if (e === '1') {
 				this.modifyPasswordDV = true; // 修改密码对话框 显示
 			} else if (e === '2') {
@@ -240,7 +240,7 @@ export default {
 .index {
 	display: flex;
 	flex-flow: column nowrap;
-	min-height: 100vh;
+	height: 100vh;
 	overflow-x: hidden;
 	// 导航栏
 	.hd {
@@ -265,6 +265,7 @@ export default {
 		flex: 1;
 		padding: 20px 0;
 		background-color: #f9f9f9;
+		overflow-y: auto;
 		.aside-menu {
 			width: 240px;
 			border: 0 none;
