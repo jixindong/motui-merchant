@@ -1,13 +1,28 @@
 <template>
-	<div>
+	<div class="card p-4 min-h-800">
 		<!-- 大标题 -->
 		<div class="headline">任务管理</div>
 
 		<!-- 功能区域 -->
-		<div class="d-flex justify-content-end mt-4 mb-4">
-			<el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
-			<el-button type="primary" size="medium" icon="el-icon-s-promotion" @click="publicMissionDV = true">发布任务</el-button>
+		<div class="d-flex justify-content-between my-4">
+			<el-select size="medium" class="w-20" v-model="search.commodityClassify" placeholder="请选择宝贝分类" clearable>
+				<el-option label="请选择" value=""></el-option>
+				<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item" :value="item"></el-option>
+			</el-select>
+			<el-input type="text" size="medium" class="w-20" v-model="search.commodityName" placeholder="请输入宝贝名称"></el-input>
+			<el-select size="medium" class="w-20" v-model="search.promoteType" placeholder="请选择推广类型" clearable>
+				<el-option label="请选择" value=""></el-option>
+				<el-option v-for="(item, index) in promoteTypeList" :key="index" :label="item" :value="item"></el-option>
+			</el-select>
+			<el-select size="medium" class="w-20" v-model="search.status" placeholder="请选择任务状态" clearable>
+				<el-option label="请选择" value=""></el-option>
+				<el-option label="未开始" value="未开始"></el-option>
+				<el-option label="进行中" value="进行中"></el-option>
+				<el-option label="已完成" value="已完成"></el-option>
+			</el-select>
+			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchMission">搜索</el-button>
 		</div>
+		<div class="d-flex justify-content-end mb-4"><el-button type="primary" size="medium" icon="el-icon-s-promotion" @click="publicMissionDV = true">发布任务</el-button></div>
 
 		<!-- 任务列表 -->
 		<div>
@@ -87,12 +102,21 @@ export default {
 	data() {
 		return {
 			/* ======================== 任务 ======================== */
+			// 搜索
+			search: {
+				commodityClassify: null,
+				commodityName: null,
+				promoteType: null,
+				status: null
+			},
+			// 推广类型
+			promoteTypeList: ['直播', '短视频'],
 			// 列表
 			missionList: [
 				{
 					commodityClassify: '分类一',
 					commodityName: '宝贝一',
-					promoteType: '普通推广',
+					promoteType: '直播',
 					promoteNum: 50,
 					missionDemand: '要求要求要求要求',
 					missionProcess: 0,
@@ -101,7 +125,7 @@ export default {
 				{
 					commodityClassify: '分类一',
 					commodityName: '宝贝二',
-					promoteType: '普通推广',
+					promoteType: '直播',
 					promoteNum: 50,
 					missionDemand: '要求要求要求要求',
 					missionProcess: 1,
@@ -110,7 +134,7 @@ export default {
 				{
 					commodityClassify: '分类一',
 					commodityName: '宝贝三',
-					promoteType: '普通推广',
+					promoteType: '短视频',
 					promoteNum: 50,
 					missionDemand: '要求要求要求要求',
 					missionProcess: 1,
@@ -151,6 +175,15 @@ export default {
 	},
 	methods: {
 		/* ======================== 任务 ======================== */
+		// 搜索
+		searchMission() {
+			if (!this.search.commodityClassify && !this.search.commodityName && !this.search.promoteType && !this.search.status) {
+				this.$message.warning('搜索条件不能为空');
+			} else {
+				// 调接口
+				console.log('搜索');
+			}
+		},
 		// 任务列表当前页切换
 		missionListCurrentChange(currentPage) {
 			this.missionListPage.currentPage = currentPage;

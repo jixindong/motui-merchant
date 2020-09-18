@@ -1,11 +1,19 @@
 <template>
-	<div>
+	<div class="card p-4 min-h-800">
 		<!-- 大标题 -->
 		<div class="headline">推广列表</div>
 
 		<!-- 功能区域 -->
-		<div class="d-flex justify-content-end mt-4 mb-4">
-			<el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
+		<div class="d-flex justify-content-between my-4">
+			<el-input type="text" size="medium" class="w-25" v-model="search.starID" placeholder="请输入达人ID"></el-input>
+			<el-date-picker type="date" size="medium" class="w-25" v-model="search.promoteDate" placeholder="请选择推广时间" clearable></el-date-picker>
+			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择推广状态" clearable>
+				<el-option label="请选择" value=""></el-option>
+				<el-option label="待分发" value="待分发"></el-option>
+				<el-option label="待审核" value="待审核"></el-option>
+				<el-option label="已完成" value="已完成"></el-option>
+			</el-select>
+			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchPromote">搜索</el-button>
 		</div>
 
 		<!-- 推广列表 -->
@@ -19,16 +27,23 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="viewCounts" label="播放量" align="center" show-overflow-tooltip></el-table-column>
-				<el-table-column label="是否审核">
+				<!-- <el-table-column label="是否审核">
 					<template slot-scope="scope">
 						<span class="text-warning" v-if="!scope.row.isCheck">未审核</span>
 						<span class="text-success" v-else>已审核</span>
 					</template>
-				</el-table-column>
-				<el-table-column label="是否发货">
+				</el-table-column> -->
+				<!-- <el-table-column label="是否发货">
 					<template slot-scope="scope">
 						<span class="text-warning" v-if="!scope.row.isShipment">未发货</span>
 						<span class="text-success" v-else>已发货</span>
+					</template>
+				</el-table-column> -->
+				<el-table-column label="状态" align="center">
+					<template slot-scope="scope">
+						<span class="text-warning" v-if="scope.row.status === 0">待分发</span>
+						<span class="text-primary" v-else-if="scope.row.status === 1">待审核</span>
+						<span class="text-success" v-else>已完成</span>
 					</template>
 				</el-table-column>
 				<el-table-column label="操作" width="260" align="center">
@@ -103,6 +118,12 @@ export default {
 	data() {
 		return {
 			/* ======================== 推广列表 ======================== */
+			// 搜索
+			search: {
+				starID: null,
+				promoteDate: null,
+				status: null
+			},
 			// 列表
 			promoteList: [
 				{
@@ -113,7 +134,8 @@ export default {
 					viewCounts: 50,
 					isCheck: false,
 					isShipment: false,
-					isComplain: false
+					isComplain: false,
+					status: 0
 				},
 				{
 					pid: 2333,
@@ -123,7 +145,8 @@ export default {
 					viewCounts: 50,
 					isCheck: false,
 					isShipment: false,
-					isComplain: false
+					isComplain: false,
+					status: 1
 				},
 				{
 					pid: 233,
@@ -133,7 +156,8 @@ export default {
 					viewCounts: 50,
 					isCheck: true,
 					isShipment: true,
-					isComplain: true
+					isComplain: true,
+					status: 2
 				}
 			],
 			// 分页
@@ -181,6 +205,15 @@ export default {
 	},
 	methods: {
 		/* ======================== 推广列表 ======================== */
+		// 搜索
+		searchPromote() {
+			if (!this.search.starID && !this.search.promoteDate && !this.search.status) {
+				this.$message.warning('搜索条件不能为空');
+			} else {
+				// 调接口
+				console.log('搜索');
+			}
+		},
 		// 审核
 		videoCheck(e) {
 			this.$confirm('确认审核通过？', '提示', {

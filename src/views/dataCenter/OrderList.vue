@@ -1,18 +1,25 @@
 <template>
-	<div>
+	<div class="card p-4 min-h-800">
 		<!-- 大标题 -->
 		<div class="headline">订单列表</div>
 
 		<!-- 功能区域 -->
-		<div class="d-flex justify-content-end mt-4 mb-4">
-			<el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
+		<div class="d-flex justify-content-between my-4">
+			<el-input type="text" size="medium" class="w-25" v-model="search.starID" placeholder="请输入达人ID"></el-input>
+			<el-input type="text" size="medium" class="w-25" v-model="search.commodityName" placeholder="请输入宝贝名称"></el-input>
+			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择订单状态" clearable>
+				<el-option label="请选择" value=""></el-option>
+				<el-option label="未支付" value="未支付"></el-option>
+				<el-option label="已支付" value="已支付"></el-option>
+			</el-select>
+			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchOrder">搜索</el-button>
 		</div>
 
 		<!-- 订单列表 -->
 		<div>
 			<el-table :data="orderList" stripe border>
 				<el-table-column prop="starID" label="达人ID" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="commodityName" label="宝贝标题" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="commodityName" label="宝贝名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="paymentNum" label="付款金额" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="paymentDate" label="付款时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="带货视频" show-overflow-tooltip>
@@ -47,6 +54,12 @@ export default {
 	data() {
 		return {
 			/* ======================== 订单列表 ======================== */
+			// 搜索
+			search:{
+				starID:null,
+				commodityName:null,
+				status:null
+			},
 			// 列表
 			orderList: [
 				{
@@ -85,6 +98,15 @@ export default {
 	},
 	methods: {
 		/* ======================== 订单列表 ======================== */
+		// 搜索
+		searchOrder(){
+			if (!this.search.starID && !this.search.commodityName && !this.search.status) {
+				this.$message.warning('搜索条件不能为空');
+			} else {
+				// 调接口
+				console.log('搜索');
+			}
+		},
 		// 订单列表当前页切换
 		orderListCurrentChange(currentPage) {
 			this.orderListPage.currentPage = currentPage;

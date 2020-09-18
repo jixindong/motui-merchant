@@ -17,6 +17,15 @@ const router = new VueRouter({
 			name: 'index',
 			component: () => import('@/views/index'),
 			children: [
+				// 控制台
+				{
+					path: 'console',
+					name: 'console',
+					component: () => import('@/views/Console'),
+					meta: {
+						title: '控制台'
+					}
+				},
 				// 宝贝管理
 				{
 					path: 'commodity-manage',
@@ -96,15 +105,6 @@ const router = new VueRouter({
 					component: () => import('@/views/AccountSetting'),
 					meta: {
 						title: '账户设置'
-					}
-				},
-				// 控制台
-				{
-					path: 'console',
-					name: 'console',
-					component: () => import('@/views/Console'),
-					meta: {
-						title: '控制台'
 					}
 				}
 			]

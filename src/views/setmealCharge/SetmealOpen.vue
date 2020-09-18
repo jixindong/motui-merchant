@@ -1,7 +1,7 @@
 <template>
-	<div>
+	<div class="card p-4 min-h-800">
 		<!-- 大标题 -->
-		<div class="headline">当前套餐</div>
+		<div class="headline mb-4">当前套餐</div>
 
 		<!-- 当前套餐 -->
 		<div>
@@ -37,7 +37,7 @@
 		</div>
 
 		<!-- 大标题 -->
-		<div class="headline mt-4">套餐开通</div>
+		<div class="headline my-4">套餐开通</div>
 
 		<!-- 套餐开通 -->
 		<div>

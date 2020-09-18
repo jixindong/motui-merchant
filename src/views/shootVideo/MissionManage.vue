@@ -1,11 +1,19 @@
 <template>
-	<div>
+	<div class="card p-4 min-h-800">
 		<!-- 大标题 -->
 		<div class="headline">任务管理</div>
 
 		<!-- 功能区域 -->
-		<div class="d-flex justify-content-end mt-4 mb-4">
-			<el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
+		<div class="d-flex justify-content-between my-4">
+			<el-input type="text" size="medium" class="w-20" v-model="search.missionName" placeholder="请输入任务名称"></el-input>
+			<el-input type="text" size="medium" class="w-20" v-model="search.commodityName" placeholder="请输入宝贝名称"></el-input>
+			<el-select size="medium" class="w-20" v-model="search.status" placeholder="请选择任务状态" clearable>
+				<el-option label="请选择" value=""></el-option>
+				<el-option label="未发货" value="未发货"></el-option>
+				<el-option label="配送中" value="配送中"></el-option>
+				<el-option label="已送达" value="已送达"></el-option>
+			</el-select>
+			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchMission">搜索</el-button>
 			<el-button type="primary" size="medium" icon="el-icon-s-promotion" @click="publicMissionDV = true">发布任务</el-button>
 		</div>
 
@@ -107,6 +115,12 @@ export default {
 	data() {
 		return {
 			/* ======================== 任务 ======================== */
+			// 搜索
+			search: {
+				missionName: null,
+				commodityName: null,
+				status: null
+			},
 			// 列表
 			missionList: [
 				{
@@ -188,12 +202,21 @@ export default {
 	},
 	methods: {
 		/* ======================== 任务 ======================== */
+		// 搜索
+		searchMission() {
+			if (!this.search.missionName && !this.search.commodityName && !this.search.status) {
+				this.$message.warning('搜索条件不能为空');
+			} else {
+				// 调接口
+				console.log('搜索');
+			}
+		},
 		// 查看任务详情
 		viewMissionDetail(e) {
 			this.missionDetailDV = true;
 
 			console.log(e);
-			// 请求接口获取任务详情
+			// 调接口
 		},
 		// 任务列表当前页切换
 		missionListCurrentChange(currentPage) {

@@ -19,56 +19,56 @@
 		<!-- 主体 -->
 		<div class="bd">
 			<div class="container d-flex align-items-start">
-				<el-menu default-active="0" class="aside-menu" @select="asideMenuSelect">
-					<el-menu-item index="0">
+				<el-menu :default-active="$route.path" class="aside-menu" router>
+					<el-menu-item index="/console">
 						<i class="el-icon-receiving"></i>
 						<span slot="title">控制台</span>
 					</el-menu-item>
 
-					<el-menu-item index="1">
+					<el-menu-item index="/commodity-manage">
 						<i class="el-icon-present"></i>
 						<span slot="title">宝贝管理</span>
 					</el-menu-item>
 
-					<el-submenu index="2">
+					<el-submenu index="/shootVideo">
 						<template slot="title">
 							<i class="el-icon-video-camera-solid"></i>
 							<span>拍摄视频</span>
 						</template>
-						<el-menu-item-group><el-menu-item index="2-1">任务管理</el-menu-item></el-menu-item-group>
+						<el-menu-item-group><el-menu-item index="/shootVideo/mission-manage">任务管理</el-menu-item></el-menu-item-group>
 					</el-submenu>
 
-					<el-submenu index="3">
+					<el-submenu index="/videoPromote">
 						<template slot="title">
 							<i class="el-icon-position"></i>
 							<span>拍摄推广</span>
 						</template>
 						<el-menu-item-group>
-							<el-menu-item index="3-1">任务管理</el-menu-item>
-							<el-menu-item index="3-2">推广列表</el-menu-item>
+							<el-menu-item index="/videoPromote/mission-manage">任务管理</el-menu-item>
+							<el-menu-item index="/videoPromote/promote-list">推广列表</el-menu-item>
 						</el-menu-item-group>
 					</el-submenu>
 
-					<el-submenu index="4">
+					<el-submenu index="/dataCenter">
 						<template slot="title">
 							<i class="el-icon-s-data"></i>
 							<span>数据中心</span>
 						</template>
-						<el-menu-item-group><el-menu-item index="4-1">订单列表</el-menu-item></el-menu-item-group>
+						<el-menu-item-group><el-menu-item index="/dataCenter/order-list">订单列表</el-menu-item></el-menu-item-group>
 					</el-submenu>
 
-					<el-submenu index="5">
+					<el-submenu index="/setmealCharge">
 						<template slot="title">
 							<i class="el-icon-money"></i>
 							<span>套餐充值</span>
 						</template>
 						<el-menu-item-group>
-							<el-menu-item index="5-1">套餐开通</el-menu-item>
-							<el-menu-item index="5-2">开通记录</el-menu-item>
+							<el-menu-item index="/setmealCharge/setmeal-open">套餐开通</el-menu-item>
+							<el-menu-item index="/setmealCharge/open-record">开通记录</el-menu-item>
 						</el-menu-item-group>
 					</el-submenu>
 
-					<el-menu-item index="6">
+					<el-menu-item index="/message-center">
 						<i class="el-icon-chat-line-square"></i>
 						<span slot="title">消息中心</span>
 					</el-menu-item>
@@ -179,28 +179,6 @@ export default {
 					});
 			}
 		},
-		// 侧边栏菜单激活回调
-		asideMenuSelect(e) {
-			if (e === '1') {
-				this.$router.push({ name: 'commodityManage' }); // 宝贝管理
-			} else if (e === '2-1') {
-				this.$router.push({ name: 'svMissionManage' }); // 拍摄视频/任务管理
-			} else if (e === '3-1') {
-				this.$router.push({ name: 'vmMissionManage' }); // 视频推广/任务管理
-			} else if (e === '3-2') {
-				this.$router.push({ name: 'vpPromoteList' }); // 视频推广/推广列表
-			} else if (e === '4-1') {
-				this.$router.push({ name: 'dcOrderList' }); // 数据中心/订单列表
-			} else if (e === '5-1') {
-				this.$router.push({ name: 'scSetmealOpen' }); // 套餐充值/套餐开通
-			} else if (e === '5-2') {
-				this.$router.push({ name: 'scOpenRecord' }); // 套餐充值/开通记录
-			} else if (e === '6') {
-				this.$router.push({ name: 'messageCenter' }); // 消息中心
-			} else if (e === '0') {
-				this.$router.push({ name: 'console' }); // 控制台
-			}
-		},
 		// 修改密码对话框 确认修改
 		submitPF() {
 			this.$refs.passwordRef.validate(valid => {
@@ -274,10 +252,7 @@ export default {
 		.main {
 			flex: 1;
 			margin-left: 20px;
-			padding: 20px;
 			min-height: 800px;
-			background-color: #fff;
-			box-shadow: 0 0 5px #cccccc66;
 		}
 	}
 	// 底部

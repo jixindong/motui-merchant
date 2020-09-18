@@ -1,11 +1,14 @@
 <template>
-	<div>
+	<div class="card p-4 min-h-800">
 		<!-- 大标题 -->
 		<div class="headline">消息中心</div>
 
 		<!-- 功能区域 -->
-		<div class="d-flex justify-content-end mt-4 mb-4">
-			<el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input>
+		<div class="d-flex justify-content-between my-4">
+			<el-input type="text" size="medium" class="w-25" v-model="search.title" placeholder="请输入消息标题"></el-input>
+			<el-input type="text" size="medium" class="w-25" v-model="search.content" placeholder="请输入消息内容"></el-input>
+			<el-date-picker type="date" size="medium" class="w-25" v-model="search.date" placeholder="请选择时间" clearable></el-date-picker>
+			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchMessage">搜索</el-button>
 		</div>
 
 		<!-- 消息列表 -->
@@ -35,6 +38,12 @@ export default {
 	data() {
 		return {
 			/* ======================== 消息 ======================== */
+			// 搜索
+			search:{
+				title:null,
+				content:null,
+				date:null
+			},
 			// 列表
 			messageList: [
 				{
@@ -67,6 +76,15 @@ export default {
 	},
 	methods: {
 		/* ======================== 消息 ======================== */
+		// 搜索
+		searchMessage(){
+			if (!this.search.title && !this.search.content && !this.search.date) {
+				this.$message.warning('搜索条件不能为空');
+			} else {
+				// 调接口
+				console.log('搜索');
+			}
+		},
 		// 消息列表当前页切换
 		messageListCurrentChange(currentPage) {
 			this.messageListPage.currentPage = currentPage;

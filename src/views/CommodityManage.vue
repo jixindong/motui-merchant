@@ -1,12 +1,30 @@
 <template>
-	<div>
+	<div class="card p-4 min-h-800">
 		<!-- 大标题 -->
 		<div class="headline">宝贝管理</div>
 
 		<!-- 功能区域 -->
-		<div class="d-flex mt-4 mb-4">
-			<!-- <el-input placeholder="请输入搜索内容" size="medium" class="mr-4 w-25"><el-button slot="append" icon="el-icon-search"></el-button></el-input> -->
-			<el-input size="medium" class="mr-4 w-25" placeholder="请输入宝贝名称"></el-input>
+		<div class="d-flex justify-content-between my-4">
+			<el-input type="text" size="medium" class="w-20" v-model="search.name" placeholder="请输入宝贝名称"></el-input>
+			<el-select size="medium" class="w-20" v-model="search.platform" placeholder="请选择宝贝平台" clearable>
+				<el-option label="请选择" value=""></el-option>
+				<el-option label="淘宝" value="淘宝"></el-option>
+				<el-option label="京东" value="京东"></el-option>
+				<el-option label="抖音小店" value="抖音小店"></el-option>
+			</el-select>
+			<el-select size="medium" class="w-20" v-model="search.classify" placeholder="请选择宝贝分类" clearable>
+				<el-option label="请选择" value=""></el-option>
+				<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item" :value="item"></el-option>
+			</el-select>
+			<el-select size="medium" class="w-20" v-model="search.status" placeholder="请选择宝贝状态" clearable>
+				<el-option label="请选择" value=""></el-option>
+				<el-option label="待审核" value="待审核"></el-option>
+				<el-option label="审核通过" value="审核通过"></el-option>
+				<el-option label="审核失败" value="审核失败"></el-option>
+			</el-select>
+			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchCommodity">搜索</el-button>
+		</div>
+		<div class="d-flex justify-content-end mb-4">
 			<el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" @click="commodityAddDV = true">增加宝贝</el-button>
 			<el-button type="danger" size="medium" icon="el-icon-delete" plain @click="commodityBatchDelete">批量删除</el-button>
 		</div>
@@ -209,6 +227,13 @@ export default {
 	data() {
 		return {
 			/* ======================== 商品 ======================== */
+			// 搜索
+			search: {
+				name: null,
+				platform: null,
+				classify: null,
+				status: null
+			},
 			// 分类
 			commodityClassify: [],
 			// 列表
@@ -223,7 +248,7 @@ export default {
 					price: '150元',
 					yhq: '1个',
 					yj: '1',
-					status:0
+					status: 0
 				},
 				{
 					id: '2',
@@ -235,7 +260,7 @@ export default {
 					price: '150元',
 					yhq: '1个',
 					yj: '1',
-					status:1
+					status: 1
 				},
 				{
 					id: '3',
@@ -247,7 +272,7 @@ export default {
 					price: '150元',
 					yhq: '1个',
 					yj: '1',
-					status:2
+					status: 2
 				}
 			],
 			// 分页
@@ -341,6 +366,15 @@ export default {
 		},
 		// 获取商品列表
 		getCommodityList() {},
+		// 搜索商品
+		searchCommodity() {
+			if (!this.search.name && !this.search.platform && !this.search.classify && !this.search.status) {
+				this.$message.warning('搜索条件不能为空');
+			} else {
+				// 调接口
+				console.log('搜索');
+			}
+		},
 		// 选择商品
 		commoditySelect(e) {
 			this.commoditySelected = e;
