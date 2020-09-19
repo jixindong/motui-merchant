@@ -5,7 +5,7 @@
 
 		<!-- 功能区域 -->
 		<div class="d-flex justify-content-between my-4">
-			<el-input type="text" size="medium" class="w-20" v-model="search.name" placeholder="请输入宝贝名称"></el-input>
+			<el-input type="text" size="medium" class="w-20" v-model="search.name" placeholder="请输入宝贝名称" clearable></el-input>
 			<el-select size="medium" class="w-20" v-model="search.platform" placeholder="请选择宝贝平台" clearable>
 				<el-option label="请选择" value=""></el-option>
 				<el-option label="淘宝" value="淘宝"></el-option>
@@ -39,14 +39,14 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="pt" label="平台" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="typeName" label="分类" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="type" label="分类" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="price" label="价格" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="yhq" label="优惠券" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="yj" label="佣金比例" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态">
 					<template slot-scope="scope">
-						<span class="text-primary" v-if="scope.row.status === 0">待审核</span>
-						<span class="text-success" v-else-if="scope.row.status === 1">审核通过</span>
+						<span class="text-primary" v-if="scope.row.status === '0'">待审核</span>
+						<span class="text-success" v-else-if="scope.row.status === '1'">审核通过</span>
 						<span class="text-danger" v-else>审核失败</span>
 					</template>
 				</el-table-column>
@@ -74,17 +74,17 @@
 			<el-row>
 				<el-col :span="8">名称：{{ this.commodityDetail.name }}</el-col>
 				<el-col :span="8">平台：{{ this.commodityDetail.pt }}</el-col>
-				<el-col :span="8">分类：{{ this.commodityDetail.typeName }}</el-col>
+				<el-col :span="8">分类：{{ this.commodityDetail.type }}</el-col>
 				<el-col :span="8">价格：{{ this.commodityDetail.price }}</el-col>
 				<el-col :span="8">优惠券：{{ this.commodityDetail.yhq }}</el-col>
 				<el-col :span="8">佣金比例：{{ this.commodityDetail.yj }}</el-col>
 				<el-col :span="24">
 					链接：
-					<el-link :href="this.commodityDetail.lj" target="_blank" type="primary">{{ commodityDetail.lj }}</el-link>
+					<el-link :href="this.commodityDetail.video" target="_blank" type="primary">{{ commodityDetail.video }}</el-link>
 				</el-col>
 				<el-col :span="12" class="d-flex">
 					<span>图片：</span>
-					<img :src="this.commodityDetail.tp" class="w-75" />
+					<img :src="this.commodityDetail.path" class="w-75" />
 				</el-col>
 			</el-row>
 		</el-dialog>
@@ -132,13 +132,13 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="24">
-						<el-form-item label="链接" prop="lj" required>
-							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityAddForm.lj" clearable></el-input>
+						<el-form-item label="链接" prop="video" required>
+							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityAddForm.video" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="图片">
-							<el-upload class="img-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="uploadCommodityImg">
+							<el-upload class="img-uploader" action="http://mtht.waszn.com:8001/upload/uploadFile" :show-file-list="false" :on-success="uploadCommodityImg">
 								<img :src="commodityAddForm.tp" v-if="commodityAddForm.tp" />
 								<i v-else class="el-icon-plus img-uploader-icon"></i>
 							</el-upload>
@@ -196,8 +196,8 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="24">
-						<el-form-item label="链接" prop="lj" required>
-							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityEditForm.lj" clearable></el-input>
+						<el-form-item label="链接" prop="video" required>
+							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityEditForm.video" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
@@ -221,6 +221,7 @@
 
 <script>
 import * as commodity from '@/api/commodity';
+// import {uploadFile} from '@/api/upload';
 
 export default {
 	name: 'CommodityManage',
@@ -237,48 +238,11 @@ export default {
 			// 分类
 			commodityClassify: [],
 			// 列表
-			commodityList: [
-				{
-					id: '1',
-					name: '商品1',
-					pt: '淘宝',
-					typeName: '自营',
-					tp: 'https://www.baidu.com/img/sjdhdong_2f0815641b0fb86e10289d06a632f3f1.gif',
-					lj: 'http://www.baidu.com',
-					price: '150元',
-					yhq: '1个',
-					yj: '1',
-					status: 0
-				},
-				{
-					id: '2',
-					name: '商品2',
-					pt: '淘宝',
-					typeName: '自营',
-					tp: 'https://www.baidu.com/img/sjdhdong_2f0815641b0fb86e10289d06a632f3f1.gif',
-					lj: 'www.baidu.com',
-					price: '150元',
-					yhq: '1个',
-					yj: '1',
-					status: 1
-				},
-				{
-					id: '3',
-					name: '商品3',
-					pt: '淘宝',
-					typeName: '自营',
-					tp: 'https://www.baidu.com/img/sjdhdong_2f0815641b0fb86e10289d06a632f3f1.gif',
-					lj: 'www.baidu.com',
-					price: '150元',
-					yhq: '1个',
-					yj: '1',
-					status: 2
-				}
-			],
+			commodityList:[],
 			// 分页
 			commodityListPage: {
-				total: 15,
-				pageSize: 10,
+				total: null,
+				pageSize: 1,
 				totalPage: 1,
 				currentPage: 1
 			},
@@ -288,17 +252,7 @@ export default {
 			// 显示隐藏
 			commodityDetailDV: false,
 			// 详情
-			commodityDetail: {
-				id: '',
-				name: '',
-				pt: '',
-				typeName: '',
-				tp: '',
-				lj: '',
-				price: '',
-				yhq: '',
-				yj: ''
-			},
+			commodityDetail: {},
 			/* ======================== 添加商品对话框 ======================== */
 			// 显示隐藏
 			commodityAddDV: false,
@@ -309,7 +263,7 @@ export default {
 				pt: '',
 				typeName: '',
 				tp: '',
-				lj: '',
+				video: '',
 				price: '',
 				yhq: '',
 				yj: ''
@@ -319,7 +273,7 @@ export default {
 				name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
 				pt: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
 				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
-				lj: [{ required: true, message: '请输入链接', trigger: ['blur', 'change'] }],
+				video: [{ required: true, message: '请输入链接', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
 				yhq: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
 				yj: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
@@ -334,7 +288,7 @@ export default {
 				pt: '',
 				typeName: '',
 				tp: '',
-				lj: '',
+				video: '',
 				price: '',
 				yhq: '',
 				yj: ''
@@ -344,7 +298,7 @@ export default {
 				name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
 				pt: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
 				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
-				lj: [{ required: true, message: '请输入链接', trigger: ['blur', 'change'] }],
+				video: [{ required: true, message: '请输入链接', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
 				yhq: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
 				yj: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
@@ -358,22 +312,40 @@ export default {
 			commodity
 				.fetchCommodityClassify()
 				.then(res => {
-					res.list.forEach(e => {
-						this.commodityClassify.push(e.name);
-					});
+					if(res.code === 200){
+						res.list.forEach(e => {
+							this.commodityClassify.push(e.name);// 商品分类
+						});
+					}
 				})
 				.catch(() => {});
 		},
 		// 获取商品列表
-		getCommodityList() {},
+		getCommodityList() {
+			commodity
+				.fetchCommodityList()
+				.then(res => {
+					if(res.code === 200){
+						this.commodityList = res.list.list;// 商品列表
+						let {totalCount:total,pageSize,totalPage,currPage:currentPage} = res.list;
+						this.commodityListPage = {total,pageSize,totalPage,currentPage};// 商品列表分页
+					}
+				})
+				.catch(() => {});
+		},
 		// 搜索商品
 		searchCommodity() {
 			if (!this.search.name && !this.search.platform && !this.search.classify && !this.search.status) {
 				this.$message.warning('搜索条件不能为空');
-			} else {
-				// 调接口
-				console.log('搜索');
+				return false;
 			}
+			
+			let data = {name:this.search.name,type:this.search.classify};
+			commodity.fetchCommodityList(data).then(res => {
+				if(res.code === 200){
+					this.commodityList = res.list.list;// 商品列表
+				}
+			}).catch(() => {});
 		},
 		// 选择商品
 		commoditySelect(e) {
@@ -381,7 +353,17 @@ export default {
 		},
 		// 商品列表当前页切换
 		commodityListCurrentChange(currentPage) {
-			this.commodityListPage.currentPage = currentPage;
+			let data = {page:currentPage};
+			commodity
+				.fetchCommodityList(data)
+				.then(res => {
+					if(res.code === 200){
+						this.commodityList = res.list.list;// 商品列表
+						let {totalCount:total,pageSize,totalPage,currPage:currentPage} = res.list;
+						this.commodityListPage = {total,pageSize,totalPage,currentPage};// 商品列表分页
+					}
+				})
+				.catch(() => {});
 		},
 		// 查看商品详情
 		viewCommodityDetail(e) {
@@ -389,8 +371,8 @@ export default {
 			this.commodityDetail = e;
 		},
 		// 上传商品图片
-		uploadCommodityImg(res, file) {
-			this.commodityEditForm.tp = URL.createObjectURL(file.raw);
+		uploadCommodityImg(res) {
+			console.log(res)
 		},
 		// 编辑商品
 		commodityEdit(e) {
@@ -479,8 +461,9 @@ export default {
 				.catch(() => {});
 		}
 	},
-	mounted() {
+	created() {
 		this.getCommodityClassify(); // 获取商品分类
+		this.getCommodityList(); // 获取商品列表
 	}
 };
 </script>

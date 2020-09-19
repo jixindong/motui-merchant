@@ -1,7 +1,7 @@
 <template>
-	<div>
+	<div class="card p-4 min-h-800">
 		<!-- 大标题 -->
-		<div class="headline">账户信息</div>
+		<div class="headline mb-4">账户信息</div>
 		<!-- 账户信息 -->
 		<div>
 			<el-table :data="basicMsg" stripe border>

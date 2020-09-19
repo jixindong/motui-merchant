@@ -35,3 +35,30 @@ export function fetchVideo(data) {
 		data
 	});
 }
+
+// 快递公司
+export function fetchExpressCompany(data) {
+	return request({
+		url: 'logisticscompany/list',
+		method: 'POST',
+		data
+	});
+}
+
+// 收货人信息
+export function fetchConsigneeMsg(data) {
+	return request({
+		url: ' setting/listByGroup',
+		method: 'POST',
+		data
+	});
+}
+
+// 确认收货
+export function confirmReceipt(data) {
+	return request({
+		url: ' logisticscompany/add',
+		method: 'POST',
+		data
+	});
+}

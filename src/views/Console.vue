@@ -3,25 +3,25 @@
 		<!-- 基础信息 -->
 		<div class="baseMsg card">
 			<div class="d-flex">
-				<img src="@/assets/images/avatar.png" class="avatar" />
+				<img :src="baseMsg.avatar" class="avatar" />
 				<div>
 					<div class="d-flex align-items-center">
-						<span class="mr-2 text-2">{{ basicMsg.account }}</span>
-						<span class="nameplate">{{ basicMsg.setmeal }}</span>
+						<span class="mr-2 text-2">{{ baseMsg.name }}</span>
+						<span class="nameplate">未知套餐</span>
 					</div>
 					<div class="mt-3">
 						<span class="mr-4">
 							<span>Tel：</span>
-							<span class="text-primary">{{ basicMsg.tel }}</span>
+							<span class="text-primary">{{ baseMsg.phone }}</span>
 						</span>
 						<span class="text-info">
-							<span>{{ basicMsg.enterDate }}</span>
+							<span>{{ baseMsg.createTime }}</span>
 							<span>入驻</span>
 						</span>
 					</div>
 					<div class="mt-2">
 						<span>代理：</span>
-						<span class="text-primary">{{ basicMsg.agencyAccount }}</span>
+						<span class="text-primary">未知代理</span>
 					</div>
 				</div>
 			</div>
@@ -30,19 +30,19 @@
 		<!-- 推广统计 -->
 		<div class="d-flex flex-wrap my-4 p-4 card">
 			<div class="headline mb-4 w-100">推广统计</div>
-			<div class="w-25">
+			<div class="w-33">
 				<el-tag type="warning" size="small">等待分发</el-tag>
 				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 'waitDistribute' } }" class="d-block mt-4 text-info text-2 text-center">
 					{{ promoteStatistics.waitDistribute }}
 				</router-link>
 			</div>
-			<div class="w-25">
+			<div class="w-33">
 				<el-tag size="small">等待审核</el-tag>
 				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 'waitCheck' } }" class="d-block mt-4 text-info text-2 text-center">
 					{{ promoteStatistics.waitCheck }}
 				</router-link>
 			</div>
-			<div class="w-25">
+			<div class="w-33">
 				<el-tag type="success" size="small">分发完成</el-tag>
 				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 'completeDistribute' } }" class="d-block mt-4 text-info text-2 text-center">
 					{{ promoteStatistics.completeDistribute }}
@@ -166,14 +166,6 @@ export default {
 	name: 'Console',
 	data() {
 		return {
-			// 基础信息
-			basicMsg: {
-				account: '山东鲁杰律师事务所',
-				tel: '11011011011',
-				enterDate: '2000年9月10日',
-				setmeal: '高级包',
-				agencyAccount: '张三'
-			},
 			// 推广统计
 			promoteStatistics: {
 				waitDistribute: 10,
@@ -226,6 +218,12 @@ export default {
 				currentPage: 1
 			}
 		};
+	},
+	computed: {
+		// 基本信息
+		baseMsg() {
+			return this.$store.state.baseMsg;
+		}
 	},
 	methods: {
 		// 订单列表当前页切换

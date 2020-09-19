@@ -5,9 +5,15 @@ import persistedState from 'vuex-persistedstate';
 Vue.use(Vuex);
 
 const store = new Vuex.Store({
-	state: {},
+	state: {
+		baseMsg:null
+	},
 	getters: {},
-	mutations: {},
+	mutations: {
+		handleBaseMsg(state,e){
+			state.baseMsg = e;
+		}
+	},
 	actions: {},
 	plugins: [persistedState({
 		storage: window.sessionStorage

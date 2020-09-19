@@ -4,7 +4,7 @@
 		<div class="hd">
 			<div class="container d-flex align-items-center">
 				<img src="@/assets/images/logo-1.png" class="logo" />
-				<el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"></el-avatar>
+				<el-avatar :src="baseMsg.avatar"></el-avatar>
 				<el-dropdown trigger="click" @command="setting">
 					<img src="@/assets/images/setting.png" class="setting" />
 					<el-dropdown-menu slot="dropdown">
@@ -82,8 +82,8 @@
 		<div class="ft">© 2018-2020 山东瓦艾斯科技 All rights reserved.</div>
 
 		<!-- 修改密码对话框 -->
-		<el-dialog title="修改密码" width="1000px" :visible.sync="modifyPasswordDV" :before-close="cPDClose">
-			<el-form :model="iPassword" :rules="passwordRules" ref="passwordRef" label-width="100px" status-icon>
+		<el-dialog title="修改密码" width="660px" :visible.sync="modifyPasswordDV" :before-close="cPDClose">
+			<el-form :model="iPassword" :rules="passwordRules" ref="passwordRef" label-width="100px" size="medium" status-icon>
 				<el-form-item label="原密码" prop="iOPassword" required>
 					<el-input type="password" placeholder="请输入原密码" v-model="iPassword.iOPassword"></el-input>
 				</el-form-item>
@@ -91,39 +91,29 @@
 					<el-input type="password" placeholder="请输入新密码" v-model="iPassword.iNPassword"></el-input>
 				</el-form-item>
 				<el-form-item label="确认密码" prop="iCNPassword" required>
-					<el-input type="password" placeholder="请输入确认密码" v-model="iPassword.iCNPassword"></el-input>
+					<el-input type="password" placeholder="请再次输入新密码" v-model="iPassword.iCNPassword"></el-input>
 				</el-form-item>
-				<el-form-item>
+				<div class="d-flex justify-content-center mt-2">
 					<el-button type="primary" size="medium" @click="submitPF">确认修改</el-button>
 					<el-button size="medium" @click="resetPF">重置</el-button>
-				</el-form-item>
+				</div>
 			</el-form>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
+import * as merch from '@/api/user';
+
 export default {
 	name: 'index',
 	data() {
-		// 原密码 用户输入 校验规则
-		let vOP = (rule, value, callback) => {
-			if (value === '') {
-				callback(new Error('请输入原密码'));
-			} else if (value != this.oPassword) {
-				callback(new Error('原密码错误'));
-			} else {
-				callback();
-			}
-		};
 		// 新密码 用户输入 校验规则
 		let vNP = (rule, value, callback) => {
 			if (value === '') {
 				callback(new Error('请输入新密码'));
 			} else if (value.length < 6 || value.length > 16) {
 				callback(new Error('密码长度应为6到16位'));
-			} else if (value == this.oPassword) {
-				callback(new Error('新旧密码不能一样'));
 			} else {
 				callback();
 			}
@@ -131,7 +121,7 @@ export default {
 		// 确认密码 用户输入 校验规则
 		let vCNP = (rule, value, callback) => {
 			if (value === '') {
-				callback(new Error('请输入确认密码'));
+				callback(new Error('请再次输入新密码'));
 			} else if (value != this.iPassword.iNPassword) {
 				callback(new Error('两次输入不一致'));
 			} else {
@@ -149,13 +139,30 @@ export default {
 			},
 			// 密码校验规则
 			passwordRules: {
-				iOPassword: [{ required: true, message: '请输入原密码', trigger: 'change' }, { validator: vOP, trigger: 'blur' }], // 原密码
-				iNPassword: [{ required: true, message: '请输入新密码', trigger: 'change' }, { validator: vNP, trigger: 'blur' }], // 新密码
-				iCNPassword: [{ required: true, message: '请输入确认密码', trigger: 'change' }, { validator: vCNP, trigger: 'blur' }] // 确认密码
+				// 原密码
+				iOPassword: [{ required: true, message: '请输入原密码', trigger: ['blur', 'change'] }],
+				// 新密码
+				iNPassword: [{ required: true, message: '请输入新密码', trigger: ['blur', 'change'] }, { validator: vNP, trigger: 'blur' }],
+				// 确认密码
+				iCNPassword: [{ required: true, message: '请再次输入新密码', trigger: ['blur', 'change'] }, { validator: vCNP, trigger: 'blur' }]
 			}
 		};
 	},
+	computed: {
+		baseMsg() {
+			return this.$store.state.baseMsg;
+		}
+	},
 	methods: {
+		// 获取基本信息
+		getBaseMsg() {
+			merch
+				.fetchMerchBaseMsg({ id: '' })
+				.then(res => {
+					this.$store.commit('handleBaseMsg', res.detail);
+				})
+				.catch(() => {});
+		},
 		// 设置
 		setting(e) {
 			if (e === '0') {
@@ -183,12 +190,23 @@ export default {
 		submitPF() {
 			this.$refs.passwordRef.validate(valid => {
 				if (valid) {
-					this.modifyPasswordDV = false; // 修改密码对话框 隐藏
-					this.$message.success('修改密码成功，请重新登录');
-					this.$router.push({ name: 'login' });
-					localStorage.removeItem('token');
-				} else {
-					this.$message.warning('修改密码失败');
+					let data = {
+						password: this.iPassword.iOPassword,
+						newPassword: this.iPassword.iNPassword
+					};
+					merch
+						.handlePassword(data)
+						.then(res => {
+							if (res.code === 200) {
+								localStorage.removeItem('token');
+								this.modifyPasswordDV = false; // 修改密码对话框 隐藏
+								this.$message.success('修改密码成功，请重新登录');
+								this.$router.push({ name: 'login' });
+							} else {
+								this.$message.warning(res.msg);
+							}
+						})
+						.catch(() => {});
 				}
 			});
 		},
@@ -210,6 +228,9 @@ export default {
 				})
 				.catch(() => {});
 		}
+	},
+	created() {
+		this.getBaseMsg(); // 获取基本信息
 	}
 };
 </script>
