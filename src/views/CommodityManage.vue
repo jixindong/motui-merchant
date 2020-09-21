@@ -138,8 +138,8 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="图片">
-							<el-upload class="img-uploader" action="http://mtht.waszn.com:8001/upload/uploadFile" :show-file-list="false" :on-success="uploadCommodityImg">
-								<img :src="commodityAddForm.tp" v-if="commodityAddForm.tp" />
+							<el-upload class="img-uploader" action="http://mtht.waszn.com:8001/upload/uploadFile" :show-file-list="false" :on-success="addCommodityImg">
+								<img :src="commodityAddForm.path" v-if="commodityAddForm.path" />
 								<i v-else class="el-icon-plus img-uploader-icon"></i>
 							</el-upload>
 						</el-form-item>
@@ -147,7 +147,7 @@
 				</el-row>
 
 				<div class="d-flex justify-content-center">
-					<el-button type="primary" size="medium" @click="submitCAF">确认修改</el-button>
+					<el-button type="primary" size="medium" @click="submitCAF">确认添加</el-button>
 					<el-button type="primary" size="medium" plain @click="resetCAF">重置</el-button>
 				</div>
 			</el-form>
@@ -202,8 +202,8 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="图片">
-							<el-upload class="img-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="uploadCommodityImg">
-								<img :src="commodityEditForm.tp" v-if="commodityEditForm.tp" />
+							<el-upload class="img-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="editCommodityImg">
+								<img :src="commodityEditForm.path" v-if="commodityEditForm.path" />
 								<i v-else class="el-icon-plus img-uploader-icon"></i>
 							</el-upload>
 						</el-form-item>
@@ -221,7 +221,6 @@
 
 <script>
 import * as commodity from '@/api/commodity';
-// import {uploadFile} from '@/api/upload';
 
 export default {
 	name: 'CommodityManage',
@@ -238,7 +237,7 @@ export default {
 			// 分类
 			commodityClassify: [],
 			// 列表
-			commodityList:[],
+			commodityList: [],
 			// 分页
 			commodityListPage: {
 				total: null,
@@ -258,11 +257,10 @@ export default {
 			commodityAddDV: false,
 			// 表单
 			commodityAddForm: {
-				id: '',
 				name: '',
 				pt: '',
 				typeName: '',
-				tp: '',
+				path: '',
 				video: '',
 				price: '',
 				yhq: '',
@@ -287,7 +285,7 @@ export default {
 				name: '',
 				pt: '',
 				typeName: '',
-				tp: '',
+				path: '',
 				video: '',
 				price: '',
 				yhq: '',
@@ -312,9 +310,9 @@ export default {
 			commodity
 				.fetchCommodityClassify()
 				.then(res => {
-					if(res.code === 200){
+					if (res.code === 200) {
 						res.list.forEach(e => {
-							this.commodityClassify.push(e.name);// 商品分类
+							this.commodityClassify.push(e.name); // 商品分类
 						});
 					}
 				})
@@ -322,13 +320,16 @@ export default {
 		},
 		// 获取商品列表
 		getCommodityList() {
+			let data = { name: this.search.name, type: this.search.classify, page: this.commodityListPage.currentPage };
 			commodity
-				.fetchCommodityList()
+				.fetchCommodityList(data)
 				.then(res => {
-					if(res.code === 200){
-						this.commodityList = res.list.list;// 商品列表
-						let {totalCount:total,pageSize,totalPage,currPage:currentPage} = res.list;
-						this.commodityListPage = {total,pageSize,totalPage,currentPage};// 商品列表分页
+					if (res.code === 200) {
+						this.commodityList = res.list.list; // 商品列表
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.commodityListPage = { total, pageSize, totalPage, currentPage }; // 商品列表分页
+					} else {
+						this.$message.warning(res.msg);
 					}
 				})
 				.catch(() => {});
@@ -339,13 +340,21 @@ export default {
 				this.$message.warning('搜索条件不能为空');
 				return false;
 			}
-			
-			let data = {name:this.search.name,type:this.search.classify};
-			commodity.fetchCommodityList(data).then(res => {
-				if(res.code === 200){
-					this.commodityList = res.list.list;// 商品列表
-				}
-			}).catch(() => {});
+
+			let data = { name: this.search.name, type: this.search.classify, page: this.commodityListPage.currentPage };
+			commodity
+				.fetchCommodityList(data)
+				.then(res => {
+					if (res.code === 200) {
+						this.commodityList = res.list.list; // 商品列表
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.commodityListPage = { total, pageSize, totalPage, currentPage }; // 商品列表分页
+						this.$message.success('搜索成功');
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
 		},
 		// 选择商品
 		commoditySelect(e) {
@@ -353,14 +362,14 @@ export default {
 		},
 		// 商品列表当前页切换
 		commodityListCurrentChange(currentPage) {
-			let data = {page:currentPage};
+			let data = { page: currentPage };
 			commodity
 				.fetchCommodityList(data)
 				.then(res => {
-					if(res.code === 200){
-						this.commodityList = res.list.list;// 商品列表
-						let {totalCount:total,pageSize,totalPage,currPage:currentPage} = res.list;
-						this.commodityListPage = {total,pageSize,totalPage,currentPage};// 商品列表分页
+					if (res.code === 200) {
+						this.commodityList = res.list.list; // 商品列表
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.commodityListPage = { total, pageSize, totalPage, currentPage }; // 商品列表分页
 					}
 				})
 				.catch(() => {});
@@ -369,10 +378,6 @@ export default {
 		viewCommodityDetail(e) {
 			this.commodityDetailDV = true;
 			this.commodityDetail = e;
-		},
-		// 上传商品图片
-		uploadCommodityImg(res) {
-			console.log(res)
 		},
 		// 编辑商品
 		commodityEdit(e) {
@@ -387,8 +392,18 @@ export default {
 				type: 'warning'
 			})
 				.then(() => {
-					console.log(e);
-					// commodity.handleCommodityDelete()
+					let data = { ids: [e.id] };
+					commodity
+						.handleCommodityDelete(data)
+						.then(res => {
+							if (res.code === 200) {
+								this.$message.success('删除宝贝成功');
+								this.getCommodityList(); // 获取商品列表
+							} else {
+								this.$message.warning(res.msg);
+							}
+						})
+						.catch(() => {});
 				})
 				.catch(() => {});
 		},
@@ -396,25 +411,72 @@ export default {
 		commodityBatchDelete() {
 			if (this.commoditySelected.length === 0) {
 				this.$message.warning('请选择至少一项');
-			} else {
-				console.log(this.commoditySelected);
-				// commodity.handleCommodityDelete()
+				return false;
 			}
+
+			this.$confirm('确认删除？', '提示', {
+				confirmButtonText: '确认',
+				cancelButtonText: '取消',
+				type: 'warning'
+			})
+				.then(() => {
+					let data = { ids: [] };
+					this.commoditySelected.forEach(e => {
+						data.ids.push(e.id);
+					});
+					commodity
+						.handleCommodityDelete(data)
+						.then(res => {
+							if (res.code === 200) {
+								this.$message.success('删除宝贝成功');
+								this.getCommodityList(); // 获取商品列表
+							} else {
+								this.$message.warning(res.msg);
+							}
+						})
+						.catch(() => {});
+				})
+				.catch(() => {});
 		},
 		/* ======================== 添加商品对话框 ======================== */
-		// 确认修改
+		// 上传商品图片
+		addCommodityImg(res) {
+			this.commodityAddForm.path = res.msg;
+		},
+		// 确认添加
 		submitCAF() {
 			this.$refs['commodityAddFormRef'].validate(valid => {
 				if (valid) {
-					console.log(1);
-					// commodity.handleCommodityAdd().then(res => {
-
-					// }).catch(() => {});
+					let data = {
+						name: this.commodityAddForm.name,
+						pt: this.commodityAddForm.pt,
+						type: this.commodityAddForm.typeName,
+						path: this.commodityAddForm.path,
+						video: this.commodityAddForm.video,
+						price: this.commodityAddForm.price,
+						yhq: this.commodityAddForm.yhq,
+						yj: this.commodityAddForm.yj
+					};
+					commodity
+						.handleCommodityAdd(data)
+						.then(res => {
+							if (res.code === 200) {
+								this.commodityAddDV = false; // 添加商品对话框 隐藏
+								this.$message.success('添加宝贝成功');
+								this.commodityAddForm.path = null;
+								this.$refs['commodityAddFormRef'].resetFields();
+								this.getCommodityList(); // 获取商品列表
+							} else {
+								this.$message.warning(res.msg);
+							}
+						})
+						.catch(() => {});
 				}
 			});
 		},
 		// 重置
 		resetCAF() {
+			this.commodityAddForm.path = null;
 			this.$refs['commodityAddFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
 		},
@@ -426,25 +488,52 @@ export default {
 				type: 'info'
 			})
 				.then(() => {
+					this.commodityAddForm.path = null;
 					this.$refs['commodityAddFormRef'].resetFields();
 					done();
 				})
 				.catch(() => {});
 		},
 		/* ======================== 编辑商品对话框 ======================== */
+		// 上传商品图片
+		editCommodityImg(res) {
+			this.commodityEditForm.path = res.msg;
+		},
 		// 确认修改
 		submitCEF() {
 			this.$refs['commodityEditFormRef'].validate(valid => {
 				if (valid) {
-					console.log(1);
-					// commodity.handleCommodityEdit().then(res => {
-
-					// }).catch(() => {});
+					let data = {
+						id: this.commodityEditForm.id,
+						name: this.commodityEditForm.name,
+						pt: this.commodityEditForm.pt,
+						type: this.commodityEditForm.typeName,
+						path: this.commodityEditForm.path,
+						video: this.commodityEditForm.video,
+						price: this.commodityEditForm.price,
+						yhq: this.commodityEditForm.yhq,
+						yj: this.commodityEditForm.yj
+					};
+					commodity
+						.handleCommodityEdit(data)
+						.then(res => {
+							if (res.code === 200) {
+								this.commodityEditDV = false; // 编辑商品对话框 隐藏
+								this.$message.success('宝贝信息修改成功');
+								this.commodityEditForm.path = null;
+								this.$refs['commodityEditFormRef'].resetFields();
+								this.getCommodityList(); // 获取商品列表
+							} else {
+								this.$message.warning(res.msg);
+							}
+						})
+						.catch(() => {});
 				}
 			});
 		},
 		// 重置
 		resetCEF() {
+			this.commodityEditForm.path = null;
 			this.$refs['commodityEditFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
 		},
@@ -456,6 +545,8 @@ export default {
 				type: 'info'
 			})
 				.then(() => {
+					this.commodityEditForm.path = null;
+					this.$refs['commodityEditFormRef'].resetFields();
 					done();
 				})
 				.catch(() => {});

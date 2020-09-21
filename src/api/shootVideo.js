@@ -45,10 +45,10 @@ export function fetchExpressCompany(data) {
 	});
 }
 
-// 收货人信息
-export function fetchConsigneeMsg(data) {
+// 收货信息
+export function fetchReceivingMsg(data) {
 	return request({
-		url: ' setting/listByGroup',
+		url: 'setting/listByGroup',
 		method: 'POST',
 		data
 	});

@@ -97,6 +97,8 @@
 </template>
 
 <script>
+import * as missionManage from '@/api/videoPromote';
+
 export default {
 	name: 'MissionManage',
 	data() {
@@ -112,39 +114,11 @@ export default {
 			// 推广类型
 			promoteTypeList: ['直播', '短视频'],
 			// 列表
-			missionList: [
-				{
-					commodityClassify: '分类一',
-					commodityName: '宝贝一',
-					promoteType: '直播',
-					promoteNum: 50,
-					missionDemand: '要求要求要求要求',
-					missionProcess: 0,
-					missionStatus: 0
-				},
-				{
-					commodityClassify: '分类一',
-					commodityName: '宝贝二',
-					promoteType: '直播',
-					promoteNum: 50,
-					missionDemand: '要求要求要求要求',
-					missionProcess: 1,
-					missionStatus: 1
-				},
-				{
-					commodityClassify: '分类一',
-					commodityName: '宝贝三',
-					promoteType: '短视频',
-					promoteNum: 50,
-					missionDemand: '要求要求要求要求',
-					missionProcess: 1,
-					missionStatus: 2
-				}
-			],
+			missionList: [],
 			// 分页
 			missionListPage: {
-				total: 15,
-				pageSize: 10,
+				total: 1,
+				pageSize: 1,
 				totalPage: 1,
 				currentPage: 1
 			},
@@ -175,6 +149,22 @@ export default {
 	},
 	methods: {
 		/* ======================== 任务 ======================== */
+		// 获取任务列表
+		getMIssionList() {
+			// let data = { name: this.search.missionName, productName: this.search.commodityName, status: this.search.status, page: this.missionListPage.currentPage };
+			missionManage
+				.fetchMissionList()
+				.then(res => {
+					if (res.code === 200) {
+						this.missionList = res.list.list;
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.missionListPage = { total, pageSize, totalPage, currentPage }; // 任务列表分页
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
 		// 搜索
 		searchMission() {
 			if (!this.search.commodityClassify && !this.search.commodityName && !this.search.promoteType && !this.search.status) {
@@ -215,6 +205,9 @@ export default {
 			this.$refs['publicMissionFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
 		}
+	},
+	created() {
+		this.getMIssionList();// 获取任务列表
 	}
 };
 </script>

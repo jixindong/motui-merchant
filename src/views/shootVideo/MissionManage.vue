@@ -5,19 +5,19 @@
 
 		<!-- 功能区域 -->
 		<div class="d-flex justify-content-between my-4">
-			<el-input type="text" size="medium" class="w-20" v-model="search.missionName" placeholder="请输入任务名称"></el-input>
-			<el-input type="text" size="medium" class="w-20" v-model="search.commodityName" placeholder="请输入宝贝名称"></el-input>
+			<el-input type="text" size="medium" class="w-20" v-model="search.missionName" placeholder="请输入任务名称" clearable></el-input>
+			<el-input type="text" size="medium" class="w-20" v-model="search.commodityName" placeholder="请输入宝贝名称" clearable></el-input>
 			<el-select size="medium" class="w-20" v-model="search.status" placeholder="请选择任务状态" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option label="未发货" value="未发货"></el-option>
-				<el-option label="配送中" value="配送中"></el-option>
-				<el-option label="已送达" value="已送达"></el-option>
+				<el-option label="未发货" value="0"></el-option>
+				<el-option label="配送中" value="1"></el-option>
+				<el-option label="已送达" value="2"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchMission">搜索</el-button>
 			<el-button type="primary" size="medium" icon="el-icon-s-promotion" @click="publicMissionDV = true">发布任务</el-button>
 		</div>
 
-		<!-- 任务管理 -->
+		<!-- 任务列表 -->
 		<div>
 			<el-table :data="missionList" stripe border>
 				<el-table-column label="任务名称">
@@ -32,11 +32,11 @@
 						<span class="text-success" v-else>已送达</span>
 					</template>
 				</el-table-column>
-				<el-table-column prop="productName" label="商品名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="content" label="备注" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="productName" label="宝贝名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="content" label="拍摄要求" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" align="center">
 					<template slot-scope="scope">
-						<el-button type="primary" size="mini" icon="el-icon-truck" plain @click="shipment(scope.row)">发货</el-button>
+						<el-button type="primary" size="mini" icon="el-icon-truck" plain :disabled="scope.row.status !== '0'" @click="shipment(scope.row)">发货</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -54,12 +54,28 @@
 
 		<!-- 任务详情对话框 -->
 		<el-dialog title="任务详情" :visible.sync="missionDetailDV" :before-close="mDDClose">
-			<div class="text-1">发货信息</div>
-			<div class="mt-4 mb-4 text-1">视频列表</div>
-			<div>
-				<el-table :data="missionDetail.videoList" stripe border>
-					<el-table-column prop="video" label="名称" show-overflow-tooltip></el-table-column>
-					<el-table-column prop="contet" label="备注" show-overflow-tooltip></el-table-column>
+			<el-row :gutter="20">
+				<el-col :span="12">
+					<span>收货人姓名：</span>
+					<span v-if="receivingMsg">{{ receivingMsg.shr_name }}</span>
+				</el-col>
+				<el-col :span="12">
+					<span>收货人电话：</span>
+					<span v-if="receivingMsg">{{ receivingMsg.shr_phone }}</span>
+				</el-col>
+				<el-col class="my-2">
+					<span>收货人地址：</span>
+					<span v-if="receivingMsg">{{ receivingMsg.shr_address }}</span>
+				</el-col>
+			</el-row>
+
+			<div class="mt-2">
+				<el-table :data="missionVideoList" stripe border>
+					<el-table-column label="视频地址" show-overflow-tooltip>
+						<template slot-scope="scope">
+							<el-link :href="scope.row.video" type="primary">{{ scope.row.video }}</el-link>
+						</template>
+					</el-table-column>
 				</el-table>
 			</div>
 		</el-dialog>
@@ -68,6 +84,21 @@
 		<el-dialog title="发布任务" :visible.sync="publicMissionDV" :before-close="pMDClose">
 			<el-form :model="publicMissionForm" :rules="publicMissionRules" ref="publicMissionFormRef" size="medium" label-width="100px" status-icon>
 				<el-row :gutter="20">
+					<el-col :span="8">
+						<el-form-item label="任务名称" prop="name" required>
+							<el-input type="text" placeholder="请输入任务名称" v-model="publicMissionForm.name" clearable></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="8">
+						<el-form-item label="任务状态" prop="status" required>
+							<el-select v-model="publicMissionForm.status" clearable>
+								<el-option label="请选择" value=""></el-option>
+								<el-option label="未发货" value="0"></el-option>
+								<el-option label="配送中" value="1"></el-option>
+								<el-option label="已送达" value="2"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
 					<el-col :span="8">
 						<el-form-item label="宝贝分类" prop="commodityClassify" required>
 							<el-select v-model="publicMissionForm.commodityClassify" clearable>
@@ -78,7 +109,7 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="选择宝贝" prop="commodityName" required>
-							<el-select v-model="publicMissionForm.commodityName" clearable>
+							<el-select v-model="publicMissionForm.commodityName" filterable clearable>
 								<el-option label="请选择" value=""></el-option>
 								<el-option v-for="(v, i) in commodityList" :key="i" :label="v" :value="v"></el-option>
 							</el-select>
@@ -104,10 +135,30 @@
 				</div>
 			</el-form>
 		</el-dialog>
+
+		<!-- 发货对话框 -->
+		<el-dialog title="发货" width="660px" :visible.sync="shipmentDV" :before-close="sDClose">
+			<el-form :model="shipmentForm" :rules="shipmentRules" ref="shipmentFormRef" size="medium" label-width="120px" status-icon>
+				<el-form-item label="选择快递公司" prop="expressCompany" required>
+					<el-select v-model="publicMissionForm.expressCompany" class="w-100" filterable clearable>
+						<el-option label="请选择" value=""></el-option>
+						<el-option v-for="(v, i) in expressCompany" :key="i" :label="v.name" :value="v.type"></el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="快递单号" prop="expressIDNum" required>
+					<el-input type="text" placeholder="请输入快递单号" v-model="publicMissionForm.expressIDNum" clearable></el-input>
+				</el-form-item>
+				<div class="d-flex justify-content-center">
+					<el-button type="primary" size="medium" @click="publicSF">确认发货</el-button>
+					<el-button type="primary" size="medium" plain @click="resetSF">重置</el-button>
+				</div>
+			</el-form>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
+import * as missionManage from '@/api/shootVideo';
 import { fetchCommodityClassify } from '@/api/commodity';
 
 export default {
@@ -122,68 +173,34 @@ export default {
 				status: null
 			},
 			// 列表
-			missionList: [
-				{
-					id: 1,
-					name: '任务一',
-					content: '1',
-					productName: '商品名称2',
-					status: '0'
-				},
-				{
-					id: 2,
-					name: '任务二',
-					content: '1',
-					productName: '商品名称2',
-					status: '1'
-				},
-				{
-					id: 3,
-					name: '任务三',
-					content: '1',
-					productName: '商品名称2',
-					status: '2'
-				}
-			],
+			missionList: [],
 			// 分页
 			missionListPage: {
-				total: 15,
-				pageSize: 10,
+				total: 1,
+				pageSize: 1,
 				totalPage: 1,
 				currentPage: 1
 			},
+			// 收货信息
+			receivingMsg: null,
+			// 快递公司列表
+			expressCompany: [],
+			// 商品分类
+			commodityClassify: [],
 			/* ======================== 任务详情对话框 ======================== */
 			// 显示隐藏
 			missionDetailDV: false,
-			// 详情
-			missionDetail: {
-				msg: {},
-				videoList: [
-					{
-						id: 1,
-						video: '视频一',
-						contet: '这是一条视频',
-						rid: 1,
-						createTime: null
-					},
-					{
-						id: 2,
-						video: '视频二',
-						contet: '这是一条视频',
-						rid: 2,
-						createTime: null
-					}
-				]
-			},
+			// 任务视频列表
+			missionVideoList: [],
 			/* ======================== 发布任务对话框 ======================== */
 			// 显示隐藏
 			publicMissionDV: false,
-			// 商品分类
-			commodityClassify: [],
 			// 商品列表
 			commodityList: ['宝贝一', '宝贝二'],
 			// 表单
 			publicMissionForm: {
+				name: null,
+				status: null,
 				commodityClassify: null,
 				commodityName: null,
 				videoNum: 1,
@@ -192,73 +209,118 @@ export default {
 			},
 			// 表单校验规则
 			publicMissionRules: {
+				name: [{ required: true, message: '请输入任务名称', trigger: ['blur', 'change'] }],
+				status: [{ required: true, message: '请选择任务状态', trigger: ['blur', 'change'] }],
 				commodityClassify: [{ required: true, message: '请选择宝贝分类', trigger: ['blur', 'change'] }],
 				commodityName: [{ required: true, message: '请选择宝贝', trigger: ['blur', 'change'] }],
 				videoNum: [{ required: true, message: '请输入视频数量', trigger: ['blur', 'change'] }],
 				commodityMerit: [{ required: true, message: '请输入宝贝亮点', trigger: ['blur', 'change'] }],
 				videoDemand: [{ required: true, message: '请输入拍摄要求', trigger: ['blur', 'change'] }]
+			},
+			/* ======================== 发货对话框 ======================== */
+			// 显示隐藏
+			shipmentDV: false,
+			// 表单
+			shipmentForm: {
+				id: null,
+				expressCompany: null,
+				expressIDNum: null
+			},
+			// 表单校验规则
+			shipmentRules: {
+				expressCompany: [{ required: true, message: '请选择快递公司', trigger: ['blur', 'change'] }],
+				expressIDNum: [{ required: true, message: '请输入快递单号', trigger: ['blur', 'change'] }]
 			}
 		};
 	},
 	methods: {
 		/* ======================== 任务 ======================== */
+		// 获取任务列表
+		getMIssionList() {
+			let data = { name: this.search.missionName, productName: this.search.commodityName, status: this.search.status, page: this.missionListPage.currentPage };
+			missionManage
+				.fetchMissionList(data)
+				.then(res => {
+					if (res.code === 200) {
+						this.missionList = res.list.list;
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.missionListPage = { total, pageSize, totalPage, currentPage }; // 任务列表分页
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
 		// 搜索
 		searchMission() {
 			if (!this.search.missionName && !this.search.commodityName && !this.search.status) {
 				this.$message.warning('搜索条件不能为空');
-			} else {
-				// 调接口
-				console.log('搜索');
+				return false;
 			}
+
+			let data = { name: this.search.missionName, productName: this.search.commodityName, status: this.search.status, page: this.missionListPage.currentPage };
+			missionManage
+				.fetchMissionList(data)
+				.then(res => {
+					if (res.code === 200) {
+						this.missionList = res.list.list;
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.missionListPage = { total, pageSize, totalPage, currentPage }; // 任务列表分页
+						this.$message.success('搜索成功');
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
 		},
 		// 查看任务详情
 		viewMissionDetail(e) {
 			this.missionDetailDV = true;
-
-			console.log(e);
-			// 调接口
+			let data = { id: e.id };
+			missionManage
+				.fetchVideoByMission(data)
+				.then(res => {
+					if (res.code === 200) {
+						this.missionVideoList = res.list; // 任务视频列表
+					}
+				})
+				.catch(() => {});
 		},
 		// 任务列表当前页切换
 		missionListCurrentChange(currentPage) {
-			this.missionListPage.currentPage = currentPage;
-		},
-		// 发货
-		shipment(e) {
-			this.$confirm('确认发货？', '提示', {
-				confirmButtonText: '发货',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					// 调接口
-					this.$message.success('发货成功');
-					console.log(e);
+			let data = { name: this.search.missionName, productName: this.search.commodityName, status: this.search.status, page:currentPage};
+			missionManage
+				.fetchMissionList(data)
+				.then(res => {
+					if (res.code === 200) {
+						this.missionList = res.list.list;
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.missionListPage = { total, pageSize, totalPage, currentPage }; // 任务列表分页
+					} else {
+						this.$message.warning(res.msg);
+					}
 				})
 				.catch(() => {});
 		},
-		/* ======================== 任务详情对话框 ======================== */
-		// 关闭
-		mDDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					done();
+		// 获取收货信息
+		getReceivingMsg() {
+			missionManage
+				.fetchReceivingMsg()
+				.then(res => {
+					if (res.code === 200) {
+						this.receivingMsg = res.data;
+					}
 				})
 				.catch(() => {});
 		},
-		/* ======================== 发布任务对话框 ======================== */
-		// 关闭
-		pMDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					done();
+		// 获取快递公司列表
+		getExpressCompany() {
+			missionManage
+				.fetchExpressCompany()
+				.then(res => {
+					if (res.code === 200) {
+						this.expressCompany = res.list; // 快递公司列表
+					}
 				})
 				.catch(() => {});
 		},
@@ -272,23 +334,124 @@ export default {
 				})
 				.catch(() => {});
 		},
+		// 获取商品列表
+		getCommodityList() {
+			// missionManage.weizhi().then(res => {
+			// 	if(res.code === 200){
+			// 		this.commodityList = res.list;// 商品列表
+			// 	}
+			// }).catch(() => {});
+		},
+		// 发货
+		shipment(e) {
+			this.shipmentForm.id = e.id;
+			this.shipmentDV = true;
+		},
+		/* ======================== 任务详情对话框 ======================== */
+		// 关闭
+		mDDClose(done) {
+			this.$confirm('确认关闭？', '提示', {
+				confirmButtonText: '关闭',
+				cancelButtonText: '取消',
+				type: 'info'
+			})
+				.then(() => {
+					this.missionVideoList = []; // 任务视频列表
+					done();
+				})
+				.catch(() => {});
+		},
+		/* ======================== 发布任务对话框 ======================== */
+		// 关闭
+		pMDClose(done) {
+			this.$confirm('确认关闭？', '提示', {
+				confirmButtonText: '关闭',
+				cancelButtonText: '取消',
+				type: 'info'
+			})
+				.then(() => {
+					this.$refs['publicMissionFormRef'].resetFields();
+					done();
+				})
+				.catch(() => {});
+		},
 		// 确认发布
 		publicPMF() {
 			this.$refs['publicMissionFormRef'].validate(valid => {
-				if (valid) {
-					console.log(1);
-					// 请求接口
+				if (!valid) {
+					return false;
 				}
+
+				let data = {
+					name: this.publicMissionForm.name,
+					status: this.publicMissionForm.status,
+					proClassify: this.publicMissionForm.commodityClassify,
+					proName: this.publicMissionForm.commodityName,
+					videoNum: this.publicMissionForm.videoNum,
+					proMerit: this.publicMissionForm.commodityMerit,
+					content: this.publicMissionForm.videoDemand
+				};
+				missionManage
+					.handleMissionAdd(data)
+					.then(res => {
+						if (res.code === 200) {
+							this.$message.success('发布任务成功');
+						} else {
+							this.$message.warning(res.msg);
+						}
+					})
+					.catch(() => {});
 			});
 		},
 		// 重置
 		resetPMF() {
 			this.$refs['publicMissionFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
+		},
+		/* ======================== 发货对话框 ======================== */
+		// 关闭
+		sDClose(done) {
+			this.$confirm('确认关闭？', '提示', {
+				confirmButtonText: '关闭',
+				cancelButtonText: '取消',
+				type: 'info'
+			})
+				.then(() => {
+					this.$refs['shipmentFormRef'].resetFields();
+					done();
+				})
+				.catch(() => {});
+		},
+		// 确认发货
+		publicSF() {
+			this.$refs['shipmentFormRef'].validate(valid => {
+				if (!valid) {
+					return false;
+				}
+
+				// let data = {id:this.shipmentForm.id,expressCompany:this.shipmentForm.expressCompany,expressIDNum:this.shipmentForm.expressIDNum};
+				// missionManage.weizhi(data).then(res => {
+				// 	if(res.code === 200){
+				// 		this.$message.success('发货成功');
+				// 		this.getMIssionList();// 获取任务列表
+				// 	}else{
+				// 		this.$message.warning(res.msg);
+				// 	}
+				// }).catch(() => {});
+			});
+		},
+		// 重置
+		resetSF() {
+			this.$refs['shipmentFormRef'].resetFields();
+			this.$message.success('输入信息已重置');
 		}
 	},
-	mounted() {
+	created() {
+		this.getMIssionList(); // 获取任务列表
+		this.getReceivingMsg(); // 获取收货信息
+		this.getExpressCompany(); // 获取快递公司列表
 		this.getCommodityClassify(); // 获取商品分类
+		this.getCommodityList(); // 获取商品列表
 	}
 };
 </script>

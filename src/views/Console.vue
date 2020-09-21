@@ -3,7 +3,7 @@
 		<!-- 基础信息 -->
 		<div class="baseMsg card">
 			<div class="d-flex">
-				<img :src="baseMsg.avatar" class="avatar" />
+				<img :src="baseMsg.avatar" class="avatar" v-if="baseMsg.avatar"/>
 				<div>
 					<div class="d-flex align-items-center">
 						<span class="mr-2 text-2">{{ baseMsg.name }}</span>

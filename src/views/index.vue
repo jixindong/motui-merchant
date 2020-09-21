@@ -4,7 +4,7 @@
 		<div class="hd">
 			<div class="container d-flex align-items-center">
 				<img src="@/assets/images/logo-1.png" class="logo" />
-				<el-avatar :src="baseMsg.avatar"></el-avatar>
+				<el-avatar :src="baseMsg.avatar" v-if="baseMsg.avatar"></el-avatar>
 				<el-dropdown trigger="click" @command="setting">
 					<img src="@/assets/images/setting.png" class="setting" />
 					<el-dropdown-menu slot="dropdown">

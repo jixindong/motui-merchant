@@ -9,8 +9,8 @@
 			<el-input type="text" size="medium" class="w-25" v-model="search.commodityName" placeholder="请输入宝贝名称"></el-input>
 			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择订单状态" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option label="未支付" value="未支付"></el-option>
-				<el-option label="已支付" value="已支付"></el-option>
+				<el-option label="未支付" value="0"></el-option>
+				<el-option label="已支付" value="1"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchOrder">搜索</el-button>
 		</div>
@@ -49,6 +49,8 @@
 </template>
 
 <script>
+// import {fetchMessageList} from '@/api/dataCenter';
+
 export default {
 	name: 'OrderList',
 	data() {
@@ -98,6 +100,18 @@ export default {
 	},
 	methods: {
 		/* ======================== 订单列表 ======================== */
+		// 获取订单列表
+		getOrderList(){
+			// fetchMessageList().then(res => {
+			// 	if(res.code === 200){
+			// 		this.orderList = res.list.list;// 订单列表
+			// 		let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+			// 		this.orderListPage = { total, pageSize, totalPage, currentPage }; // 订单列表分页
+			// 	}else{
+			// 		this.$message.warning(res.msg);
+			// 	}
+			// }).catch(() => {});
+		},
 		// 搜索
 		searchOrder(){
 			if (!this.search.starID && !this.search.commodityName && !this.search.status) {
@@ -111,6 +125,9 @@ export default {
 		orderListCurrentChange(currentPage) {
 			this.orderListPage.currentPage = currentPage;
 		}
+	},
+	created() {
+		this.getOrderList();// 获取订单列表
 	}
 };
 </script>
