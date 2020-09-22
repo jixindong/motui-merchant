@@ -159,7 +159,6 @@
 
 <script>
 import * as missionManage from '@/api/shootVideo';
-import { fetchCommodityClassify } from '@/api/commodity';
 
 export default {
 	name: 'MissionManage',
@@ -185,8 +184,6 @@ export default {
 			receivingMsg: null,
 			// 快递公司列表
 			expressCompany: [],
-			// 商品分类
-			commodityClassify: [],
 			/* ======================== 任务详情对话框 ======================== */
 			// 显示隐藏
 			missionDetailDV: false,
@@ -233,13 +230,27 @@ export default {
 			}
 		};
 	},
+	computed: {
+		// 商品分类
+		commodityClassify() {
+			return this.$store.state.commodityClassify || [];
+		},
+		// 任务列表搜索条件
+		searchData() {
+			return {
+				productName: this.search.commodityName,
+				name: this.search.missionName,
+				status: this.search.status,
+				page: this.missionListPage.currentPage
+			};
+		}
+	},
 	methods: {
 		/* ======================== 任务 ======================== */
 		// 获取任务列表
 		getMIssionList() {
-			let data = { name: this.search.missionName, productName: this.search.commodityName, status: this.search.status, page: this.missionListPage.currentPage };
 			missionManage
-				.fetchMissionList(data)
+				.fetchMissionList(this.searchData)
 				.then(res => {
 					if (res.code === 200) {
 						this.missionList = res.list.list;
@@ -258,20 +269,7 @@ export default {
 				return false;
 			}
 
-			let data = { name: this.search.missionName, productName: this.search.commodityName, status: this.search.status, page: this.missionListPage.currentPage };
-			missionManage
-				.fetchMissionList(data)
-				.then(res => {
-					if (res.code === 200) {
-						this.missionList = res.list.list;
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
-						this.missionListPage = { total, pageSize, totalPage, currentPage }; // 任务列表分页
-						this.$message.success('搜索成功');
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			this.getMIssionList(); // 获取任务列表
 		},
 		// 查看任务详情
 		viewMissionDetail(e) {
@@ -288,19 +286,8 @@ export default {
 		},
 		// 任务列表当前页切换
 		missionListCurrentChange(currentPage) {
-			let data = { name: this.search.missionName, productName: this.search.commodityName, status: this.search.status, page:currentPage};
-			missionManage
-				.fetchMissionList(data)
-				.then(res => {
-					if (res.code === 200) {
-						this.missionList = res.list.list;
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
-						this.missionListPage = { total, pageSize, totalPage, currentPage }; // 任务列表分页
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			this.missionListPage.currentPage = currentPage;
+			this.getMIssionList(); // 获取任务列表
 		},
 		// 获取收货信息
 		getReceivingMsg() {
@@ -321,16 +308,6 @@ export default {
 					if (res.code === 200) {
 						this.expressCompany = res.list; // 快递公司列表
 					}
-				})
-				.catch(() => {});
-		},
-		// 获取商品分类
-		getCommodityClassify() {
-			fetchCommodityClassify()
-				.then(res => {
-					res.list.forEach(e => {
-						this.commodityClassify.push(e.name);
-					});
 				})
 				.catch(() => {});
 		},
@@ -396,6 +373,8 @@ export default {
 					.then(res => {
 						if (res.code === 200) {
 							this.$message.success('发布任务成功');
+							this.$refs['publicMissionFormRef'].resetFields();
+							this.publicMissionDV = false; // 发布任务对话框 隐藏
 						} else {
 							this.$message.warning(res.msg);
 						}
@@ -450,7 +429,6 @@ export default {
 		this.getMIssionList(); // 获取任务列表
 		this.getReceivingMsg(); // 获取收货信息
 		this.getExpressCompany(); // 获取快递公司列表
-		this.getCommodityClassify(); // 获取商品分类
 		this.getCommodityList(); // 获取商品列表
 	}
 };

@@ -4,7 +4,7 @@
 		<div class="hd">
 			<div class="container d-flex align-items-center">
 				<img src="@/assets/images/logo-1.png" class="logo" />
-				<el-avatar :src="baseMsg.avatar" v-if="baseMsg.avatar"></el-avatar>
+				<el-avatar :src="baseMsg.avatar" v-if="baseMsg"></el-avatar>
 				<el-dropdown trigger="click" @command="setting">
 					<img src="@/assets/images/setting.png" class="setting" />
 					<el-dropdown-menu slot="dropdown">
@@ -104,6 +104,7 @@
 
 <script>
 import * as merch from '@/api/user';
+import { fetchCommodityClassify } from '@/api/commodity';
 
 export default {
 	name: 'index',
@@ -149,6 +150,7 @@ export default {
 		};
 	},
 	computed: {
+		// 商家基本信息
 		baseMsg() {
 			return this.$store.state.baseMsg;
 		}
@@ -159,7 +161,27 @@ export default {
 			merch
 				.fetchMerchBaseMsg({ id: '' })
 				.then(res => {
-					this.$store.commit('handleBaseMsg', res.detail);
+					if (res.code === 200) {
+						this.$store.commit('handleBaseMsg', res.detail);
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
+		// 获取商品分类
+		getCommodityClassify() {
+			fetchCommodityClassify()
+				.then(res => {
+					if (res.code === 200) {
+						let commodityClassify = [];
+						res.list.forEach(e => {
+							commodityClassify.push(e.name);
+						});
+						this.$store.commit('handleCommodityClassify', commodityClassify);
+					} else {
+						this.$message.warning(res.msg);
+					}
 				})
 				.catch(() => {});
 		},
@@ -231,6 +253,7 @@ export default {
 	},
 	created() {
 		this.getBaseMsg(); // 获取基本信息
+		this.getCommodityClassify(); // 获取商品分类
 	}
 };
 </script>

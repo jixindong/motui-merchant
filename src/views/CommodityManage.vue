@@ -234,13 +234,11 @@ export default {
 				classify: null,
 				status: null
 			},
-			// 分类
-			commodityClassify: [],
 			// 列表
 			commodityList: [],
 			// 分页
 			commodityListPage: {
-				total: null,
+				total: 1,
 				pageSize: 1,
 				totalPage: 1,
 				currentPage: 1
@@ -303,26 +301,27 @@ export default {
 			}
 		};
 	},
+	computed: {
+		// 商品分类
+		commodityClassify() {
+			return this.$store.state.commodityClassify || [];
+		},
+		// 商品列表搜索条件
+		searchData() {
+			return {
+				name: this.search.name,
+				pt: this.search.platform,
+				type: this.search.classify,
+				page: this.commodityListPage.currentPage
+			};
+		}
+	},
 	methods: {
 		/* ======================== 商品 ======================== */
-		// 获取商品分类
-		getCommodityClassify() {
-			commodity
-				.fetchCommodityClassify()
-				.then(res => {
-					if (res.code === 200) {
-						res.list.forEach(e => {
-							this.commodityClassify.push(e.name); // 商品分类
-						});
-					}
-				})
-				.catch(() => {});
-		},
 		// 获取商品列表
 		getCommodityList() {
-			let data = { name: this.search.name, type: this.search.classify, page: this.commodityListPage.currentPage };
 			commodity
-				.fetchCommodityList(data)
+				.fetchCommodityList(this.searchData)
 				.then(res => {
 					if (res.code === 200) {
 						this.commodityList = res.list.list; // 商品列表
@@ -341,20 +340,7 @@ export default {
 				return false;
 			}
 
-			let data = { name: this.search.name, type: this.search.classify, page: this.commodityListPage.currentPage };
-			commodity
-				.fetchCommodityList(data)
-				.then(res => {
-					if (res.code === 200) {
-						this.commodityList = res.list.list; // 商品列表
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
-						this.commodityListPage = { total, pageSize, totalPage, currentPage }; // 商品列表分页
-						this.$message.success('搜索成功');
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			this.getCommodityList(); // 获取商品列表
 		},
 		// 选择商品
 		commoditySelect(e) {
@@ -362,17 +348,8 @@ export default {
 		},
 		// 商品列表当前页切换
 		commodityListCurrentChange(currentPage) {
-			let data = { page: currentPage };
-			commodity
-				.fetchCommodityList(data)
-				.then(res => {
-					if (res.code === 200) {
-						this.commodityList = res.list.list; // 商品列表
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
-						this.commodityListPage = { total, pageSize, totalPage, currentPage }; // 商品列表分页
-					}
-				})
-				.catch(() => {});
+			this.missionListPage.currentPage = currentPage;
+			this.getCommodityList(); // 获取商品列表
 		},
 		// 查看商品详情
 		viewCommodityDetail(e) {
@@ -553,7 +530,6 @@ export default {
 		}
 	},
 	created() {
-		this.getCommodityClassify(); // 获取商品分类
 		this.getCommodityList(); // 获取商品列表
 	}
 };

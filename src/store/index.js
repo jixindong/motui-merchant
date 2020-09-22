@@ -6,12 +6,18 @@ Vue.use(Vuex);
 
 const store = new Vuex.Store({
 	state: {
-		baseMsg:null
+		// 商家基本信息
+		baseMsg:null,
+		// 商品分类
+		commodityClassify:null
 	},
 	getters: {},
 	mutations: {
 		handleBaseMsg(state,e){
 			state.baseMsg = e;
+		},
+		handleCommodityClassify(state,e){
+			state.commodityClassify = e;
 		}
 	},
 	actions: {},

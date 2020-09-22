@@ -60,12 +60,22 @@ export default {
 			}
 		};
 	},
+	computed: {
+		// 消息列表搜索条件
+		searchData() {
+			return {
+				username: this.search.username,
+				title: this.search.title,
+				content: this.search.content,
+				page: this.messageListPage.currentPage
+			};
+		}
+	},
 	methods: {
 		/* ======================== 消息 ======================== */
 		// 获取消息列表
 		getMessageList() {
-			let data = { username: this.search.username, title: this.search.title, content: this.search.content, page: this.messageListPage.currentPage };
-			fetchMessageList(data)
+			fetchMessageList(this.searchData)
 				.then(res => {
 					if (res.code === 200) {
 						this.messageList = res.list.list; // 任务列表
@@ -84,33 +94,12 @@ export default {
 				return false;
 			}
 
-			let data = { username: this.search.username, title: this.search.title, content: this.search.content, page: this.messageListPage.currentPage };
-			fetchMessageList(data)
-				.then(res => {
-					if (res.code === 200) {
-						this.messageList = res.list.list; // 任务列表
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
-						this.messageListPage = { total, pageSize, totalPage, currentPage }; // 任务列表分页
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			this.getMessageList(); // 获取消息列表
 		},
 		// 消息列表当前页切换
 		messageListCurrentChange(currentPage) {
-			let data = { username: this.search.username, title: this.search.title, content: this.search.content, page: currentPage };
-			fetchMessageList(data)
-				.then(res => {
-					if (res.code === 200) {
-						this.messageList = res.list.list; // 任务列表
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
-						this.messageListPage = { total, pageSize, totalPage, currentPage }; // 任务列表分页
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			this.messageListPage.currentPage = currentPage;
+			this.getMessageList(); // 获取消息列表
 		}
 	},
 	created() {
