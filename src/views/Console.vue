@@ -3,11 +3,11 @@
 		<!-- 基础信息 -->
 		<div class="baseMsg card">
 			<div class="d-flex">
-				<img :src="baseMsg.avatar" class="avatar" v-if="baseMsg.avatar"/>
+				<img :src="baseMsg.avatar" class="avatar" v-if="baseMsg.avatar" />
 				<div>
 					<div class="d-flex align-items-center">
 						<span class="mr-2 text-2">{{ baseMsg.name }}</span>
-						<span class="nameplate">未知套餐</span>
+						<span class="nameplate">{{ baseMsg.talent || '未开通' }}</span>
 					</div>
 					<div class="mt-3">
 						<span class="mr-4">
@@ -21,7 +21,7 @@
 					</div>
 					<div class="mt-2">
 						<span>代理：</span>
-						<span class="text-primary">未知代理</span>
+						<span class="text-primary">{{ baseMsg.did }}</span>
 					</div>
 				</div>
 			</div>

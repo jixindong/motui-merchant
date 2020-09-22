@@ -7,17 +7,22 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
 	state: {
 		// 商家基本信息
-		baseMsg:null,
+		baseMsg: null,
 		// 商品分类
-		commodityClassify:null
+		commodityClassify: [],
+		// 物流公司
+		expressCompany: []
 	},
 	getters: {},
 	mutations: {
-		handleBaseMsg(state,e){
+		handleBaseMsg(state, e) {
 			state.baseMsg = e;
 		},
-		handleCommodityClassify(state,e){
+		handleCommodityClassify(state, e) {
 			state.commodityClassify = e;
+		},
+		handleExpressCompany(state, e) {
+			state.expressCompany = e;
 		}
 	},
 	actions: {},

@@ -5,13 +5,14 @@
 
 		<!-- 功能区域 -->
 		<div class="d-flex justify-content-between my-4">
-			<el-input type="text" size="medium" class="w-25" v-model="search.starID" placeholder="请输入达人ID"></el-input>
-			<el-date-picker type="date" size="medium" class="w-25" v-model="search.promoteDate" placeholder="请选择推广时间" clearable></el-date-picker>
+			<el-input type="text" size="medium" class="w-25" v-model="search.commodityName" placeholder="请输入宝贝名称" clearable></el-input>
+			<el-input type="text" size="medium" class="w-25" v-model="search.starID" placeholder="请输入达人ID" clearable></el-input>
+			<!-- <el-date-picker type="date" size="medium" class="w-25" v-model="search.promoteDate" placeholder="请选择推广时间" clearable></el-date-picker> -->
 			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择推广状态" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option label="待分发" value="待分发"></el-option>
-				<el-option label="待审核" value="待审核"></el-option>
-				<el-option label="已完成" value="已完成"></el-option>
+				<el-option label="待分发" value="0"></el-option>
+				<el-option label="待审核" value="1"></el-option>
+				<el-option label="已完成" value="2"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchPromote">搜索</el-button>
 		</div>
@@ -19,30 +20,19 @@
 		<!-- 推广列表 -->
 		<div>
 			<el-table :data="promoteList" stripe border>
+				<el-table-column prop="productName" label="宝贝名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="starID" label="达人ID" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="promoteDate" label="推广时间" show-overflow-tooltip></el-table-column>
+				<!-- <el-table-column prop="promoteDate" label="推广时间" show-overflow-tooltip></el-table-column> -->
 				<el-table-column label="视频地址">
 					<template slot-scope="scope">
 						<el-link type="primary" :href="scope.row.videoLink" target="blank">视频链接</el-link>
 					</template>
 				</el-table-column>
 				<el-table-column prop="viewCounts" label="播放量" align="center" show-overflow-tooltip></el-table-column>
-				<!-- <el-table-column label="是否审核">
-					<template slot-scope="scope">
-						<span class="text-warning" v-if="!scope.row.isCheck">未审核</span>
-						<span class="text-success" v-else>已审核</span>
-					</template>
-				</el-table-column> -->
-				<!-- <el-table-column label="是否发货">
-					<template slot-scope="scope">
-						<span class="text-warning" v-if="!scope.row.isShipment">未发货</span>
-						<span class="text-success" v-else>已发货</span>
-					</template>
-				</el-table-column> -->
 				<el-table-column label="状态" align="center">
 					<template slot-scope="scope">
-						<span class="text-warning" v-if="scope.row.status === 0">待分发</span>
-						<span class="text-primary" v-else-if="scope.row.status === 1">待审核</span>
+						<span class="text-warning" v-if="scope.row.status === '0'">待分发</span>
+						<span class="text-primary" v-else-if="scope.row.status === '1'">待审核</span>
 						<span class="text-success" v-else>已完成</span>
 					</template>
 				</el-table-column>
@@ -52,8 +42,8 @@
 						<el-button type="success" size="mini" plain disabled v-if="scope.row.isCheck">已审核</el-button>
 						<el-button type="primary" size="mini" icon="el-icon-truck" @click="shipment(scope.row)" v-if="!scope.row.isShipment">发货</el-button>
 						<el-button type="primary" size="mini" plain disabled v-if="scope.row.isShipment">已发货</el-button>
-						<el-button type="danger" size="mini" icon="el-icon-chat-round" @click="complain(scope.row)" v-if="!scope.row.isComplain">投诉</el-button>
-						<el-button type="danger" size="mini" plain disabled v-if="scope.row.isComplain">已投诉</el-button>
+						<el-button type="danger" size="mini" icon="el-icon-chat-round" @click="complain(scope.row)" v-if="!scope.row.isComplain">申诉</el-button>
+						<el-button type="danger" size="mini" plain disabled v-if="scope.row.isComplain">已申诉</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -78,9 +68,9 @@
 					<el-col :span="24" class="mt-4 mb-4">达人地址：{{ starMsg.addr }}</el-col>
 					<el-col :span="12">
 						<el-form-item label="物流公司" prop="company" required>
-							<el-select v-model="shipmentForm.company" clearable>
+							<el-select v-model="shipmentForm.company" class="w-100" filterable clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(v, i) in logisticsCompany" :key="i" :label="v" :value="v"></el-option>
+								<el-option v-for="(v, i) in expressCompany" :key="i" :label="v.name" :value="v.type"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -97,14 +87,14 @@
 			</el-form>
 		</el-dialog>
 
-		<!-- 投诉对话框 -->
-		<el-dialog title="投诉" :visible.sync="complainDV" :before-close="cDClose">
+		<!-- 申诉对话框 -->
+		<el-dialog title="申诉" :visible.sync="complainDV" :before-close="cDClose">
 			<el-form :model="complainForm" :rules="complainRules" ref="complainFormRef" size="medium" label-width="100px" status-icon>
-				<el-form-item label="投诉内容" prop="content" required>
-					<el-input type="textarea" placeholder="请输入投诉内容" v-model="complainForm.content" clearable></el-input>
+				<el-form-item label="申诉内容" prop="content" required>
+					<el-input type="textarea" placeholder="请输入申诉内容" v-model="complainForm.content" clearable></el-input>
 				</el-form-item>
 				<div class="d-flex justify-content-center">
-					<el-button type="primary" size="medium" @click="complainCDF">提交投诉</el-button>
+					<el-button type="primary" size="medium" @click="complainCDF">提交申诉</el-button>
 					<el-button type="primary" size="medium" plain @click="resetCDF">重置</el-button>
 				</div>
 			</el-form>
@@ -113,6 +103,8 @@
 </template>
 
 <script>
+import * as videoPromote from '@/api/videoPromote';
+
 export default {
 	name: 'PromoteList',
 	data() {
@@ -120,50 +112,17 @@ export default {
 			/* ======================== 推广列表 ======================== */
 			// 搜索
 			search: {
+				commodityName: null,
 				starID: null,
-				promoteDate: null,
+				// promoteDate: null,
 				status: null
 			},
 			// 列表
-			promoteList: [
-				{
-					pid: 23333,
-					starID: 123456,
-					promoteDate: '2020年9月16日',
-					videoLink: 'http://www.baidu.com',
-					viewCounts: 50,
-					isCheck: false,
-					isShipment: false,
-					isComplain: false,
-					status: 0
-				},
-				{
-					pid: 2333,
-					starID: 123456,
-					promoteDate: '2020年9月16日',
-					videoLink: 'http://www.baidu.com',
-					viewCounts: 50,
-					isCheck: false,
-					isShipment: false,
-					isComplain: false,
-					status: 1
-				},
-				{
-					pid: 233,
-					starID: 123456,
-					promoteDate: '2020年9月16日',
-					videoLink: 'http://www.baidu.com',
-					viewCounts: 50,
-					isCheck: true,
-					isShipment: true,
-					isComplain: true,
-					status: 2
-				}
-			],
+			promoteList: [],
 			// 分页
 			promoteListPage: {
-				total: 15,
-				pageSize: 10,
+				total: 1,
+				pageSize: 1,
 				totalPage: 1,
 				currentPage: 1
 			},
@@ -184,13 +143,11 @@ export default {
 			currentPid: null,
 			// 达人信息
 			starMsg: {
-				person: '达人',
-				tel: '12345678910',
-				addr: '山东省青岛市市北区敦化路诺德广场'
+				name: null,
+				tel: null,
+				addr: null
 			},
-			// 物流公司
-			logisticsCompany: ['顺丰', '韵达'],
-			/* ======================== 投诉对话框 ======================== */
+			/* ======================== 申诉对话框 ======================== */
 			// 显示隐藏
 			complainDV: false,
 			// 表单
@@ -199,37 +156,79 @@ export default {
 			},
 			// 表单校验规则
 			complainRules: {
-				content: [{ required: true, message: '请输入投诉内容', trigger: ['blur', 'change'] }]
+				content: [{ required: true, message: '请输入申诉内容', trigger: ['blur', 'change'] }]
 			}
 		};
 	},
+	computed: {
+		// 快递公司列表
+		expressCompany() {
+			return this.$store.state.expressCompany || [];
+		},
+		// 推广列表搜索条件
+		searchData() {
+			return {
+				productName: this.search.commodityName,
+				starID: this.search.starID,
+				status: this.search.status,
+				page: this.promoteListPage.currentPage
+			};
+		}
+	},
 	methods: {
 		/* ======================== 推广列表 ======================== */
+		// 获取推广列表
+		getPromoteList() {
+			videoPromote
+				.fetchPromoteList(this.searchData)
+				.then(res => {
+					if (res.code === 200) {
+						this.promoteList = res.list.list;
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.promoteListPage = { total, pageSize, totalPage, currentPage }; // 推广列表分页
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
 		// 搜索
 		searchPromote() {
-			if (!this.search.starID && !this.search.promoteDate && !this.search.status) {
+			if (!this.search.commodityName && !this.search.starID && !this.search.status) {
 				this.$message.warning('搜索条件不能为空');
-			} else {
-				// 调接口
-				console.log('搜索');
+				return false;
 			}
+
+			this.getPromoteList(); // 获取推广列表
+		},
+		// 推广列表当前页切换
+		promoteListCurrentChange(currentPage) {
+			this.promoteListPage.currentPage = currentPage;
+			this.getPromoteList(); // 获取推广列表
 		},
 		// 审核
 		videoCheck(e) {
 			this.$confirm('确认审核通过？', '提示', {
-				confirmButtonText: '通过',
+				confirmButtonText: '确认',
 				cancelButtonText: '取消',
 				type: 'info'
 			})
 				.then(() => {
-					// 调接口
-
-					this.promoteList.map(v => {
-						if (v.pid === e.pid) {
-							v.isCheck = true;
-						}
-					});
-					this.$message.success('审核通过');
+					videoPromote
+						.merchCheck({ id: e.pid })
+						.then(res => {
+							if (res.code === 200) {
+								this.$message.success('审核通过');
+								this.promoteList.map(v => {
+									if (v.pid === e.pid) {
+										v.isCheck = true;
+									}
+								});
+							} else {
+								this.$message.warning(res.msg);
+							}
+						})
+						.catch(() => {});
 				})
 				.catch(() => {});
 		},
@@ -237,15 +236,18 @@ export default {
 		shipment(e) {
 			this.shipmentDV = true;
 			this.currentPid = e.pid;
+			// videoPromote.weizhi({id:e.pid}).then(res => {
+			// 	if(res.code === 200){
+			// 		// this.starMsg = res.data//达人信息
+			// 	}else{
+			// 		this.$message.warning(res.msg);
+			// 	}
+			// }).catch(() => {});
 		},
-		// 投诉
+		// 申诉
 		complain(e) {
 			this.complainDV = true;
 			this.currentPid = e.pid;
-		},
-		// 推广列表当前页切换
-		promoteListCurrentChange(currentPage) {
-			this.promoteListPage.currentPage = currentPage;
 		},
 		/* ======================== 发货对话框 ======================== */
 		// 关闭
@@ -256,6 +258,7 @@ export default {
 				type: 'info'
 			})
 				.then(() => {
+					this.$refs['shipmentFormRef'].resetFields();
 					done();
 				})
 				.catch(() => {});
@@ -263,18 +266,28 @@ export default {
 		// 确认发货
 		shipmentSDF() {
 			this.$refs['shipmentFormRef'].validate(valid => {
-				if (valid) {
-					console.log(1);
-					// 请求接口
-
-					this.promoteList.map(v => {
-						if (v.pid === this.currentPid) {
-							v.isShipment = true;
-						}
-					});
-					this.$message.success('确认发货成功');
-					this.shipmentDV = false;
+				if (!valid) {
+					return false;
 				}
+
+				let data = { id: this.currentPid, logistics_name: this.shipmentForm.company, logistics: this.shipmentForm.shipmentID };
+				videoPromote
+					.merchSend(data)
+					.then(res => {
+						if (res.code === 200) {
+							this.$message.success('确认发货成功');
+							this.$refs['shipmentFormRef'].resetFields();
+							this.shipmentDV = false;
+							this.promoteList.map(v => {
+								if (v.pid === this.currentPid) {
+									v.isShipment = true;
+								}
+							});
+						} else {
+							this.$message.warning(res.msg);
+						}
+					})
+					.catch(() => {});
 			});
 		},
 		// 重置
@@ -282,7 +295,7 @@ export default {
 			this.$refs['shipmentFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
 		},
-		/* ======================== 投诉对话框 ======================== */
+		/* ======================== 申诉对话框 ======================== */
 		// 关闭
 		cDClose(done) {
 			this.$confirm('确认关闭？', '提示', {
@@ -291,25 +304,36 @@ export default {
 				type: 'info'
 			})
 				.then(() => {
+					this.$refs['complainFormRef'].resetFields();
 					done();
 				})
 				.catch(() => {});
 		},
-		// 提交投诉
+		// 提交申诉
 		complainCDF() {
 			this.$refs['complainFormRef'].validate(valid => {
-				if (valid) {
-					console.log(1);
-					// 请求接口
-
-					this.promoteList.map(v => {
-						if (v.pid === this.currentPid) {
-							v.isComplain = true;
-						}
-					});
-					this.$message.success('提交投诉成功');
-					this.complainDV = false;
+				if (!valid) {
+					return false;
 				}
+
+				let data = { id: this.currentPid, content: this.complainForm.content };
+				videoPromote
+					.merchComplaint(data)
+					.then(res => {
+						if (res.code === 200) {
+							this.$message.success('提交申诉成功');
+							this.$refs['complainFormRef'].resetFields();
+							this.complainDV = false;
+							this.promoteList.map(v => {
+								if (v.pid === this.currentPid) {
+									v.isComplain = true;
+								}
+							});
+						} else {
+							this.$message.warning(res.msg);
+						}
+					})
+					.catch(() => {});
 			});
 		},
 		// 重置
@@ -317,6 +341,9 @@ export default {
 			this.$refs['complainFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
 		}
+	},
+	created() {
+		this.getPromoteList(); // 获取推广列表
 	}
 };
 </script>

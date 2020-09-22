@@ -105,6 +105,7 @@
 <script>
 import * as merch from '@/api/user';
 import { fetchCommodityClassify } from '@/api/commodity';
+import { fetchExpressCompany } from '@/api/shootVideo';
 
 export default {
 	name: 'index',
@@ -185,6 +186,18 @@ export default {
 				})
 				.catch(() => {});
 		},
+		// 获取快递公司列表
+		getExpressCompany() {
+			fetchExpressCompany()
+				.then(res => {
+					if (res.code === 200) {
+						this.$store.commit('handleExpressCompany', res.list);
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
 		// 设置
 		setting(e) {
 			if (e === '0') {
@@ -254,6 +267,7 @@ export default {
 	created() {
 		this.getBaseMsg(); // 获取基本信息
 		this.getCommodityClassify(); // 获取商品分类
+		this.getExpressCompany(); // 获取快递公司列表
 	}
 };
 </script>

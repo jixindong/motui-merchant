@@ -49,7 +49,7 @@
 </template>
 
 <script>
-// import {fetchMessageList} from '@/api/dataCenter';
+// import {fetchOrderList} from '@/api/dataCenter';
 
 export default {
 	name: 'OrderList',
@@ -102,7 +102,7 @@ export default {
 		/* ======================== 订单列表 ======================== */
 		// 获取订单列表
 		getOrderList(){
-			// fetchMessageList().then(res => {
+			// fetchOrderList().then(res => {
 			// 	if(res.code === 200){
 			// 		this.orderList = res.list.list;// 订单列表
 			// 		let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;

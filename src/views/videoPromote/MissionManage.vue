@@ -104,7 +104,7 @@
 </template>
 
 <script>
-import * as missionManage from '@/api/videoPromote';
+import * as videoPromote from '@/api/videoPromote';
 
 export default {
 	name: 'MissionManage',
@@ -175,7 +175,7 @@ export default {
 		/* ======================== 任务 ======================== */
 		// 获取任务列表
 		getMIssionList() {
-			missionManage
+			videoPromote
 				.fetchMissionList(this.searchData)
 				.then(res => {
 					if (res.code === 200) {
@@ -231,13 +231,13 @@ export default {
 					promoteNum: this.publicMissionForm.promoteNum,
 					missionDemand: this.publicMissionForm.missionDemand
 				};
-				missionManage
+				videoPromote
 					.handleMissionAdd(data)
 					.then(res => {
 						if (res.code === 200) {
 							this.$message.success('发布任务成功');
 							this.$refs['publicMissionFormRef'].resetFields();
-							this.publicMissionDV = false;// 发布任务对话框 隐藏
+							this.publicMissionDV = false; // 发布任务对话框 隐藏
 						} else {
 							this.$message.warning(res.msg);
 						}

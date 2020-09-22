@@ -1,9 +1,9 @@
 import request from '@/utils/request';
 
-// 消息列表
-export function fetchMessageList(data) {
+// 订单列表
+export function fetchOrderList(data) {
 	return request({
-		url: 'information/list',
+		url: 'ordersync/list',
 		method: 'POST',
 		data
 	});

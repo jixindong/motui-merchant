@@ -182,8 +182,6 @@ export default {
 			},
 			// 收货信息
 			receivingMsg: null,
-			// 快递公司列表
-			expressCompany: [],
 			/* ======================== 任务详情对话框 ======================== */
 			// 显示隐藏
 			missionDetailDV: false,
@@ -234,6 +232,10 @@ export default {
 		// 商品分类
 		commodityClassify() {
 			return this.$store.state.commodityClassify || [];
+		},
+		// 快递公司列表
+		expressCompany() {
+			return this.$store.state.expressCompany || [];
 		},
 		// 任务列表搜索条件
 		searchData() {
@@ -296,17 +298,6 @@ export default {
 				.then(res => {
 					if (res.code === 200) {
 						this.receivingMsg = res.data;
-					}
-				})
-				.catch(() => {});
-		},
-		// 获取快递公司列表
-		getExpressCompany() {
-			missionManage
-				.fetchExpressCompany()
-				.then(res => {
-					if (res.code === 200) {
-						this.expressCompany = res.list; // 快递公司列表
 					}
 				})
 				.catch(() => {});
@@ -428,7 +419,6 @@ export default {
 	created() {
 		this.getMIssionList(); // 获取任务列表
 		this.getReceivingMsg(); // 获取收货信息
-		this.getExpressCompany(); // 获取快递公司列表
 		this.getCommodityList(); // 获取商品列表
 	}
 };
