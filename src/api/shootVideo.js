@@ -23,7 +23,7 @@ export function fetchVideoByMission(data) {
 	return request({
 		url: 'businessvideo/listByVideo',
 		method: 'POST',
-		data
+		params:data
 	});
 }
 
@@ -48,17 +48,26 @@ export function fetchExpressCompany(data) {
 // 收货信息
 export function fetchReceivingMsg(data) {
 	return request({
-		url: 'setting/listByGroup',
+		url: 'setting/listBySort',
 		method: 'POST',
-		data
+		params:data
 	});
 }
 
 // 确认收货
 export function confirmReceipt(data) {
 	return request({
-		url: ' logisticscompany/add',
+		url: 'logisticscompany/add',
 		method: 'POST',
 		data
+	});
+}
+
+// 发货
+export function shipments(data) {
+	return request({
+		url: 'talentapply/send',
+		method: 'POST',
+		params:data
 	});
 }

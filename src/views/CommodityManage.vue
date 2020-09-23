@@ -38,11 +38,11 @@
 						<el-button type="text" @click="viewCommodityDetail(scope.row)">{{ scope.row.name }}</el-button>
 					</template>
 				</el-table-column>
-				<el-table-column prop="pt" label="平台" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="lx" label="平台" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="type" label="分类" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="price" label="价格" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="yhq" label="优惠券" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="yj" label="佣金比例" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="discount" label="优惠券" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="profit" label="佣金比例" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态">
 					<template slot-scope="scope">
 						<span class="text-primary" v-if="scope.row.status === '0'">待审核</span>
@@ -73,20 +73,28 @@
 		<el-dialog title="宝贝详情" width="1000px" :visible.sync="commodityDetailDV">
 			<el-row>
 				<el-col :span="8">名称：{{ this.commodityDetail.name }}</el-col>
-				<el-col :span="8">平台：{{ this.commodityDetail.pt }}</el-col>
+				<el-col :span="8">平台：{{ this.commodityDetail.lx }}</el-col>
 				<el-col :span="8">分类：{{ this.commodityDetail.type }}</el-col>
-				<el-col :span="8">价格：{{ this.commodityDetail.price }}</el-col>
-				<el-col :span="8">优惠券：{{ this.commodityDetail.yhq }}</el-col>
-				<el-col :span="8">佣金比例：{{ this.commodityDetail.yj }}</el-col>
-				<el-col :span="24">
-					链接：
-					<el-link :href="this.commodityDetail.video" target="_blank" type="primary">{{ commodityDetail.video }}</el-link>
-				</el-col>
-				<el-col :span="12" class="d-flex">
+				<el-col :span="8" class="my-4">价格：{{ this.commodityDetail.price }}</el-col>
+				<el-col :span="8" class="my-4">优惠券：{{ this.commodityDetail.discount }}</el-col>
+				<el-col :span="8" class="my-4">佣金比例：{{ this.commodityDetail.profit }}</el-col>
+				<el-col :span="8" class="d-flex">
 					<span>图片：</span>
-					<img :src="this.commodityDetail.path" class="w-75" />
+					<img :src="this.commodityDetail.path" class="w-50" />
 				</el-col>
 			</el-row>
+
+			<div>
+				<div class="mt-4 mb-2">视频列表：</div>
+				<el-table :data="commodityVideoList" stripe border>
+					<el-table-column label="视频链接" show-overflow-tooltip>
+						<template slot-scope="scope">
+							<el-link type="primary" :href="scope.row.video">{{ scope.row.video }}</el-link>
+						</template>
+					</el-table-column>
+					<el-table-column prop="number" label="播放量" width="100" align="center" show-overflow-tooltip></el-table-column>
+				</el-table>
+			</div>
 		</el-dialog>
 
 		<!-- 添加商品对话框 -->
@@ -99,8 +107,8 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="平台" prop="pt" required>
-							<el-select v-model="commodityAddForm.pt" clearable>
+						<el-form-item label="平台" prop="lx" required>
+							<el-select v-model="commodityAddForm.lx" clearable>
 								<el-option label="请选择" value=""></el-option>
 								<el-option label="淘宝" value="淘宝"></el-option>
 								<el-option label="抖音小店" value="抖音小店"></el-option>
@@ -122,20 +130,36 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="优惠券" prop="yhq" required>
-							<el-input type="text" placeholder="请输入优惠券" v-model="commodityAddForm.yhq" clearable></el-input>
+						<el-form-item label="优惠券" prop="discount" required>
+							<el-input type="text" placeholder="请输入优惠券" v-model="commodityAddForm.discount" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="佣金比例" prop="yj" required>
-							<el-input type="number" placeholder="请输入佣金比例" v-model="commodityAddForm.yj" clearable></el-input>
+						<el-form-item label="佣金比例" prop="profit" required>
+							<el-input type="number" placeholder="请输入佣金比例" v-model="commodityAddForm.profit" clearable></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col :span="24">
+				</el-row>
+
+				<el-row :gutter="20">
+					<el-col :span="21">
 						<el-form-item label="链接" prop="video" required>
 							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityAddForm.video" clearable></el-input>
 						</el-form-item>
 					</el-col>
+					<el-col :span="3"><el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" plain @click="cADAddVideoItem">增加</el-button></el-col>
+				</el-row>
+
+				<el-row :gutter="20" v-for="(item, index) in commodityAddForm.videoList" :key="index">
+					<el-col :span="21">
+						<el-form-item label="链接" :prop="'videoList[' + index + ']'" :rules="{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }">
+							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityAddForm.videoList[index]" clearable></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="3"><el-button type="danger" size="medium" icon="el-icon-delete" plain @click="cADDelVideoItem(index)">删除</el-button></el-col>
+				</el-row>
+
+				<el-row>
 					<el-col :span="8">
 						<el-form-item label="图片">
 							<el-upload class="img-uploader" action="http://mtht.waszn.com:8001/upload/uploadFile" :show-file-list="false" :on-success="addCommodityImg">
@@ -163,8 +187,8 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="平台" prop="pt" required>
-							<el-select v-model="commodityEditForm.pt" clearable>
+						<el-form-item label="平台" prop="lx" required>
+							<el-select v-model="commodityEditForm.lx" clearable>
 								<el-option label="请选择" value=""></el-option>
 								<el-option label="淘宝" value="淘宝"></el-option>
 								<el-option label="抖音小店" value="抖音小店"></el-option>
@@ -173,7 +197,7 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="分类" prop="typeName" required>
+						<el-form-item label="分类" prop="type" required>
 							<el-select v-model="commodityEditForm.typeName" clearable>
 								<el-option label="请选择" value=""></el-option>
 								<el-option v-for="(v, i) in commodityClassify" :key="i" :label="v" :value="v"></el-option>
@@ -186,20 +210,30 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="优惠券" prop="yhq" required>
-							<el-input type="text" placeholder="请输入优惠券" v-model="commodityEditForm.yhq" clearable></el-input>
+						<el-form-item label="优惠券" prop="discount" required>
+							<el-input type="text" placeholder="请输入优惠券" v-model="commodityEditForm.discount" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="佣金比例" prop="yj" required>
-							<el-input type="number" placeholder="请输入佣金比例" v-model="commodityEditForm.yj" clearable></el-input>
+						<el-form-item label="佣金比例" prop="profit" required>
+							<el-input type="number" placeholder="请输入佣金比例" v-model="commodityEditForm.profit" clearable></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col :span="24">
-						<el-form-item label="链接" prop="video" required>
-							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityEditForm.video" clearable></el-input>
+				</el-row>
+
+				<el-row :gutter="20" v-for="(item, index) in commodityEditForm.videoList" :key="index">
+					<el-col :span="21">
+						<el-form-item label="链接" :prop="'videoList[' + index + ']'" :rules="{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }">
+							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityEditForm.videoList[index]" clearable></el-input>
 						</el-form-item>
 					</el-col>
+					<el-col :span="3" v-if="index === 0">
+						<el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" plain @click="cEDAddVideoItem()">增加</el-button>
+					</el-col>
+					<el-col :span="3" v-else><el-button type="danger" size="medium" icon="el-icon-delete" plain @click="cEDDelVideoItem(index)">删除</el-button></el-col>
+				</el-row>
+
+				<el-row>
 					<el-col :span="8">
 						<el-form-item label="图片">
 							<el-upload class="img-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="editCommodityImg">
@@ -221,6 +255,7 @@
 
 <script>
 import * as commodity from '@/api/commodity';
+import { deepClone } from '@/utils/utils';
 
 export default {
 	name: 'CommodityManage',
@@ -245,6 +280,8 @@ export default {
 			},
 			// 已选择
 			commoditySelected: [],
+			// 单个商品视频列表
+			commodityVideoList: [],
 			/* ======================== 商品详情对话框 ======================== */
 			// 显示隐藏
 			commodityDetailDV: false,
@@ -256,48 +293,38 @@ export default {
 			// 表单
 			commodityAddForm: {
 				name: '',
-				pt: '',
+				lx: '',
 				typeName: '',
 				path: '',
 				video: '',
 				price: '',
-				yhq: '',
-				yj: ''
+				discount: '',
+				profit: '',
+				videoList: []
 			},
 			// 表单校验规则
 			commodityAddRules: {
 				name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
-				pt: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
+				lx: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
 				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
 				video: [{ required: true, message: '请输入链接', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
-				yhq: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
-				yj: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
+				discount: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
+				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
 			},
 			/* ======================== 编辑商品对话框 ======================== */
 			// 显示隐藏
 			commodityEditDV: false,
 			// 表单
-			commodityEditForm: {
-				id: '',
-				name: '',
-				pt: '',
-				typeName: '',
-				path: '',
-				video: '',
-				price: '',
-				yhq: '',
-				yj: ''
-			},
+			commodityEditForm: {},
 			// 表单校验规则
 			commodityEditRules: {
 				name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
-				pt: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
+				lx: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
 				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
-				video: [{ required: true, message: '请输入链接', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
-				yhq: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
-				yj: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
+				discount: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
+				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
 			}
 		};
 	},
@@ -310,8 +337,9 @@ export default {
 		searchData() {
 			return {
 				name: this.search.name,
-				pt: this.search.platform,
+				lx: this.search.platform,
 				type: this.search.classify,
+				status: this.search.status,
 				page: this.commodityListPage.currentPage
 			};
 		}
@@ -355,11 +383,36 @@ export default {
 		viewCommodityDetail(e) {
 			this.commodityDetailDV = true;
 			this.commodityDetail = e;
+			this.getCommodityVideoList({ id: e.id }); // 获取单个商品视频列表
+		},
+		// 获取单个商品视频列表
+		getCommodityVideoList(data) {
+			commodity
+				.fetchCommodityVideoList(data)
+				.then(res => {
+					if (res.code === 200) {
+						this.commodityVideoList = res.list; // 单个商品视频列表
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
 		},
 		// 编辑商品
 		commodityEdit(e) {
-			this.commodityEditDV = true; // 编辑商品对话框 显示
-			this.commodityEditForm = e;
+			let { id, name, lx, type, path, price, discount, profit } = e;
+			this.commodityEditForm = { id, name, lx, type, path, price, discount, profit, videoList: [] };
+			commodity
+				.fetchCommodityVideoList({ id: e.id })
+				.then(res => {
+					if (res.code === 200) {
+						res.list.forEach(v => {
+							this.commodityEditForm.videoList.push(v.video);
+						});
+						this.commodityEditDV = true; // 编辑商品对话框 显示
+					}
+				})
+				.catch(() => {});
 		},
 		// 删除商品
 		commodityDelete(e) {
@@ -420,19 +473,29 @@ export default {
 		addCommodityImg(res) {
 			this.commodityAddForm.path = res.msg;
 		},
+		// 添加视频链接
+		cADAddVideoItem() {
+			this.commodityAddForm.videoList.push('');
+		},
+		// 删除视频链接
+		cADDelVideoItem(index) {
+			this.commodityAddForm.videoList.splice(index, 1);
+		},
 		// 确认添加
 		submitCAF() {
 			this.$refs['commodityAddFormRef'].validate(valid => {
 				if (valid) {
+					let urlArr = deepClone(this.commodityAddForm.videoList);
+					urlArr.push(this.commodityAddForm.video);
 					let data = {
 						name: this.commodityAddForm.name,
-						pt: this.commodityAddForm.pt,
+						lx: this.commodityAddForm.lx,
 						type: this.commodityAddForm.typeName,
 						path: this.commodityAddForm.path,
-						video: this.commodityAddForm.video,
+						urlArr,
 						price: this.commodityAddForm.price,
-						yhq: this.commodityAddForm.yhq,
-						yj: this.commodityAddForm.yj
+						discount: this.commodityAddForm.discount,
+						profit: this.commodityAddForm.profit
 					};
 					commodity
 						.handleCommodityAdd(data)
@@ -441,6 +504,7 @@ export default {
 								this.commodityAddDV = false; // 添加商品对话框 隐藏
 								this.$message.success('添加宝贝成功');
 								this.commodityAddForm.path = null;
+								this.commodityAddForm.videoList = [];
 								this.$refs['commodityAddFormRef'].resetFields();
 								this.getCommodityList(); // 获取商品列表
 							} else {
@@ -454,6 +518,7 @@ export default {
 		// 重置
 		resetCAF() {
 			this.commodityAddForm.path = null;
+			this.commodityAddForm.videoList = [];
 			this.$refs['commodityAddFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
 		},
@@ -466,6 +531,7 @@ export default {
 			})
 				.then(() => {
 					this.commodityAddForm.path = null;
+					this.commodityAddForm.videoList = [];
 					this.$refs['commodityAddFormRef'].resetFields();
 					done();
 				})
@@ -476,6 +542,18 @@ export default {
 		editCommodityImg(res) {
 			this.commodityEditForm.path = res.msg;
 		},
+		// 添加视频链接
+		cEDAddVideoItem() {
+			this.commodityEditForm.videoList.push('');
+		},
+		// 删除视频链接
+		cEDDelVideoItem(index) {
+			if (this.commodityEditForm.videoList.length <= 1) {
+				this.$message.warning('宝贝链接至少为一个');
+			} else {
+				this.commodityEditForm.videoList.splice(index, 1);
+			}
+		},
 		// 确认修改
 		submitCEF() {
 			this.$refs['commodityEditFormRef'].validate(valid => {
@@ -483,13 +561,13 @@ export default {
 					let data = {
 						id: this.commodityEditForm.id,
 						name: this.commodityEditForm.name,
-						pt: this.commodityEditForm.pt,
+						lx: this.commodityEditForm.lx,
 						type: this.commodityEditForm.typeName,
 						path: this.commodityEditForm.path,
-						video: this.commodityEditForm.video,
 						price: this.commodityEditForm.price,
-						yhq: this.commodityEditForm.yhq,
-						yj: this.commodityEditForm.yj
+						discount: this.commodityEditForm.discount,
+						profit: this.commodityEditForm.profit,
+						urlArr: this.commodityEditForm.videoList
 					};
 					commodity
 						.handleCommodityEdit(data)

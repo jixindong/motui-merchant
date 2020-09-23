@@ -5,7 +5,25 @@ export function fetchCommodityClassify(data) {
 	return request({
 		url: 'productclassify/list',
 		method: 'POST',
-		data
+		params: data
+	});
+}
+
+// 商品分类(详情)
+export function fetchCommodityClassifyDtl(data) {
+	return request({
+		url: 'product/listByShForSp',
+		method: 'POST',
+		params: data
+	});
+}
+
+// 根据分类搜索商品
+export function fetchCommodityByClassify(data) {
+	return request({
+		url: 'productclassify/list',
+		method: 'POST',
+		params: data
 	});
 }
 
@@ -14,7 +32,7 @@ export function fetchCommodityList(data) {
 	return request({
 		url: 'product/listBySh',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 
@@ -41,7 +59,7 @@ export function handleCommodityDelete(data) {
 	return request({
 		url: 'product/delete',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 
@@ -50,7 +68,16 @@ export function fetchCommodityDetail(data) {
 	return request({
 		url: 'product/detail',
 		method: 'POST',
-		data
+		params: data
+	});
+}
+
+// 单个商品视频列表
+export function fetchCommodityVideoList(data) {
+	return request({
+		url: 'product/listByVideo',
+		method: 'POST',
+		params: data
 	});
 }
 
