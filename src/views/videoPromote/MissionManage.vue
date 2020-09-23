@@ -5,17 +5,12 @@
 
 		<!-- 功能区域 -->
 		<div class="d-flex justify-content-between my-4">
-			<!-- <el-select size="medium" class="w-20" v-model="search.commodityClassify" placeholder="请选择宝贝分类" clearable>
-				<el-option label="请选择" value=""></el-option>
-				<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item" :value="item"></el-option>
-			</el-select> -->
-			<el-input type="text" size="medium" class="w-20" v-model="search.name" placeholder="请输入任务名称" clearable></el-input>
-			<el-input type="text" size="medium" class="w-20" v-model="search.commodityName" placeholder="请输入宝贝名称" clearable></el-input>
-			<el-select size="medium" class="w-20" v-model="search.promoteType" placeholder="请选择推广类型" clearable>
+			<el-input type="text" size="medium" class="w-25" v-model="search.name" placeholder="请输入任务名称" clearable></el-input>
+			<el-select size="medium" class="w-25" v-model="search.promoteType" placeholder="请选择推广类型" clearable>
 				<el-option label="请选择" value=""></el-option>
 				<el-option v-for="(item, index) in promoteTypeList" :key="index" :label="item" :value="item"></el-option>
 			</el-select>
-			<el-select size="medium" class="w-20" v-model="search.status" placeholder="请选择任务状态" clearable>
+			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择任务状态" clearable>
 				<el-option label="请选择" value=""></el-option>
 				<el-option label="未开始" value="0"></el-option>
 				<el-option label="进行中" value="1"></el-option>
@@ -29,12 +24,10 @@
 		<div>
 			<el-table :data="missionList" stripe border>
 				<el-table-column prop="name" label="任务名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="commodityClassify" label="宝贝分类" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="commodityName" label="宝贝名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="promoteType" label="推广类型" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="promoteNum" label="推广数量" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="missionDemand" label="任务要求" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="missionProcess" label="进度" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="productName" label="宝贝名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="type" label="推广类型" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="number" label="推广数量" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="content" label="任务要求" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" align="center">
 					<template slot-scope="scope">
 						<span class="text-warning" v-if="scope.row.missionStatus === 0">未开始</span>
@@ -73,7 +66,7 @@
 						<el-form-item label="宝贝分类" prop="commodityClassify" required>
 							<el-select v-model="publicMissionForm.commodityClassify" class="w-100" filterable clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(v, i) in commodityClassify" :key="i" :label="v" :value="v"></el-option>
+								<el-option v-for="(v, i) in commodityClassify" :key="i" :label="v.name" :value="v.id"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -81,7 +74,7 @@
 						<el-form-item label="选择宝贝" prop="commodityName" required>
 							<el-select v-model="publicMissionForm.commodityName" class="w-100" filterable clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(v, i) in commodityList" :key="i" :label="v" :value="v"></el-option>
+								<el-option v-for="(v, i) in commodityList" :key="i" :label="v.name" :value="v.name"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -105,6 +98,7 @@
 
 <script>
 import * as videoPromote from '@/api/videoPromote';
+import { fetchCommodityClassifyDtl, fetchCommodityByClassify } from '@/api/commodity';
 
 export default {
 	name: 'MissionManage',
@@ -114,8 +108,6 @@ export default {
 			// 搜索
 			search: {
 				name: null,
-				// commodityClassify: null,
-				commodityName: null,
 				promoteType: null,
 				status: null
 			},
@@ -133,8 +125,10 @@ export default {
 			/* ======================== 发布任务对话框 ======================== */
 			// 显示隐藏
 			publicMissionDV: false,
+			// 商品分类
+			commodityClassify: [],
 			// 商品列表
-			commodityList: ['宝贝一', '宝贝二'],
+			commodityList: [],
 			// 表单
 			publicMissionForm: {
 				name: null,
@@ -156,19 +150,23 @@ export default {
 		};
 	},
 	computed: {
-		// 商品分类
-		commodityClassify() {
-			return this.$store.state.commodityClassify || [];
-		},
 		// 任务列表搜索条件
 		searchData() {
 			return {
-				productName: this.search.commodityName,
-				promoteType: this.search.promoteType,
 				name: this.search.name,
+				type: this.search.promoteType,
 				status: this.search.status,
 				page: this.missionListPage.currentPage
 			};
+		}
+	},
+	watch: {
+		// 发布任务对话框表单
+		publicMissionForm: {
+			handler(newVal) {
+				this.getCommodityList({ id: newVal.commodityClassify }); // 根据分类搜索商品
+			},
+			deep: true
 		}
 	},
 	methods: {
@@ -190,7 +188,7 @@ export default {
 		},
 		// 搜索
 		searchMission() {
-			if (!this.search.name && !this.search.commodityName && !this.search.promoteType && !this.search.status) {
+			if (!this.search.name && !this.search.promoteType && !this.search.status) {
 				this.$message.warning('搜索条件不能为空');
 				return false;
 			}
@@ -216,6 +214,30 @@ export default {
 				})
 				.catch(() => {});
 		},
+		// 获取商品分类(详情)
+		getCommodityClassifyDtl() {
+			fetchCommodityClassifyDtl()
+				.then(res => {
+					if (res.code === 200) {
+						this.commodityClassify = res.list;
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
+		// 根据分类搜索商品
+		getCommodityList(data) {
+			fetchCommodityByClassify(data)
+				.then(res => {
+					if (res.code === 200) {
+						this.commodityList = res.list;
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
 		// 确认发布
 		publicPMF() {
 			this.$refs['publicMissionFormRef'].validate(valid => {
@@ -226,10 +248,9 @@ export default {
 				let data = {
 					name: this.publicMissionForm.name,
 					productName: this.commodityName,
-					productClassify: this.publicMissionForm.commodityClassify,
-					promoteType: this.publicMissionForm.promoteType,
-					promoteNum: this.publicMissionForm.promoteNum,
-					missionDemand: this.publicMissionForm.missionDemand
+					type: this.publicMissionForm.promoteType,
+					number: this.publicMissionForm.promoteNum,
+					content: this.publicMissionForm.missionDemand
 				};
 				videoPromote
 					.handleMissionAdd(data)
@@ -253,6 +274,7 @@ export default {
 	},
 	created() {
 		this.getMIssionList(); // 获取任务列表
+		this.getCommodityClassifyDtl(); // 获取商品分类(详情)
 	}
 };
 </script>

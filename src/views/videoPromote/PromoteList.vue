@@ -4,15 +4,17 @@
 		<div class="headline">推广列表</div>
 
 		<!-- 功能区域 -->
-		<div class="d-flex justify-content-between my-4">
-			<el-input type="text" size="medium" class="w-25" v-model="search.commodityName" placeholder="请输入宝贝名称" clearable></el-input>
-			<el-input type="text" size="medium" class="w-25" v-model="search.starID" placeholder="请输入达人ID" clearable></el-input>
-			<!-- <el-date-picker type="date" size="medium" class="w-25" v-model="search.promoteDate" placeholder="请选择推广时间" clearable></el-date-picker> -->
-			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择推广状态" clearable>
+		<div class="d-flex my-4">
+			<el-select size="medium" class="mr-4 w-25" v-model="search.status" placeholder="请选择推广状态" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option label="待分发" value="0"></el-option>
-				<el-option label="待审核" value="1"></el-option>
-				<el-option label="已完成" value="2"></el-option>
+				<el-option label="已申请" value="0"></el-option>
+				<el-option label="申请通过" value="1"></el-option>
+				<el-option label="申请拒绝" value="2"></el-option>
+				<el-option label="已上传" value="3"></el-option>
+				<el-option label="已完成" value="4"></el-option>
+				<el-option label="已寄样" value="5"></el-option>
+				<el-option label="投诉" value="6"></el-option>
+				<el-option label="已下载" value="7"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchPromote">搜索</el-button>
 		</div>
@@ -21,29 +23,25 @@
 		<div>
 			<el-table :data="promoteList" stripe border>
 				<el-table-column prop="productName" label="宝贝名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="starID" label="达人ID" show-overflow-tooltip></el-table-column>
-				<!-- <el-table-column prop="promoteDate" label="推广时间" show-overflow-tooltip></el-table-column> -->
-				<el-table-column label="视频地址">
-					<template slot-scope="scope">
-						<el-link type="primary" :href="scope.row.videoLink" target="blank">视频链接</el-link>
-					</template>
-				</el-table-column>
-				<el-table-column prop="viewCounts" label="播放量" align="center" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="pName" label="达人名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="did" label="达人ID" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" align="center">
 					<template slot-scope="scope">
-						<span class="text-warning" v-if="scope.row.status === '0'">待分发</span>
-						<span class="text-primary" v-else-if="scope.row.status === '1'">待审核</span>
-						<span class="text-success" v-else>已完成</span>
+						<span class="text-info" v-if="scope.row.status === '0'">已申请</span>
+						<span class="text-primary" v-else-if="scope.row.status === '1'">申请通过</span>
+						<span class="text-danger" v-else-if="scope.row.status === '2'">申请拒绝</span>
+						<span class="text-primary" v-else-if="scope.row.status === '3'">已上传</span>
+						<span class="text-primary" v-else-if="scope.row.status === '4'">已完成</span>
+						<span class="text-primary" v-else-if="scope.row.status === '5'">已寄样</span>
+						<span class="text-warning" v-else-if="scope.row.status === '6'">投诉</span>
+						<span class="text-success" v-else>已下载</span>
 					</template>
 				</el-table-column>
 				<el-table-column label="操作" width="260" align="center">
 					<template slot-scope="scope">
-						<el-button type="success" size="mini" icon="el-icon-view" @click="videoCheck(scope.row)" v-if="!scope.row.isCheck">审核</el-button>
-						<el-button type="success" size="mini" plain disabled v-if="scope.row.isCheck">已审核</el-button>
-						<el-button type="primary" size="mini" icon="el-icon-truck" @click="shipment(scope.row)" v-if="!scope.row.isShipment">发货</el-button>
-						<el-button type="primary" size="mini" plain disabled v-if="scope.row.isShipment">已发货</el-button>
-						<el-button type="danger" size="mini" icon="el-icon-chat-round" @click="complain(scope.row)" v-if="!scope.row.isComplain">申诉</el-button>
-						<el-button type="danger" size="mini" plain disabled v-if="scope.row.isComplain">已申诉</el-button>
+						<el-button type="success" size="mini" icon="el-icon-view" @click="videoCheck(scope.row)" v-if="scope.row.status === '0'">审核</el-button>
+						<el-button type="primary" size="mini" icon="el-icon-truck" @click="shipment(scope.row)" v-else-if="scope.row.status === '4'">发货</el-button>
+						<el-button type="danger" size="mini" icon="el-icon-chat-round" @click="complain(scope.row)" v-else-if="scope.row.status === '6'">申诉</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -112,10 +110,7 @@ export default {
 			/* ======================== 推广列表 ======================== */
 			// 搜索
 			search: {
-				commodityName: null,
-				starID: null,
-				// promoteDate: null,
-				status: null
+				status: ''
 			},
 			// 列表
 			promoteList: [],
@@ -168,8 +163,6 @@ export default {
 		// 推广列表搜索条件
 		searchData() {
 			return {
-				productName: this.search.commodityName,
-				starID: this.search.starID,
 				status: this.search.status,
 				page: this.promoteListPage.currentPage
 			};
@@ -194,7 +187,7 @@ export default {
 		},
 		// 搜索
 		searchPromote() {
-			if (!this.search.commodityName && !this.search.starID && !this.search.status) {
+			if (!this.search.status) {
 				this.$message.warning('搜索条件不能为空');
 				return false;
 			}
@@ -215,15 +208,11 @@ export default {
 			})
 				.then(() => {
 					videoPromote
-						.merchCheck({ id: e.pid })
+						.merchCheck({ id: e.id, status: 1 })
 						.then(res => {
 							if (res.code === 200) {
 								this.$message.success('审核通过');
-								this.promoteList.map(v => {
-									if (v.pid === e.pid) {
-										v.isCheck = true;
-									}
-								});
+								this.getPromoteList(); // 获取推广列表
 							} else {
 								this.$message.warning(res.msg);
 							}
@@ -235,19 +224,22 @@ export default {
 		// 发货
 		shipment(e) {
 			this.shipmentDV = true;
-			this.currentPid = e.pid;
-			// videoPromote.weizhi({id:e.pid}).then(res => {
-			// 	if(res.code === 200){
-			// 		// this.starMsg = res.data//达人信息
-			// 	}else{
-			// 		this.$message.warning(res.msg);
-			// 	}
-			// }).catch(() => {});
+			this.currentPid = e.id;
+			videoPromote
+				.fetchStarAddress({ id: e.did })
+				.then(res => {
+					if (res.code === 200) {
+						this.starMsg = res.data;
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
 		},
 		// 申诉
 		complain(e) {
 			this.complainDV = true;
-			this.currentPid = e.pid;
+			this.currentPid = e.id;
 		},
 		/* ======================== 发货对话框 ======================== */
 		// 关闭
@@ -278,11 +270,7 @@ export default {
 							this.$message.success('确认发货成功');
 							this.$refs['shipmentFormRef'].resetFields();
 							this.shipmentDV = false;
-							this.promoteList.map(v => {
-								if (v.pid === this.currentPid) {
-									v.isShipment = true;
-								}
-							});
+							this.getPromoteList(); // 获取推广列表
 						} else {
 							this.$message.warning(res.msg);
 						}
@@ -316,7 +304,7 @@ export default {
 					return false;
 				}
 
-				let data = { id: this.currentPid, content: this.complainForm.content };
+				let data = { id: this.currentPid, status: 6, content: this.complainForm.content };
 				videoPromote
 					.merchComplaint(data)
 					.then(res => {
@@ -324,11 +312,7 @@ export default {
 							this.$message.success('提交申诉成功');
 							this.$refs['complainFormRef'].resetFields();
 							this.complainDV = false;
-							this.promoteList.map(v => {
-								if (v.pid === this.currentPid) {
-									v.isComplain = true;
-								}
-							});
+							this.getPromoteList(); // 获取推广列表
 						} else {
 							this.$message.warning(res.msg);
 						}

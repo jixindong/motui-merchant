@@ -23,7 +23,7 @@ export function fetchVideoByMission(data) {
 	return request({
 		url: 'businessvideo/listByVideo',
 		method: 'POST',
-		params:data
+		params: data
 	});
 }
 
@@ -50,7 +50,7 @@ export function fetchReceivingMsg(data) {
 	return request({
 		url: 'setting/listBySort',
 		method: 'POST',
-		params:data
+		params: data
 	});
 }
 
@@ -68,6 +68,6 @@ export function shipments(data) {
 	return request({
 		url: 'talentapply/send',
 		method: 'POST',
-		params:data
+		params: data
 	});
 }

@@ -32,7 +32,7 @@ export function fetchPromoteList(data) {
 	return request({
 		url: 'talentapply/listByRw',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 
@@ -41,7 +41,7 @@ export function merchCheck(data) {
 	return request({
 		url: 'talentapply/examine',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 
@@ -60,5 +60,14 @@ export function merchComplaint(data) {
 		url: 'taskproduct/examine',
 		method: 'POST',
 		data
+	});
+}
+
+// 获取达人地址信息
+export function fetchStarAddress(data) {
+	return request({
+		url: 'talent/detailBySh',
+		method: 'POST',
+		params: data
 	});
 }
