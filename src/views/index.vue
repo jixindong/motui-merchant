@@ -5,7 +5,7 @@
 			<div class="container d-flex align-items-center">
 				<img src="@/assets/images/logo-1.png" class="logo" />
 				<el-avatar :src="baseMsg.avatar" v-if="baseMsg"></el-avatar>
-				<el-avatar src="@/assets/images/avatar.png" v-else></el-avatar>
+				<el-avatar :src="require('@/assets/images/avatar.png')" v-else></el-avatar>
 				<el-dropdown trigger="click" @command="setting">
 					<img src="@/assets/images/setting.png" class="setting" />
 					<el-dropdown-menu slot="dropdown">

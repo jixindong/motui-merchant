@@ -1,26 +1,25 @@
 <template>
 	<div class="card p-4 min-h-800">
 		<!-- 大标题 -->
-		<div class="headline mb-4">当前套餐</div>
+		<div class="headline mb-4">套餐余量</div>
 
-		<!-- 当前套餐 -->
+		<!-- 套餐余量 -->
 		<div>
 			<el-table :data="nowSetmealList" stripe border>
-				<el-table-column prop="name" label="套餐名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="date" label="开通时间" show-overflow-tooltip></el-table-column>
-				<el-table-column label="视频推广数">
+				<el-table-column prop="bid" label="商家ID" show-overflow-tooltip></el-table-column>
+				<el-table-column label="短视频推广">
 					<template slot-scope="scope">
-						<span :class="{ 'text-primary': scope.row.videoPromoteNum > 0, 'text-danger': scope.row.videoPromoteNum === 0 }">{{ scope.row.videoPromoteNum }}</span>
+						<span :class="{ 'text-primary': scope.row.video > 0, 'text-danger': scope.row.video === 0 }">{{ scope.row.video }}</span>
 					</template>
 				</el-table-column>
-				<el-table-column label="视频制作数">
+				<el-table-column label="视频制作">
 					<template slot-scope="scope">
-						<span :class="{ 'text-primary': scope.row.videoMakeNum > 0, 'text-danger': scope.row.videoMakeNum === 0 }">{{ scope.row.videoMakeNum }}</span>
+						<span :class="{ 'text-primary': scope.row.shot > 0, 'text-danger': scope.row.shot === 0 }">{{ scope.row.shot }}</span>
 					</template>
 				</el-table-column>
 				<el-table-column label="直播场次">
 					<template slot-scope="scope">
-						<span :class="{ 'text-primary': scope.row.videoLiveNum > 0, 'text-danger': scope.row.videoLiveNum === 0 }">{{ scope.row.videoLiveNum }}</span>
+						<span :class="{ 'text-primary': scope.row.live > 0, 'text-danger': scope.row.live === 0 }">{{ scope.row.live }}</span>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -43,88 +42,287 @@
 		<div>
 			<el-table :data="setmealList" stripe border>
 				<el-table-column prop="name" label="套餐名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="price" label="价格" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="videoPromoteNum" label="视频推广数" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="videoMakeNum" label="视频制作数" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="videoLiveNum" label="直播场次" show-overflow-tooltip></el-table-column>
-				<el-table-column label="购买" align="center">
+				<el-table-column prop="price_total" label="原价" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="price" label="优惠价" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="setMealList[0].number" label="短视频推广数"></el-table-column>
+				<el-table-column prop="setMealList[2].number" label="视频制作数"></el-table-column>
+				<el-table-column prop="setMealList[1].number" label="直播场次"></el-table-column>
+				<el-table-column label="开通" align="center">
 					<template slot-scope="scope">
-						<el-button type="warning" size="small" icon="el-icon-coin" plain @click="purchaseSetmeal(scope.row)">购买</el-button>
+						<el-button type="warning" size="small" icon="el-icon-coin" plain @click="purchaseSetmeal(scope.row)">开通</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
 		</div>
+
+		<!-- 支付方式对话框 -->
+		<el-dialog title="支付方式" :visible.sync="choicePayTypeDV" :before-close="choicePayTypeDClose">
+			<div class="text-1">选择支付方式：{{ payType }}</div>
+			<div class="payTab">
+				<div :class="['item', { active: payTypeSign === 'zfb' }]" @click="payTypeSign = 'zfb'">
+					<img src="@/assets/images/Alipay.png" />
+					<div>支付宝支付</div>
+				</div>
+				<div :class="['item', { active: payTypeSign === 'wx' }]" @click="payTypeSign = 'wx'">
+					<img src="@/assets/images/WeChatPay.png" />
+					<div>微信支付</div>
+				</div>
+			</div>
+			<div class="d-flex justify-content-center"><el-button type="primary" size="medium" icon="el-icon-coin" @click="payNow">立即支付</el-button></div>
+		</el-dialog>
+
+		<!-- 支付宝对话框 -->
+		<el-dialog title="支付宝支付" :visible.sync="AlipayDV" :before-close="AlipayDClose"><div v-html="AlipayDOM"></div></el-dialog>
+
+		<!-- 微信支付对话框 -->
+		<el-dialog title="微信支付" width="360px" :visible.sync="WeChatPayDV" :before-close="WeChatPayDClose">
+			<qriously class="d-flex justify-content-center" :size="200" :value="WeChatPayLink"></qriously>
+		</el-dialog>
 	</div>
 </template>
 
 <script>
+import * as setmeal from '@/api/setmeal';
+
 export default {
 	name: 'SetmealOpen',
 	data() {
 		return {
-			/* ======================== 当前套餐 ======================== */
+			/* ======================== 套餐余量 ======================== */
 			// 列表
-			nowSetmealList: [
-				{
-					name: '体验包',
-					date: '2020-9-16 14:09:11',
-					videoPromoteNum: 10,
-					videoMakeNum: 5,
-					videoLiveNum: 0
-				},
-				{
-					name: '入门包',
-					date: '2020-9-16 14:09:11',
-					videoPromoteNum: 20,
-					videoMakeNum: 50,
-					videoLiveNum: 20
-				}
-			],
+			nowSetmealList: [],
 			// 分页
 			nowSetmealListPage: {
-				total: 15,
-				pageSize: 10,
+				total: 1,
+				pageSize: 1,
 				totalPage: 1,
 				currentPage: 1
 			},
 			/* ======================== 套餐开通 ======================== */
 			// 列表
-			setmealList: [
-				{
-					name: '体验包',
-					price: '￥3980',
-					videoPromoteNum: 100,
-					videoMakeNum: 100,
-					videoLiveNum: 6
-				},
-				{
-					name: '入门包',
-					price: '￥6980',
-					videoPromoteNum: 200,
-					videoMakeNum: 200,
-					videoLiveNum: 15
-				},
-				{
-					name: '体验包',
-					price: '￥9980',
-					videoPromoteNum: 300,
-					videoMakeNum: 300,
-					videoLiveNum: 26
-				}
-			]
+			setmealList: [],
+			/* ======================== 支付方式对话框 ======================== */
+			// 显示隐藏
+			choicePayTypeDV: false,
+			// 当前选择套餐
+			currentSeatmeal: null,
+			// 支付方式标识
+			payTypeSign: '',
+			// 支付标识
+			paySign: 0,
+			/* ======================== 支付宝对话框 ======================== */
+			// 显示隐藏
+			AlipayDV: false,
+			// 支付宝支付DOM
+			AlipayDOM: null,
+			/* ======================== 微信支付对话框 ======================== */
+			// 显示隐藏
+			WeChatPayDV: false,
+			// 微信支付链接
+			WeChatPayLink: ''
 		};
 	},
+	computed: {
+		// 搜索条件
+		searchData() {
+			return { page: this.nowSetmealListPage.currentPage };
+		},
+		// 支付方式
+		payType() {
+			let payType = '';
+			if (this.payTypeSign === 'zfb') {
+				payType = '支付宝';
+			} else if (this.payTypeSign === 'wx') {
+				payType = '微信支付';
+			} else {
+				payType = '';
+			}
+			return payType;
+		}
+	},
 	methods: {
-		/* ======================== 当前套餐 ======================== */
-		// 当前套餐列表当前页切换
+		/* ======================== 套餐余量 ======================== */
+		// 获取套餐余量列表
+		getSetmealResidue() {
+			setmeal
+				.fetchSetmealResidue(this.searchData)
+				.then(res => {
+					if (res.code === 200) {
+						this.nowSetmealList = res.page.list; // 套餐余量列表
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.page;
+						this.nowSetmealListPage = { total, pageSize, totalPage, currentPage }; // 套餐余量列表分页
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
+		// 套餐余量列表当前页切换
 		nowSetmealListCurrentChange(currentPage) {
 			this.nowSetmealListPage.currentPage = currentPage;
+			this.getSetmealResidue(); // 获取套餐余量列表
 		},
 		/* ======================== 套餐开通 ======================== */
+		// 获取套餐列表
+		getSetmealList() {
+			setmeal
+				.fetchSetmealList()
+				.then(res => {
+					if (res.code === 200) {
+						this.setmealList = res.list.list; // 套餐开通列表
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
 		// 开通
 		purchaseSetmeal(e) {
-			console.log(e);
+			this.currentSeatmeal = e;
+			this.choicePayTypeDV = true;
+		},
+		/* ======================== 支付方式对话框 ======================== */
+		// 立即支付
+		payNow() {
+			if (!this.payTypeSign) {
+				this.$message.warning('请选择支付方式');
+				return false;
+			}
+
+			// let data = {id:this.currentSeatmeal.id,price:this.currentSeatmeal.price,priceTotal:this.currentSeatmeal.priceTotal,type:this.payTypeSign};
+			let data = { id: this.currentSeatmeal.id, price: 0.01, priceTotal: 0.01, type: this.payTypeSign };
+			if (data.type === 'wx') {
+				this.WeChatPay(data);
+			} else if (data.type === 'zfb') {
+				this.Alipay(data);
+			}
+		},
+		// 是否支付成功
+		judgePaymentSuccess(data) {
+			setmeal
+				.fetchPaymentSuccess(data)
+				.then(res => {
+					if (res.code === 200) {
+						this.paySign = res.status; // 支付标识
+						if (this.paySign === 1) {
+							this.$message.success('开通成功');
+							this.AlipayDV = false; // 支付宝对话框 隐藏
+							this.WeChatPayDV = false; // 微信支付对话框 隐藏
+						}
+					}
+				})
+				.catch(() => {});
+		},
+		// 关闭
+		choicePayTypeDClose(done) {
+			this.$confirm('确认关闭？', '提示', {
+				confirmButtonText: '关闭',
+				cancelButtonText: '取消',
+				type: 'info'
+			})
+				.then(() => {
+					this.currentSeatmeal = null; // 当前选择套餐
+					done();
+				})
+				.catch(() => {});
+		},
+		/* ======================== 支付宝对话框 ======================== */
+		// 支付宝支付
+		Alipay(data) {
+			setmeal
+				.openSeatmeal(data)
+				.then(res => {
+					if (res.code === 200) {
+						this.AlipayDOM = res.status; // 支付宝支付DOM
+						this.AlipayDV = true; // 支付宝对话框 显示
+						this.choicePayTypeDV = false; // 支付方式对话框 隐藏
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
+		// 关闭
+		AlipayDClose(done) {
+			this.$confirm('确认关闭？', '提示', {
+				confirmButtonText: '关闭',
+				cancelButtonText: '取消',
+				type: 'info'
+			})
+				.then(() => {
+					this.AlipayDOM = null; // 支付宝支付DOM
+					done();
+				})
+				.catch(() => {});
+		},
+		/* ======================== 微信支付对话框 ======================== */
+		// 微信支付
+		WeChatPay(data) {
+			setmeal
+				.openSeatmeal(data)
+				.then(res => {
+					if (!res) {
+						this.$message.warning('请重试');
+						return false;
+					}
+
+					this.WeChatPayLink = res.code_url; // 微信支付链接
+					this.WeChatPayDV = true; // 微信支付对话框 显示
+					this.choicePayTypeDV = false; // 支付方式对话框 隐藏
+					let timer = setInterval(() => {
+						if (this.paySign === 1 || this.WeChatPayDV === false) {
+							window.clearInterval(timer);
+							return false;
+						}
+						this.judgePaymentSuccess({ orderId: res.out_trade_no }); // 是否支付成功
+					}, 3000);
+				})
+				.catch(() => {});
+		},
+		// 关闭
+		WeChatPayDClose(done) {
+			this.$confirm('确认关闭？', '提示', {
+				confirmButtonText: '关闭',
+				cancelButtonText: '取消',
+				type: 'info'
+			})
+				.then(() => {
+					this.WeChatPayLink = ''; // 微信支付链接
+					done();
+				})
+				.catch(() => {});
 		}
+	},
+	created() {
+		this.getSetmealResidue(); // 获取套餐余量列表
+		this.getSetmealList(); // 获取套餐列表
 	}
 };
 </script>
+
+<style lang="scss" scoped>
+.payTab {
+	display: flex;
+	justify-content: center;
+	padding: 20px 0;
+	.item {
+		display: flex;
+		flex-flow: column nowrap;
+		justify-content: center;
+		align-items: center;
+		margin: 0 20px;
+		padding: 20px 40px;
+		font-size: 16px;
+		cursor: pointer;
+		&.active {
+			color: #fff;
+			background-color: #c9e8ff;
+		}
+		img {
+			margin-bottom: 10px;
+			width: 80px;
+			height: 80px;
+		}
+	}
+}
+</style>
