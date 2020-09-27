@@ -44,10 +44,10 @@ export default {
 			/* ======================== 消息 ======================== */
 			// 搜索
 			search: {
-				username: null,
-				title: null,
-				content: null,
-				date: null
+				username: '',
+				title: '',
+				content: '',
+				date: ''
 			},
 			// 列表
 			messageList: [],
