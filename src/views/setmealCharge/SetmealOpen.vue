@@ -72,7 +72,7 @@
 		</el-dialog>
 
 		<!-- 支付宝对话框 -->
-		<el-dialog title="支付宝支付" :visible.sync="AlipayDV" :before-close="AlipayDClose"><div v-html="AlipayDOM"></div></el-dialog>
+		<el-dialog title="支付宝支付" width="360px" :visible.sync="AlipayDV" :before-close="AlipayDClose"><div class="text-1">正在支付...</div></el-dialog>
 
 		<!-- 微信支付对话框 -->
 		<el-dialog title="微信支付" width="360px" :visible.sync="WeChatPayDV" :before-close="WeChatPayDClose">
@@ -113,8 +113,6 @@ export default {
 			/* ======================== 支付宝对话框 ======================== */
 			// 显示隐藏
 			AlipayDV: false,
-			// 支付宝支付DOM
-			AlipayDOM: null,
 			/* ======================== 微信支付对话框 ======================== */
 			// 显示隐藏
 			WeChatPayDV: false,
@@ -222,6 +220,7 @@ export default {
 			})
 				.then(() => {
 					this.currentSeatmeal = null; // 当前选择套餐
+					this.payTypeSign = ''; // 支付方式标识
 					done();
 				})
 				.catch(() => {});
@@ -233,9 +232,22 @@ export default {
 				.openSeatmeal(data)
 				.then(res => {
 					if (res.code === 200) {
-						this.AlipayDOM = res.status; // 支付宝支付DOM
+						let div = document.createElement('div');
+						div.innerHTML = res.status;
+						document.body.appendChild(div);
+						document.forms[0].target = 'blank';
+						document.forms[0].submit();
+						document.body.removeChild(div);
 						this.AlipayDV = true; // 支付宝对话框 显示
 						this.choicePayTypeDV = false; // 支付方式对话框 隐藏
+						this.payTypeSign = ''; // 支付方式标识
+						let timer = setInterval(() => {
+							if (this.paySign === 1 || this.AlipayDV === false) {
+								window.clearInterval(timer);
+								return false;
+							}
+							this.judgePaymentSuccess({ orderId: res.orderId }); // 是否支付成功
+						}, 3000);
 					} else {
 						this.$message.warning(res.msg);
 					}
@@ -250,7 +262,6 @@ export default {
 				type: 'info'
 			})
 				.then(() => {
-					this.AlipayDOM = null; // 支付宝支付DOM
 					done();
 				})
 				.catch(() => {});
@@ -269,6 +280,7 @@ export default {
 					this.WeChatPayLink = res.code_url; // 微信支付链接
 					this.WeChatPayDV = true; // 微信支付对话框 显示
 					this.choicePayTypeDV = false; // 支付方式对话框 隐藏
+					this.payTypeSign = ''; // 支付方式标识
 					let timer = setInterval(() => {
 						if (this.paySign === 1 || this.WeChatPayDV === false) {
 							window.clearInterval(timer);
