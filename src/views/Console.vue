@@ -32,63 +32,59 @@
 		<div class="d-flex flex-wrap my-4 p-4 card">
 			<div class="headline mb-4 w-100">推广统计</div>
 			<div class="w-33">
-				<el-tag type="warning" size="small">等待分发</el-tag>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 'waitDistribute' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+				<el-tag type="warning" size="small">已申请</el-tag>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '0' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 					{{ statistics.tgtj.dff }}
 				</router-link>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 'waitDistribute' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '0' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 			</div>
 			<div class="w-33">
-				<el-tag size="small">等待审核</el-tag>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 'waitCheck' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+				<el-tag size="small">申请通过</el-tag>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 					{{ statistics.tgtj.dsh }}
 				</router-link>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 'waitCheck' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 			</div>
 			<div class="w-33">
-				<el-tag type="success" size="small">分发完成</el-tag>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 'completeDistribute' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+				<el-tag type="success" size="small">已寄样</el-tag>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '5' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 					{{ statistics.tgtj.ffwc }}
 				</router-link>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 'completeDistribute' } }" class="d-block mt-4 text-info text-2 text-center" v-else>
-					0
-				</router-link>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '5' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 			</div>
 		</div>
 
 		<div class="d-flex my-4 p-4 card">
 			<!-- 商品统计 -->
 			<div class="d-flex flex-wrap w-50">
-				<div class="headline mb-4 w-100">商品统计</div>
+				<div class="headline mb-4 w-100">宝贝统计</div>
 				<div class="w-50">
-					<el-tag type="info" size="small">全部商品</el-tag>
-					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: 'all' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+					<el-tag type="info" size="small">全部宝贝</el-tag>
+					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: '' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.sptj.all }}
 					</router-link>
-					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: 'all' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: '' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 				<div class="w-50">
-					<el-tag size="small">待审核商品</el-tag>
-					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: 'waitCheck' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+					<el-tag size="small">待审核宝贝</el-tag>
+					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: '0' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.sptj.dsh }}
 					</router-link>
-					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: 'waitCheck' } }" class="d-block mt-4 text-info text-2 text-center" v-else>
-						0
-					</router-link>
+					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: '0' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 				<div class="w-50">
-					<el-tag type="success" size="small">审核通过商品</el-tag>
-					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: 'checked' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+					<el-tag type="success" size="small">审核通过宝贝</el-tag>
+					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.sptj.shtg }}
 					</router-link>
-					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: 'checked' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 				<div class="w-50">
-					<el-tag type="danger" size="small">审核拒绝商品</el-tag>
-					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: 'reject' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+					<el-tag type="danger" size="small">审核拒绝宝贝</el-tag>
+					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: '2' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.sptj.shjj }}
 					</router-link>
-					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: 'reject' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+					<router-link :to="{ name: 'commodityManage', params: { commodityStatus: '2' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 			</div>
 
@@ -97,31 +93,31 @@
 				<div class="headline mb-4 w-100">视频制作</div>
 				<div class="w-50">
 					<el-tag type="info" size="small">全部任务</el-tag>
-					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: 'allMission' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.spzz.all }}
 					</router-link>
-					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: 'allMission' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 				<div class="w-50">
-					<el-tag size="small">待发货</el-tag>
-					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: 'shipmented' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+					<el-tag type="warning" size="small">待发货</el-tag>
+					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '0' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.spzz.dfh }}
 					</router-link>
-					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: 'shipmented' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '0' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 				<div class="w-50">
-					<el-tag type="warning" size="small">等待制作</el-tag>
-					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: 'waitMake' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+					<el-tag size="small">已发货</el-tag>
+					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.spzz.dzz }}
 					</router-link>
-					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: 'waitMake' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 				<div class="w-50">
-					<el-tag type="success" size="small">已完成</el-tag>
-					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: 'complete' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+					<el-tag type="success" size="small">已上传</el-tag>
+					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '2' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.spzz.ywc }}
 					</router-link>
-					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: 'complete' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '2' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 			</div>
 		</div>

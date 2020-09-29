@@ -110,14 +110,14 @@ export default {
 			/* ======================== 推广列表 ======================== */
 			// 搜索
 			search: {
-				status: ''
+				status: null
 			},
 			// 列表
 			promoteList: [],
 			// 分页
 			promoteListPage: {
 				total: 1,
-				pageSize: 1,
+				pageSize: 10,
 				totalPage: 1,
 				currentPage: 1
 			},
@@ -164,7 +164,8 @@ export default {
 		searchData() {
 			return {
 				status: this.search.status,
-				page: this.promoteListPage.currentPage
+				page: this.promoteListPage.currentPage,
+				limit: this.promoteListPage.pageSize
 			};
 		}
 	},
@@ -176,8 +177,8 @@ export default {
 				.fetchPromoteList(this.searchData)
 				.then(res => {
 					if (res.code === 200) {
-						this.promoteList = res.list.list;
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.promoteList = res.page.list;
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.page;
 						this.promoteListPage = { total, pageSize, totalPage, currentPage }; // 推广列表分页
 					} else {
 						this.$message.warning(res.msg);
@@ -192,6 +193,13 @@ export default {
 				return false;
 			}
 
+			this.getPromoteList(); // 获取推广列表
+		},
+		// 根据状态搜索
+		searchPromoteByStatus() {
+			if (this.$route.params.promoteStatus) {
+				this.search.status = this.$route.params.promoteStatus;
+			}
 			this.getPromoteList(); // 获取推广列表
 		},
 		// 推广列表当前页切换
@@ -327,7 +335,7 @@ export default {
 		}
 	},
 	created() {
-		this.getPromoteList(); // 获取推广列表
+		this.searchPromoteByStatus(); // 根据状态搜索
 	}
 };
 </script>

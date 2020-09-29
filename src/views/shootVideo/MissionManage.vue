@@ -123,12 +123,12 @@
 					</el-col>
 					<el-col :span="24">
 						<el-form-item label="宝贝亮点" prop="commodityMerit" required>
-							<el-input type="text" placeholder="请输入宝贝亮点" v-model="publicMissionForm.commodityMerit" clearable></el-input>
+							<el-input type="textarea" placeholder="请输入宝贝亮点" v-model="publicMissionForm.commodityMerit" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="24">
 						<el-form-item label="拍摄要求" prop="videoDemand" required>
-							<el-input type="text" placeholder="请输入拍摄要求" v-model="publicMissionForm.videoDemand" clearable></el-input>
+							<el-input type="textarea" placeholder="请输入拍摄要求" v-model="publicMissionForm.videoDemand" clearable></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -282,6 +282,13 @@ export default {
 				return false;
 			}
 
+			this.getMIssionList(); // 获取任务列表
+		},
+		// 根据状态搜索
+		searchMissionByStatus() {
+			if (this.$route.params.videoStatus) {
+				this.search.status = this.$route.params.videoStatus;
+			}
 			this.getMIssionList(); // 获取任务列表
 		},
 		// 查看任务详情
@@ -449,7 +456,7 @@ export default {
 		}
 	},
 	created() {
-		this.getMIssionList(); // 获取任务列表
+		this.searchMissionByStatus(); // 根据状态搜索
 		this.getReceivingMsg(); // 获取收货信息
 		this.getCommodityClassifyDtl(); // 获取商品分类(详情)
 	}

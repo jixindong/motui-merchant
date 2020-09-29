@@ -18,9 +18,9 @@
 			</el-select>
 			<el-select size="medium" class="w-20" v-model="search.status" placeholder="请选择宝贝状态" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option label="待审核" value="待审核"></el-option>
-				<el-option label="审核通过" value="审核通过"></el-option>
-				<el-option label="审核失败" value="审核失败"></el-option>
+				<el-option label="待审核" value="0"></el-option>
+				<el-option label="审核通过" value="1"></el-option>
+				<el-option label="审核失败" value="2"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchCommodity">搜索</el-button>
 		</div>
@@ -162,7 +162,13 @@
 				<el-row>
 					<el-col :span="8">
 						<el-form-item label="图片">
-							<el-upload class="img-uploader" action="http://mtht.waszn.com:8001/upload/uploadFile" :show-file-list="false" :on-success="addCommodityImg">
+							<el-upload
+								class="img-uploader"
+								action="http://mtht.waszn.com:8001/upload/uploadFile"
+								:headers="requestHeaders"
+								:show-file-list="false"
+								:on-success="addCommodityImg"
+							>
 								<img :src="commodityAddForm.path" v-if="commodityAddForm.path" />
 								<i v-else class="el-icon-plus img-uploader-icon"></i>
 							</el-upload>
@@ -236,7 +242,13 @@
 				<el-row>
 					<el-col :span="8">
 						<el-form-item label="图片">
-							<el-upload class="img-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="editCommodityImg">
+							<el-upload
+								class="img-uploader"
+								action="http://mtht.waszn.com:8001/upload/uploadFile"
+								:headers="requestHeaders"
+								:show-file-list="false"
+								:on-success="editCommodityImg"
+							>
 								<img :src="commodityEditForm.path" v-if="commodityEditForm.path" />
 								<i v-else class="el-icon-plus img-uploader-icon"></i>
 							</el-upload>
@@ -342,6 +354,10 @@ export default {
 				status: this.search.status,
 				page: this.commodityListPage.currentPage
 			};
+		},
+		// 请求头
+		requestHeaders() {
+			return { token: localStorage.getItem('token') };
 		}
 	},
 	methods: {
@@ -368,6 +384,13 @@ export default {
 				return false;
 			}
 
+			this.getCommodityList(); // 获取商品列表
+		},
+		// 根据状态搜索
+		searchCommodityByStatus() {
+			if (this.$route.params.commodityStatus) {
+				this.search.status = this.$route.params.commodityStatus;
+			}
 			this.getCommodityList(); // 获取商品列表
 		},
 		// 选择商品
@@ -608,7 +631,7 @@ export default {
 		}
 	},
 	created() {
-		this.getCommodityList(); // 获取商品列表
+		this.searchCommodityByStatus(); // 根据状态搜索
 	}
 };
 </script>

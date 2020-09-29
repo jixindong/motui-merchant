@@ -21,6 +21,12 @@
 						<span class="text-primary" v-else-if="scope.row.type === 'zfb'">支付宝支付</span>
 					</template>
 				</el-table-column>
+				<el-table-column label="支付状态" align="center">
+					<template slot-scope="scope">
+						<el-tag type="danger" v-if="scope.row.status === 0">支付失败</el-tag>
+						<el-tag type="success" v-else>支付成功</el-tag>
+					</template>
+				</el-table-column>
 			</el-table>
 			<div class="d-flex justify-content-center mt-4">
 				<el-pagination
@@ -53,7 +59,7 @@ export default {
 			// 分页
 			recordListPage: {
 				total: 1,
-				pageSize: 1,
+				pageSize: 10,
 				totalPage: 1,
 				currentPage: 1
 			}
@@ -62,7 +68,7 @@ export default {
 	computed: {
 		// 搜索条件
 		searchData() {
-			return { page: this.recordListPage.currentPage };
+			return { page: this.recordListPage.currentPage, limit: this.recordListPage.pageSize };
 		}
 	},
 	methods: {

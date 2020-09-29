@@ -54,7 +54,7 @@ export default {
 			// 分页
 			messageListPage: {
 				total: 1,
-				pageSize: 1,
+				pageSize: 10,
 				totalPage: 1,
 				currentPage: 1
 			}
@@ -67,7 +67,8 @@ export default {
 				username: this.search.username,
 				title: this.search.title,
 				content: this.search.content,
-				page: this.messageListPage.currentPage
+				page: this.messageListPage.currentPage,
+				limit: this.messageListPage.pageSize
 			};
 		}
 	},
@@ -78,8 +79,8 @@ export default {
 			fetchMessageList(this.searchData)
 				.then(res => {
 					if (res.code === 200) {
-						this.messageList = res.list.list; // 任务列表
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
+						this.messageList = res.page.list; // 任务列表
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.page;
 						this.messageListPage = { total, pageSize, totalPage, currentPage }; // 任务列表分页
 					} else {
 						this.$message.warning(res.msg);

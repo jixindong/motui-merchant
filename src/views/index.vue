@@ -21,55 +21,55 @@
 		<div class="bd">
 			<div class="container d-flex align-items-start">
 				<el-menu :default-active="$route.path" class="aside-menu" router>
-					<el-menu-item index="/console">
+					<el-menu-item index="/manage/console">
 						<i class="el-icon-receiving"></i>
 						<span slot="title">控制台</span>
 					</el-menu-item>
 
-					<el-menu-item index="/commodity-manage">
+					<el-menu-item index="/manage/commodity-manage">
 						<i class="el-icon-present"></i>
 						<span slot="title">宝贝管理</span>
 					</el-menu-item>
 
-					<el-submenu index="/shootVideo">
+					<el-submenu index="/manage/shootVideo">
 						<template slot="title">
 							<i class="el-icon-video-camera-solid"></i>
 							<span>拍摄视频</span>
 						</template>
-						<el-menu-item-group><el-menu-item index="/shootVideo/mission-manage">任务管理</el-menu-item></el-menu-item-group>
+						<el-menu-item-group><el-menu-item index="/manage/shootVideo/mission-manage">任务管理</el-menu-item></el-menu-item-group>
 					</el-submenu>
 
-					<el-submenu index="/videoPromote">
+					<el-submenu index="/manage/videoPromote">
 						<template slot="title">
 							<i class="el-icon-position"></i>
 							<span>拍摄推广</span>
 						</template>
 						<el-menu-item-group>
-							<el-menu-item index="/videoPromote/mission-manage">任务管理</el-menu-item>
-							<el-menu-item index="/videoPromote/promote-list">推广列表</el-menu-item>
+							<el-menu-item index="/manage/videoPromote/mission-manage">任务管理</el-menu-item>
+							<el-menu-item index="/manage/videoPromote/promote-list">推广列表</el-menu-item>
 						</el-menu-item-group>
 					</el-submenu>
 
-					<el-submenu index="/dataCenter">
+					<el-submenu index="/manage/dataCenter">
 						<template slot="title">
 							<i class="el-icon-s-data"></i>
 							<span>数据中心</span>
 						</template>
-						<el-menu-item-group><el-menu-item index="/dataCenter/order-list">订单列表</el-menu-item></el-menu-item-group>
+						<el-menu-item-group><el-menu-item index="/manage/dataCenter/order-list">订单列表</el-menu-item></el-menu-item-group>
 					</el-submenu>
 
-					<el-submenu index="/setmealCharge">
+					<el-submenu index="/manage/setmealCharge">
 						<template slot="title">
 							<i class="el-icon-money"></i>
 							<span>套餐充值</span>
 						</template>
 						<el-menu-item-group>
-							<el-menu-item index="/setmealCharge/setmeal-open">套餐开通</el-menu-item>
-							<el-menu-item index="/setmealCharge/open-record">开通记录</el-menu-item>
+							<el-menu-item index="/manage/setmealCharge/setmeal-open">套餐开通</el-menu-item>
+							<el-menu-item index="/manage/setmealCharge/open-record">开通记录</el-menu-item>
 						</el-menu-item-group>
 					</el-submenu>
 
-					<el-menu-item index="/message-center">
+					<el-menu-item index="/manage/message-center">
 						<i class="el-icon-chat-line-square"></i>
 						<span slot="title">消息中心</span>
 					</el-menu-item>

@@ -23,7 +23,7 @@ export function fetchSetmealRecord(data) {
 	return request({
 		url: 'businessrecord/listBySh',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 
