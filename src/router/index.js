@@ -13,13 +13,13 @@ const router = new VueRouter({
 		// 首页
 		{
 			path: '/',
-			redirect: 'manage/console',
+			redirect: 'console',
 			name: 'index',
 			component: () => import('@/views/index'),
 			children: [
 				// 控制台
 				{
-					path: 'manage/console',
+					path: 'console',
 					name: 'console',
 					component: () => import('@/views/Console'),
 					meta: {
@@ -28,7 +28,7 @@ const router = new VueRouter({
 				},
 				// 宝贝管理
 				{
-					path: 'manage/commodity-manage',
+					path: 'commodity-manage',
 					name: 'commodityManage',
 					component: () => import('@/views/CommodityManage'),
 					meta: {
@@ -37,7 +37,7 @@ const router = new VueRouter({
 				},
 				// 拍摄视频/任务管理
 				{
-					path: 'manage/shootVideo/mission-manage',
+					path: 'video-mission-manage',
 					name: 'svMissionManage',
 					component: () => import('@/views/shootVideo/MissionManage'),
 					meta: {
@@ -46,7 +46,7 @@ const router = new VueRouter({
 				},
 				// 视频推广/任务管理
 				{
-					path: 'manage/videoPromote/mission-manage',
+					path: 'promote-mission-manage',
 					name: 'vmMissionManage',
 					component: () => import('@/views/videoPromote/MissionManage'),
 					meta: {
@@ -55,7 +55,7 @@ const router = new VueRouter({
 				},
 				// 视频推广/推广列表
 				{
-					path: 'manage/videoPromote/promote-list',
+					path: 'promote-list',
 					name: 'vpPromoteList',
 					component: () => import('@/views/videoPromote/PromoteList'),
 					meta: {
@@ -64,7 +64,7 @@ const router = new VueRouter({
 				},
 				// 数据中心/订单列表
 				{
-					path: 'manage/dataCenter/order-list',
+					path: 'order-list',
 					name: 'dcOrderList',
 					component: () => import('@/views/dataCenter/OrderList'),
 					meta: {
@@ -73,7 +73,7 @@ const router = new VueRouter({
 				},
 				// 套餐充值/套餐开通
 				{
-					path: 'manage/setmealCharge/setmeal-open',
+					path: 'setmeal-open',
 					name: 'scSetmealOpen',
 					component: () => import('@/views/setmealCharge/SetmealOpen'),
 					meta: {
@@ -82,7 +82,7 @@ const router = new VueRouter({
 				},
 				// 套餐充值/开通记录
 				{
-					path: 'manage/setmealCharge/open-record',
+					path: 'open-record',
 					name: 'scOpenRecord',
 					component: () => import('@/views/setmealCharge/OpenRecord'),
 					meta: {
@@ -91,7 +91,7 @@ const router = new VueRouter({
 				},
 				// 消息中心
 				{
-					path: 'manage/message-center',
+					path: 'message-center',
 					name: 'messageCenter',
 					component: () => import('@/views/MessageCenter'),
 					meta: {
@@ -100,7 +100,7 @@ const router = new VueRouter({
 				},
 				// 账户信息
 				{
-					path: 'manage/account-setting',
+					path: 'account-setting',
 					name: 'accountSetting',
 					component: () => import('@/views/AccountSetting'),
 					meta: {
@@ -111,7 +111,7 @@ const router = new VueRouter({
 		},
 		// 用户登录
 		{
-			path: '/manage/login',
+			path: '/login',
 			name: 'login',
 			component: () => import('@/views/Login'),
 			meta: {

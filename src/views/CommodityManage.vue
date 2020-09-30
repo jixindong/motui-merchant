@@ -8,9 +8,9 @@
 			<el-input type="text" size="medium" class="w-20" v-model="search.name" placeholder="请输入宝贝名称" clearable></el-input>
 			<el-select size="medium" class="w-20" v-model="search.platform" placeholder="请选择宝贝平台" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option label="淘宝" value="淘宝"></el-option>
-				<el-option label="京东" value="京东"></el-option>
-				<el-option label="抖音小店" value="抖音小店"></el-option>
+				<el-option label="淘宝" value="taobao"></el-option>
+				<el-option label="京东" value="jingdong"></el-option>
+				<el-option label="抖音小店" value="douyin"></el-option>
 			</el-select>
 			<el-select size="medium" class="w-20" v-model="search.classify" placeholder="请选择宝贝分类" clearable>
 				<el-option label="请选择" value=""></el-option>
@@ -82,6 +82,10 @@
 					<span>图片：</span>
 					<img :src="this.commodityDetail.path" class="w-50" />
 				</el-col>
+				<el-col class="my-4">
+					宝贝链接：
+					<el-link type="primary" :href="commodityDetail.address" target="blank">{{ this.commodityDetail.address }}</el-link>
+				</el-col>
 			</el-row>
 
 			<div>
@@ -110,9 +114,9 @@
 						<el-form-item label="平台" prop="lx" required>
 							<el-select v-model="commodityAddForm.lx" clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option label="淘宝" value="淘宝"></el-option>
-								<el-option label="抖音小店" value="抖音小店"></el-option>
-								<el-option label="京东" value="京东"></el-option>
+								<el-option label="淘宝" value="taobao"></el-option>
+								<el-option label="京东" value="jingdong"></el-option>
+								<el-option label="抖音小店" value="douyin"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -139,12 +143,17 @@
 							<el-input type="number" placeholder="请输入佣金比例" v-model="commodityAddForm.profit" clearable></el-input>
 						</el-form-item>
 					</el-col>
+					<el-col>
+						<el-form-item label="宝贝链接" prop="address" required>
+							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityAddForm.address" clearable></el-input>
+						</el-form-item>
+					</el-col>
 				</el-row>
 
 				<el-row :gutter="20">
 					<el-col :span="21">
-						<el-form-item label="链接" prop="video" required>
-							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityAddForm.video" clearable></el-input>
+						<el-form-item label="视频链接" prop="video" required>
+							<el-input type="text" placeholder="请输入宝贝视频链接" v-model="commodityAddForm.video" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="3"><el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" plain @click="cADAddVideoItem">增加</el-button></el-col>
@@ -152,8 +161,8 @@
 
 				<el-row :gutter="20" v-for="(item, index) in commodityAddForm.videoList" :key="index">
 					<el-col :span="21">
-						<el-form-item label="链接" :prop="'videoList[' + index + ']'" :rules="{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }">
-							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityAddForm.videoList[index]" clearable></el-input>
+						<el-form-item label="视频链接" :prop="'videoList[' + index + ']'" :rules="{ required: true, message: '请输入宝贝视频链接', trigger: ['blur', 'change'] }">
+							<el-input type="text" placeholder="请输入宝贝视频链接" v-model="commodityAddForm.videoList[index]" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="3"><el-button type="danger" size="medium" icon="el-icon-delete" plain @click="cADDelVideoItem(index)">删除</el-button></el-col>
@@ -196,15 +205,15 @@
 						<el-form-item label="平台" prop="lx" required>
 							<el-select v-model="commodityEditForm.lx" clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option label="淘宝" value="淘宝"></el-option>
-								<el-option label="抖音小店" value="抖音小店"></el-option>
-								<el-option label="京东" value="京东"></el-option>
+								<el-option label="淘宝" value="taobao"></el-option>
+								<el-option label="京东" value="jingdong"></el-option>
+								<el-option label="抖音小店" value="douyin"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="分类" prop="type" required>
-							<el-select v-model="commodityEditForm.typeName" clearable>
+							<el-select v-model="commodityEditForm.type" clearable>
 								<el-option label="请选择" value=""></el-option>
 								<el-option v-for="(v, i) in commodityClassify" :key="i" :label="v" :value="v"></el-option>
 							</el-select>
@@ -225,12 +234,17 @@
 							<el-input type="number" placeholder="请输入佣金比例" v-model="commodityEditForm.profit" clearable></el-input>
 						</el-form-item>
 					</el-col>
+					<el-col>
+						<el-form-item label="宝贝链接" prop="address" required>
+							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityEditForm.address" clearable></el-input>
+						</el-form-item>
+					</el-col>
 				</el-row>
 
 				<el-row :gutter="20" v-for="(item, index) in commodityEditForm.videoList" :key="index">
 					<el-col :span="21">
-						<el-form-item label="链接" :prop="'videoList[' + index + ']'" :rules="{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }">
-							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityEditForm.videoList[index]" clearable></el-input>
+						<el-form-item label="视频链接" :prop="'videoList[' + index + ']'" :rules="{ required: true, message: '请输入宝贝视频链接', trigger: ['blur', 'change'] }">
+							<el-input type="text" placeholder="请输入宝贝视频链接" v-model="commodityEditForm.videoList[index]" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="3" v-if="index === 0">
@@ -286,7 +300,7 @@ export default {
 			// 分页
 			commodityListPage: {
 				total: 1,
-				pageSize: 1,
+				pageSize: 10,
 				totalPage: 1,
 				currentPage: 1
 			},
@@ -312,6 +326,7 @@ export default {
 				price: '',
 				discount: '',
 				profit: '',
+				address: '',
 				videoList: []
 			},
 			// 表单校验规则
@@ -322,7 +337,8 @@ export default {
 				video: [{ required: true, message: '请输入链接', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
 				discount: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
-				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
+				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }],
+				address: [{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }]
 			},
 			/* ======================== 编辑商品对话框 ======================== */
 			// 显示隐藏
@@ -333,10 +349,11 @@ export default {
 			commodityEditRules: {
 				name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
 				lx: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
-				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
+				type: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
 				discount: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
-				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
+				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }],
+				address: [{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }]
 			}
 		};
 	},
@@ -352,7 +369,8 @@ export default {
 				lx: this.search.platform,
 				type: this.search.classify,
 				status: this.search.status,
-				page: this.commodityListPage.currentPage
+				page: this.commodityListPage.currentPage,
+				limit: this.commodityListPage.pageSize
 			};
 		},
 		// 请求头
@@ -423,8 +441,8 @@ export default {
 		},
 		// 编辑商品
 		commodityEdit(e) {
-			let { id, name, lx, type, path, price, discount, profit } = e;
-			this.commodityEditForm = { id, name, lx, type, path, price, discount, profit, videoList: [] };
+			let { id, name, lx, type, path, price, discount, profit, address } = e;
+			this.commodityEditForm = { id, name, lx, type, path, price, discount, profit, address, videoList: [] };
 			commodity
 				.fetchCommodityVideoList({ id: e.id })
 				.then(res => {
@@ -518,7 +536,8 @@ export default {
 						urlArr,
 						price: this.commodityAddForm.price,
 						discount: this.commodityAddForm.discount,
-						profit: this.commodityAddForm.profit
+						profit: this.commodityAddForm.profit,
+						address: this.commodityAddForm.address
 					};
 					commodity
 						.handleCommodityAdd(data)
@@ -590,6 +609,7 @@ export default {
 						price: this.commodityEditForm.price,
 						discount: this.commodityEditForm.discount,
 						profit: this.commodityEditForm.profit,
+						address: this.commodityEditForm.address,
 						urlArr: this.commodityEditForm.videoList
 					};
 					commodity
