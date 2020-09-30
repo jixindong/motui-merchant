@@ -93,7 +93,7 @@
 				<el-table :data="commodityVideoList" stripe border>
 					<el-table-column label="视频链接" show-overflow-tooltip>
 						<template slot-scope="scope">
-							<el-link type="primary" :href="scope.row.video">{{ scope.row.video }}</el-link>
+							<video :src="scope.row.video" controls></video>
 						</template>
 					</el-table-column>
 					<el-table-column prop="number" label="播放量" width="100" align="center" show-overflow-tooltip></el-table-column>
@@ -148,29 +148,31 @@
 							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityAddForm.address" clearable></el-input>
 						</el-form-item>
 					</el-col>
-				</el-row>
-
-				<el-row :gutter="20">
-					<el-col :span="21">
-						<el-form-item label="视频链接" prop="video" required>
-							<el-input type="text" placeholder="请输入宝贝视频链接" v-model="commodityAddForm.video" clearable></el-input>
-						</el-form-item>
+					<el-col>
+						<div class="mx-5 mb-3">视频</div>
+						<div class="d-flex flex-wrap px-4">
+							<div class="video-uploader" v-for="(item, index) in commodityAddForm.videoList" :key="index">
+								<video :src="item" width="100%" controls></video>
+								<i class="el-icon-error delete-icon" @click="delAddVideo(index)"></i>
+							</div>
+							<el-upload
+								class="video-uploader"
+								action="http://mtht.waszn.com:8001/upload/uploadFile"
+								:headers="requestHeaders"
+								:show-file-list="false"
+								multiple
+								:before-upload="uploadCommodityVideoBefore"
+								:on-progress="addCommodityVideoProcess"
+								:on-success="addCommodityVideoSuccess"
+							>
+								<i class="el-icon-plus uploader-icon" v-if="!commodityAddForm.videoUploadPercent"></i>
+								<el-progress type="circle" :percentage="commodityAddForm.videoUploadPercent" v-else></el-progress>
+							</el-upload>
+						</div>
 					</el-col>
-					<el-col :span="3"><el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" plain @click="cADAddVideoItem">增加</el-button></el-col>
-				</el-row>
-
-				<el-row :gutter="20" v-for="(item, index) in commodityAddForm.videoList" :key="index">
-					<el-col :span="21">
-						<el-form-item label="视频链接" :prop="'videoList[' + index + ']'" :rules="{ required: true, message: '请输入宝贝视频链接', trigger: ['blur', 'change'] }">
-							<el-input type="text" placeholder="请输入宝贝视频链接" v-model="commodityAddForm.videoList[index]" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :span="3"><el-button type="danger" size="medium" icon="el-icon-delete" plain @click="cADDelVideoItem(index)">删除</el-button></el-col>
-				</el-row>
-
-				<el-row>
-					<el-col :span="8">
-						<el-form-item label="图片">
+					<el-col>
+						<div class="mx-5 my-3">图片</div>
+						<div class="px-4">
 							<el-upload
 								class="img-uploader"
 								action="http://mtht.waszn.com:8001/upload/uploadFile"
@@ -179,9 +181,9 @@
 								:on-success="addCommodityImg"
 							>
 								<img :src="commodityAddForm.path" v-if="commodityAddForm.path" />
-								<i v-else class="el-icon-plus img-uploader-icon"></i>
+								<i v-else class="el-icon-plus uploader-icon"></i>
 							</el-upload>
-						</el-form-item>
+						</div>
 					</el-col>
 				</el-row>
 
@@ -239,23 +241,31 @@
 							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityEditForm.address" clearable></el-input>
 						</el-form-item>
 					</el-col>
-				</el-row>
-
-				<el-row :gutter="20" v-for="(item, index) in commodityEditForm.videoList" :key="index">
-					<el-col :span="21">
-						<el-form-item label="视频链接" :prop="'videoList[' + index + ']'" :rules="{ required: true, message: '请输入宝贝视频链接', trigger: ['blur', 'change'] }">
-							<el-input type="text" placeholder="请输入宝贝视频链接" v-model="commodityEditForm.videoList[index]" clearable></el-input>
-						</el-form-item>
+					<el-col>
+						<div class="mx-5 mb-3">视频</div>
+						<div class="d-flex flex-wrap px-4">
+							<div class="video-uploader" v-for="(item, index) in commodityEditForm.videoList" :key="index">
+								<video :src="item" width="100%" controls></video>
+								<i class="el-icon-error delete-icon" @click="delEditVideo(index)"></i>
+							</div>
+							<el-upload
+								class="video-uploader"
+								action="http://mtht.waszn.com:8001/upload/uploadFile"
+								:headers="requestHeaders"
+								:show-file-list="false"
+								multiple
+								:before-upload="uploadCommodityVideoBefore"
+								:on-progress="editCommodityVideoProcess"
+								:on-success="editCommodityVideoSuccess"
+							>
+								<i class="el-icon-plus uploader-icon" v-if="!commodityEditForm.videoUploadPercent"></i>
+								<el-progress type="circle" :percentage="commodityEditForm.videoUploadPercent" v-else></el-progress>
+							</el-upload>
+						</div>
 					</el-col>
-					<el-col :span="3" v-if="index === 0">
-						<el-button type="primary" size="medium" icon="el-icon-circle-plus-outline" plain @click="cEDAddVideoItem()">增加</el-button>
-					</el-col>
-					<el-col :span="3" v-else><el-button type="danger" size="medium" icon="el-icon-delete" plain @click="cEDDelVideoItem(index)">删除</el-button></el-col>
-				</el-row>
-
-				<el-row>
-					<el-col :span="8">
-						<el-form-item label="图片">
+					<el-col>
+						<div class="mx-5 my-3">图片</div>
+						<div class="px-4">
 							<el-upload
 								class="img-uploader"
 								action="http://mtht.waszn.com:8001/upload/uploadFile"
@@ -264,9 +274,9 @@
 								:on-success="editCommodityImg"
 							>
 								<img :src="commodityEditForm.path" v-if="commodityEditForm.path" />
-								<i v-else class="el-icon-plus img-uploader-icon"></i>
+								<i class="el-icon-plus uploader-icon" v-else></i>
 							</el-upload>
-						</el-form-item>
+						</div>
 					</el-col>
 				</el-row>
 
@@ -281,7 +291,6 @@
 
 <script>
 import * as commodity from '@/api/commodity';
-import { deepClone } from '@/utils/utils';
 
 export default {
 	name: 'CommodityManage',
@@ -322,7 +331,7 @@ export default {
 				lx: '',
 				typeName: '',
 				path: '',
-				video: '',
+				videoUploadPercent: 0,
 				price: '',
 				discount: '',
 				profit: '',
@@ -334,7 +343,6 @@ export default {
 				name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
 				lx: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
 				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
-				video: [{ required: true, message: '请输入链接', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
 				discount: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
 				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }],
@@ -379,6 +387,19 @@ export default {
 		}
 	},
 	methods: {
+		/* ======================== 公共 ======================== */
+		// 上传商品视频前
+		uploadCommodityVideoBefore(file) {
+			let fileSize = file.size / 1024 / 1024 < 50;
+			if (['video/mp4', 'video/ogg', 'video/flv', 'video/wmv', 'video/rmvb', 'video/mov'].indexOf(file.type) === -1) {
+				this.$message.warning('请上传正确的视频格式');
+				return false;
+			}
+			if (!fileSize) {
+				this.$message.warning('视频大小不能超过50MB');
+				return false;
+			}
+		},
 		/* ======================== 商品 ======================== */
 		// 获取商品列表
 		getCommodityList() {
@@ -442,7 +463,7 @@ export default {
 		// 编辑商品
 		commodityEdit(e) {
 			let { id, name, lx, type, path, price, discount, profit, address } = e;
-			this.commodityEditForm = { id, name, lx, type, path, price, discount, profit, address, videoList: [] };
+			this.commodityEditForm = { id, name, lx, type, path, price, discount, profit, address, videoUploadPercent: 0, videoList: [] };
 			commodity
 				.fetchCommodityVideoList({ id: e.id })
 				.then(res => {
@@ -510,31 +531,34 @@ export default {
 				.catch(() => {});
 		},
 		/* ======================== 添加商品对话框 ======================== */
+		// 上传视频过程
+		addCommodityVideoProcess(event, file) {
+			this.commodityAddForm.videoUploadPercent = file.percentage.toFixed(0) * 1; // 进度条
+		},
+		// 上传视频成功
+		addCommodityVideoSuccess(res) {
+			this.$message.success('上传视频成功');
+			this.commodityAddForm.videoUploadPercent = 0; // 进度条
+			this.commodityAddForm.videoList.push(res.msg);
+		},
+		// 删除已上传视频
+		delAddVideo(index) {
+			this.commodityAddForm.videoList.splice(index, 1);
+		},
 		// 上传商品图片
 		addCommodityImg(res) {
-			console.log(res);
 			this.commodityAddForm.path = res.msg;
-		},
-		// 添加视频链接
-		cADAddVideoItem() {
-			this.commodityAddForm.videoList.push('');
-		},
-		// 删除视频链接
-		cADDelVideoItem(index) {
-			this.commodityAddForm.videoList.splice(index, 1);
 		},
 		// 确认添加
 		submitCAF() {
 			this.$refs['commodityAddFormRef'].validate(valid => {
 				if (valid) {
-					let urlArr = deepClone(this.commodityAddForm.videoList);
-					urlArr.push(this.commodityAddForm.video);
 					let data = {
 						name: this.commodityAddForm.name,
 						lx: this.commodityAddForm.lx,
 						type: this.commodityAddForm.typeName,
 						path: this.commodityAddForm.path,
-						urlArr,
+						urlArr: this.commodityAddForm.videoList,
 						price: this.commodityAddForm.price,
 						discount: this.commodityAddForm.discount,
 						profit: this.commodityAddForm.profit,
@@ -581,21 +605,23 @@ export default {
 				.catch(() => {});
 		},
 		/* ======================== 编辑商品对话框 ======================== */
+		// 上传视频过程
+		editCommodityVideoProcess(event, file) {
+			this.commodityEditForm.videoUploadPercent = file.percentage.toFixed(0) * 1; // 进度条
+		},
+		// 上传视频成功
+		editCommodityVideoSuccess(res) {
+			this.$message.success('上传视频成功');
+			this.commodityEditForm.videoUploadPercent = 0; // 进度条
+			this.commodityEditForm.videoList.push(res.msg);
+		},
+		// 删除已上传视频
+		delEditVideo(index) {
+			this.commodityEditForm.videoList.splice(index, 1);
+		},
 		// 上传商品图片
 		editCommodityImg(res) {
 			this.commodityEditForm.path = res.msg;
-		},
-		// 添加视频链接
-		cEDAddVideoItem() {
-			this.commodityEditForm.videoList.push('');
-		},
-		// 删除视频链接
-		cEDDelVideoItem(index) {
-			if (this.commodityEditForm.videoList.length <= 1) {
-				this.$message.warning('宝贝链接至少为一个');
-			} else {
-				this.commodityEditForm.videoList.splice(index, 1);
-			}
 		},
 		// 确认修改
 		submitCEF() {

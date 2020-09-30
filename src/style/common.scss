@@ -105,7 +105,7 @@ body {
 	overflow: hidden;
 	border: 1px solid #ebeef5;
 	border-radius: 4px;
-	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
+	box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
 // Sizing
@@ -152,31 +152,68 @@ body {
 	}
 }
 
-// 图片上传
-.img-uploader {
+// 文件上传
+.img-uploader,
+.video-uploader {
 	position: relative;
+	margin: 0 10px;
 	width: 178px;
 	height: 178px;
+	color: #8c939d;
 	border: 1px dashed #d9d9d9;
 	border-radius: 6px;
-	overflow: hidden;
 	cursor: pointer;
 
+	.uploader-icon {
+		width: 178px;
+		line-height: 178px;
+		font-size: 28px;
+		text-align: center;
+	}
+}
+
+.img-uploader {
 	&:hover {
-		border-color: #409eff;
+		color: #67c23a;
+		border-color: #67c23a;
 	}
 
 	img {
-		width: 178px;
-		height: 178px;
+		width: 100%;
+		max-width: 100%;
+	}
+}
+
+.video-uploader {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	&:hover {
+		color: #409eff;
+		border-color: #409eff;
+
+		.delete-icon {
+			visibility: visible;
+		}
 	}
 
-	.img-uploader-icon {
-		width: 178px;
-		line-height: 178px;
-		color: #8c939d;
-		font-size: 28px;
-		text-align: center;
+	video {
+		width: 100%;
+		max-height: 100%;
+	}
+
+	.delete-icon {
+		position: absolute;
+		top: -5px;
+		right: -5px;
+		visibility: hidden;
+		color: #666;
+		font-size: 24px;
+
+		&:hover {
+			color: #f56c6c;
+		}
 	}
 }
 

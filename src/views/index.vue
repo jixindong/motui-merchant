@@ -3,7 +3,7 @@
 		<!-- 导航栏 -->
 		<div class="hd">
 			<div class="container d-flex align-items-center">
-				<img src="@/assets/images/logo-1.png" class="logo" />
+				<img src="@/assets/images/logo-1.png" class="logo" onclick="window.open('http://motui.waszn.com/')" />
 				<el-avatar :src="baseMsg.avatar" v-if="baseMsg"></el-avatar>
 				<el-avatar :src="require('@/assets/images/avatar.png')" v-else></el-avatar>
 				<el-dropdown trigger="click" @command="setting">
@@ -285,6 +285,7 @@ export default {
 		background-color: #2897ff;
 		.logo {
 			width: 100px;
+			cursor: pointer;
 		}
 		::v-deep .el-avatar {
 			margin: 0 40px 0 auto;
