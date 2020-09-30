@@ -512,6 +512,7 @@ export default {
 		/* ======================== 添加商品对话框 ======================== */
 		// 上传商品图片
 		addCommodityImg(res) {
+			console.log(res);
 			this.commodityAddForm.path = res.msg;
 		},
 		// 添加视频链接

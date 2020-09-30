@@ -6,5 +6,5 @@ module.exports = {
 	},
 	filenameHashing: false,
 	outputDir: '../motui-merchant-dist',
-	publicPath: ''
+	publicPath: './'
 };
