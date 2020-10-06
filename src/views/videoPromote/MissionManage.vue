@@ -161,12 +161,8 @@ export default {
 		}
 	},
 	watch: {
-		// 发布任务对话框表单
-		publicMissionForm: {
-			handler(newVal) {
-				this.getCommodityList({ id: newVal.commodityClassify }); // 根据分类搜索商品
-			},
-			deep: true
+		'publicMissionForm.name'(newVal){
+			this.getCommodityList({ id: newVal.commodityClassify }); // 根据分类搜索商品
 		}
 	},
 	methods: {

@@ -59,7 +59,7 @@ export function handleCommodityDelete(data) {
 	return request({
 		url: 'product/delete',
 		method: 'POST',
-		params: data
+		data
 	});
 }
 

@@ -484,7 +484,8 @@ export default {
 				type: 'warning'
 			})
 				.then(() => {
-					let data = { ids: [e.id] };
+					let data = {ids:[]};
+					data.ids.push(e.id);
 					commodity
 						.handleCommodityDelete(data)
 						.then(res => {
