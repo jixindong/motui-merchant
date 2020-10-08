@@ -66,7 +66,7 @@ export function confirmReceipt(data) {
 // 发货
 export function shipments(data) {
 	return request({
-		url: 'talentapply/send',
+		url: 'businessvideo/send',
 		method: 'POST',
 		params: data
 	});

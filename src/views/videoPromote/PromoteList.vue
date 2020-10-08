@@ -10,11 +10,11 @@
 				<el-option label="已申请" value="0"></el-option>
 				<el-option label="申请通过" value="1"></el-option>
 				<el-option label="申请拒绝" value="2"></el-option>
-				<el-option label="已上传" value="3"></el-option>
+				<el-option label="已上传链接" value="3"></el-option>
 				<el-option label="已完成" value="4"></el-option>
 				<el-option label="已寄样" value="5"></el-option>
 				<el-option label="投诉" value="6"></el-option>
-				<el-option label="已下载" value="7"></el-option>
+				<el-option label="已下载链接" value="7"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchPromote">搜索</el-button>
 		</div>
@@ -163,6 +163,7 @@ export default {
 		// 推广列表搜索条件
 		searchData() {
 			return {
+				type: 'sh',
 				status: this.search.status,
 				page: this.promoteListPage.currentPage,
 				limit: this.promoteListPage.pageSize
@@ -177,8 +178,8 @@ export default {
 				.fetchPromoteList(this.searchData)
 				.then(res => {
 					if (res.code === 200) {
-						this.promoteList = res.page.list;
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.page;
+						this.promoteList = res.list.list;
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
 						this.promoteListPage = { total, pageSize, totalPage, currentPage }; // 推广列表分页
 					} else {
 						this.$message.warning(res.msg);

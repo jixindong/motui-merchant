@@ -86,20 +86,20 @@
 		<el-dialog title="发布任务" :visible.sync="publicMissionDV" :before-close="pMDClose">
 			<el-form :model="publicMissionForm" :rules="publicMissionRules" ref="publicMissionFormRef" size="medium" label-width="100px" status-icon>
 				<el-row :gutter="20">
-					<el-col :span="8">
+					<el-col :span="12">
 						<el-form-item label="任务名称" prop="name" required>
 							<el-input type="text" placeholder="请输入任务名称" v-model="publicMissionForm.name" clearable></el-input>
 						</el-form-item>
 					</el-col>
-					<el-col :span="8">
+					<el-col :span="12">
 						<el-form-item label="选择宝贝" prop="commodityName" required>
-							<el-select v-model="publicMissionForm.commodityName" clearable>
+							<el-select v-model="publicMissionForm.commodityName" :placeholder="commodityByMerch.length === 0 ? '您当前没有宝贝' : '请选择宝贝'" class="w-100" filterable clearable>
 								<el-option label="请选择" value=""></el-option>
 								<el-option v-for="(v, i) in commodityByMerch" :key="i" :label="v.name" :value="v.id"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
-					<el-col :span="8">
+					<el-col :span="12">
 						<el-form-item label="视频数量" prop="videoNum" required><el-input-number v-model="publicMissionForm.videoNum" :min="1"></el-input-number></el-form-item>
 					</el-col>
 					<el-col :span="24">
@@ -291,7 +291,7 @@ export default {
 		},
 		// 获取当前商家审核通过商品
 		getCommodityByMerch() {
-			fetchCommodityByMerch()
+			fetchCommodityByMerch({type:'1'})
 				.then(res => {
 					if (res.code === 200) {
 						this.commodityByMerch = res.list;
@@ -343,7 +343,7 @@ export default {
 
 				let data = {
 					name: this.publicMissionForm.name,
-					proName: this.publicMissionForm.commodityName,
+					pid: this.publicMissionForm.commodityName,
 					number: this.publicMissionForm.videoNum,
 					highlights: this.publicMissionForm.commodityMerit,
 					content: this.publicMissionForm.videoDemand
@@ -355,6 +355,7 @@ export default {
 							this.$message.success('发布任务成功');
 							this.$refs['publicMissionFormRef'].resetFields();
 							this.publicMissionDV = false; // 发布任务对话框 隐藏
+							this.getMIssionList(); // 获取任务列表
 						} else {
 							this.$message.warning(res.msg);
 						}

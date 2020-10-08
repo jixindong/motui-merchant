@@ -6,7 +6,7 @@
 		<!-- 套餐余量 -->
 		<div>
 			<el-table :data="nowSetmealList" stripe border>
-				<el-table-column prop="bid" label="商家ID" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="bName" label="商家名称" show-overflow-tooltip></el-table-column>
 				<el-table-column label="短视频推广">
 					<template slot-scope="scope">
 						<span :class="{ 'text-primary': scope.row.video > 0, 'text-danger': scope.row.video === 0 }">{{ scope.row.video }}</span>
@@ -42,11 +42,11 @@
 		<div>
 			<el-table :data="setmealList" stripe border>
 				<el-table-column prop="name" label="套餐名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="price_total" label="原价" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="priceTotal" label="原价" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="price" label="优惠价" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="setMealList[0].number" label="短视频推广数"></el-table-column>
-				<el-table-column prop="setMealList[2].number" label="视频制作数"></el-table-column>
-				<el-table-column prop="setMealList[1].number" label="直播场次"></el-table-column>
+				<el-table-column prop="video" label="短视频推广数"></el-table-column>
+				<el-table-column prop="shot" label="视频制作数"></el-table-column>
+				<el-table-column prop="live" label="直播场次"></el-table-column>
 				<el-table-column label="开通" align="center">
 					<template slot-scope="scope">
 						<el-button type="warning" size="small" icon="el-icon-coin" plain @click="purchaseSetmeal(scope.row)">开通</el-button>
@@ -146,8 +146,8 @@ export default {
 				.fetchSetmealResidue(this.searchData)
 				.then(res => {
 					if (res.code === 200) {
-						this.nowSetmealList = res.page.list; // 套餐余量列表
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.page;
+						this.nowSetmealList = res.list.list; // 套餐余量列表
+						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.list;
 						this.nowSetmealListPage = { total, pageSize, totalPage, currentPage }; // 套餐余量列表分页
 					} else {
 						this.$message.warning(res.msg);

@@ -8,7 +8,7 @@
 			<el-input type="text" size="medium" class="w-25" v-model="search.name" placeholder="请输入任务名称" clearable></el-input>
 			<el-select size="medium" class="w-25" v-model="search.promoteType" placeholder="请选择推广类型" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option v-for="(item, index) in promoteTypeList" :key="index" :label="item" :value="item"></el-option>
+				<el-option v-for="(item, index) in promoteTypeList" :key="index" :label="item.title" :value="item.value"></el-option>
 			</el-select>
 			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择任务状态" clearable>
 				<el-option label="请选择" value=""></el-option>
@@ -25,14 +25,24 @@
 			<el-table :data="missionList" stripe border>
 				<el-table-column prop="name" label="任务名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="productName" label="宝贝名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="type" label="推广类型" show-overflow-tooltip></el-table-column>
+				<el-table-column label="推广类型" align="center" show-overflow-tooltip>
+					<template slot-scope="scope">
+						<span v-if="scope.row.type === 'live'">直播</span>
+						<span v-else-if="scope.row.type === 'video'">短视频</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop="number" label="推广数量" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="content" label="任务要求" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" align="center">
 					<template slot-scope="scope">
-						<span class="text-warning" v-if="scope.row.missionStatus === 0">未开始</span>
-						<span class="text-primary" v-else-if="scope.row.missionStatus === 1">进行中</span>
-						<span class="text-success" v-else>已完成</span>
+						<span class="text-info" v-if="scope.row.status === 0">已申请</span>
+						<span class="text-primary" v-else-if="scope.row.status === 1">申请通过</span>
+						<span class="text-danger" v-else-if="scope.row.status === 2">申请拒绝</span>
+						<span class="text-primary" v-else-if="scope.row.status === 3">已上传链接</span>
+						<span class="text-success" v-else-if="scope.row.status === 4">已完成</span>
+						<span class="text-primary" v-else-if="scope.row.status === 5">已寄样</span>
+						<span class="text-danger" v-else-if="scope.row.status === 6">投诉</span>
+						<span class="text-success" v-else-if="scope.row.status === 7">已下载链接</span>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -59,31 +69,78 @@
 					</el-col>
 					<el-col :span="12">
 						<el-form-item label="推广类型" prop="promoteType" required>
-							<el-input type="text" placeholder="请输入推广类型" v-model="publicMissionForm.promoteType" clearable></el-input>
-						</el-form-item>
-					</el-col>
-					<el-col :span="12">
-						<el-form-item label="宝贝分类" prop="commodityClassify" required>
-							<el-select v-model="publicMissionForm.commodityClassify" class="w-100" filterable clearable>
+							<el-select v-model="publicMissionForm.promoteType" class="w-100" clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(v, i) in commodityClassify" :key="i" :label="v.name" :value="v.id"></el-option>
+								<el-option v-for="(item, index) in promoteTypeList" :key="index" :label="item.title" :value="item.value"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
 					<el-col :span="12">
 						<el-form-item label="选择宝贝" prop="commodityName" required>
-							<el-select v-model="publicMissionForm.commodityName" class="w-100" filterable clearable>
+							<el-select
+								v-model="publicMissionForm.commodityName"
+								:placeholder="commodityByMerch.length === 0 ? '您当前没有宝贝' : '请选择宝贝'"
+								class="w-100"
+								filterable
+								clearable
+							>
 								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(v, i) in commodityList" :key="i" :label="v.name" :value="v.name"></el-option>
+								<el-option v-for="(v, i) in commodityByMerch" :key="i" :label="v.name" :value="v.id"></el-option>
 							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="12">
+						<el-form-item label="开始时间" prop="startTime" required>
+							<el-date-picker
+								type="date"
+								value-format="yyyy-MM-dd HH:mm:ss"
+								v-model="publicMissionForm.startTime"
+								class="w-100"
+								placeholder="请选择开始时间"
+								clearable
+								required
+							></el-date-picker>
 						</el-form-item>
 					</el-col>
 					<el-col :span="12">
 						<el-form-item label="推广数量" prop="promoteNum" required><el-input-number v-model="publicMissionForm.promoteNum" :min="1"></el-input-number></el-form-item>
 					</el-col>
+					<el-col :span="12">
+						<el-form-item label="粉丝数量" prop="fans" required><el-input-number v-model="publicMissionForm.fans" :min="1"></el-input-number></el-form-item>
+					</el-col>
+					<el-col :span="12">
+						<el-form-item label="定向任务" required>
+							<el-radio-group v-model="publicMissionForm.isDx">
+								<el-radio :label="0">非定向</el-radio>
+								<el-radio :label="1">定向</el-radio>
+							</el-radio-group>
+						</el-form-item>
+					</el-col>
+					<el-col :span="12">
+						<el-form-item label="达人" prop="star" required v-if="publicMissionForm.isDx === 1">
+							<el-select
+								v-model="publicMissionForm.star"
+								:remote-method="getStarList"
+								class="w-100"
+								placeholder="请输入达人昵称或完整id"
+								multiple
+								filterable
+								remote
+								clearable
+							>
+								<el-option label="请选择" value=""></el-option>
+								<el-option v-for="(item, index) in starList" :key="index" :label="item.name" :value="item.id"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
 					<el-col :span="24">
 						<el-form-item label="任务要求" prop="missionDemand" required>
 							<el-input type="textarea" placeholder="请输入任务要求" v-model="publicMissionForm.missionDemand" clearable></el-input>
+						</el-form-item>
+					</el-col>
+					<el-col :span="24">
+						<el-form-item label="宝贝要求" prop="productDemand" required>
+							<el-input type="textarea" placeholder="请输入宝贝要求" v-model="publicMissionForm.productDemand" clearable></el-input>
 						</el-form-item>
 					</el-col>
 				</el-row>
@@ -98,7 +155,7 @@
 
 <script>
 import * as videoPromote from '@/api/videoPromote';
-import { fetchCommodityClassifyDtl, fetchCommodityByClassify } from '@/api/commodity';
+import { fetchCommodityByMerch } from '@/api/commodity';
 
 export default {
 	name: 'MissionManage',
@@ -112,7 +169,7 @@ export default {
 				status: null
 			},
 			// 推广类型
-			promoteTypeList: ['直播', '短视频'],
+			promoteTypeList: [{ title: '直播', value: 'live' }, { title: '短视频', value: 'video' }],
 			// 列表
 			missionList: [],
 			// 分页
@@ -125,26 +182,33 @@ export default {
 			/* ======================== 发布任务对话框 ======================== */
 			// 显示隐藏
 			publicMissionDV: false,
-			// 商品分类
-			commodityClassify: [],
-			// 商品列表
-			commodityList: [],
+			// 获取当前商家审核通过商品
+			commodityByMerch: [],
+			// 达人列表
+			starList: [],
 			// 表单
 			publicMissionForm: {
 				name: null,
 				promoteType: null,
 				promoteNum: 1,
-				commodityClassify: null,
 				commodityName: null,
+				fans: 1,
+				startTime: null,
+				isDx: 0,
+				star: [],
+				productDemand: null,
 				missionDemand: null
 			},
 			// 表单校验规则
 			publicMissionRules: {
 				name: [{ required: true, message: '请选输入任务名称', trigger: ['blur', 'change'] }],
-				commodityClassify: [{ required: true, message: '请选择宝贝分类', trigger: ['blur', 'change'] }],
 				commodityName: [{ required: true, message: '请选择宝贝', trigger: ['blur', 'change'] }],
-				promoteType: [{ required: true, message: '请输入推广类型', trigger: ['blur', 'change'] }],
+				fans: [{ required: true, message: '请输入粉丝数量', trigger: ['blur', 'change'] }],
+				startTime: [{ required: true, message: '请选择开始时间', trigger: ['blur', 'change'] }],
+				promoteType: [{ required: true, message: '请选择推广类型', trigger: ['blur', 'change'] }],
 				promoteNum: [{ required: true, message: '请输入推广数量', trigger: ['blur', 'change'] }],
+				star: [{ required: true, message: '请输入达人昵称或完整id', trigger: ['blur', 'change'] }],
+				productDemand: [{ required: true, message: '请输入宝贝要求', trigger: ['blur', 'change'] }],
 				missionDemand: [{ required: true, message: '请输入任务要求', trigger: ['blur', 'change'] }]
 			}
 		};
@@ -158,11 +222,6 @@ export default {
 				status: this.search.status,
 				page: this.missionListPage.currentPage
 			};
-		}
-	},
-	watch: {
-		'publicMissionForm.name'(newVal){
-			this.getCommodityList({ id: newVal.commodityClassify }); // 根据分类搜索商品
 		}
 	},
 	methods: {
@@ -210,27 +269,33 @@ export default {
 				})
 				.catch(() => {});
 		},
-		// 获取商品分类(详情)
-		getCommodityClassifyDtl() {
-			fetchCommodityClassifyDtl()
+		// 获取当前商家审核通过商品
+		getCommodityByMerch() {
+			fetchCommodityByMerch({ type: '1' })
 				.then(res => {
 					if (res.code === 200) {
-						this.commodityClassify = res.list;
+						this.commodityByMerch = res.list;
 					} else {
 						this.$message.warning(res.msg);
 					}
 				})
 				.catch(() => {});
 		},
-		// 根据分类搜索商品
-		getCommodityList(data) {
-			fetchCommodityByClassify(data)
+		// 获取达人列表
+		getStarList(query) {
+			if (query === '') {
+				this.starList = [];
+				return false;
+			}
+
+			videoPromote
+				.fetchStarList({ name: query })
 				.then(res => {
-					if (res.code === 200) {
-						this.commodityList = res.list;
-					} else {
-						this.$message.warning(res.msg);
+					if (res.code !== 200) {
+						return false;
 					}
+
+					this.starList = res.list;
 				})
 				.catch(() => {});
 		},
@@ -243,21 +308,28 @@ export default {
 
 				let data = {
 					name: this.publicMissionForm.name,
-					productName: this.commodityName,
+					pid: this.publicMissionForm.commodityName,
 					type: this.publicMissionForm.promoteType,
 					number: this.publicMissionForm.promoteNum,
-					content: this.publicMissionForm.missionDemand
+					fans: this.publicMissionForm.fans,
+					createTime: this.publicMissionForm.startTime,
+					isDx: this.publicMissionForm.isDx,
+					did: this.publicMissionForm.star.join(','),
+					content: this.publicMissionForm.missionDemand,
+					requirement: this.publicMissionForm.productDemand
 				};
 				videoPromote
 					.handleMissionAdd(data)
 					.then(res => {
-						if (res.code === 200) {
-							this.$message.success('发布任务成功');
-							this.$refs['publicMissionFormRef'].resetFields();
-							this.publicMissionDV = false; // 发布任务对话框 隐藏
-						} else {
+						if (res.code !== 200) {
 							this.$message.warning(res.msg);
+							return false;
 						}
+
+						this.$message.success('发布任务成功');
+						this.$refs['publicMissionFormRef'].resetFields();
+						this.publicMissionDV = false; // 发布任务对话框 隐藏
+						this.getMIssionList(); // 获取任务列表
 					})
 					.catch(() => {});
 			});
@@ -270,7 +342,7 @@ export default {
 	},
 	created() {
 		this.getMIssionList(); // 获取任务列表
-		this.getCommodityClassifyDtl(); // 获取商品分类(详情)
+		this.getCommodityByMerch(); // 获取当前商家审核通过商品
 	}
 };
 </script>

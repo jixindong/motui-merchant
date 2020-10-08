@@ -30,7 +30,7 @@ export function handleMissionAdd(data) {
 // 推广列表
 export function fetchPromoteList(data) {
 	return request({
-		url: 'talentapply/listByRw',
+		url: 'talentapply/listByType',
 		method: 'POST',
 		params: data
 	});
@@ -60,6 +60,15 @@ export function merchComplaint(data) {
 		url: 'taskproduct/examine',
 		method: 'POST',
 		data
+	});
+}
+
+// 获取达人列表
+export function fetchStarList(data) {
+	return request({
+		url: 'talent/query',
+		method: 'POST',
+		params: data
 	});
 }
 

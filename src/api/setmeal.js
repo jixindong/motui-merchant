@@ -3,7 +3,7 @@ import request from '@/utils/request';
 // 套餐列表
 export function fetchSetmealList(data) {
 	return request({
-		url: 'setmeallinformation/list',
+		url: 'setmeallinformation/listTwo',
 		method: 'POST',
 		data
 	});

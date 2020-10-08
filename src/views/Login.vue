@@ -76,7 +76,7 @@ export default {
 		acquireValCodeImg() {
 			let uuid = this.getUUID();
 			this.uuid = uuid;
-			this.valCodeImg = `http://mtht.waszn.com:8001/captcha.jpg?uuid=${uuid}`;
+			this.valCodeImg = `http://api.motui.com.cn:8001/captcha.jpg?uuid=${uuid}`;
 		},
 		// 登录
 		merchantLogin() {
