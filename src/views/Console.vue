@@ -3,7 +3,7 @@
 		<!-- 基础信息 -->
 		<div class="baseMsg card">
 			<div class="d-flex">
-				<img :src="baseMsg.avatar" class="avatar" v-if="baseMsg" />
+				<img :src="baseMsg.avatar" class="avatar" v-if="baseMsg && baseMsg.avatar" />
 				<img src="@/assets/images/avatar.png" class="avatar" v-else />
 				<div>
 					<div class="d-flex align-items-center">
@@ -106,14 +106,14 @@
 					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '0' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 				<div class="w-50">
-					<el-tag size="small">已发货</el-tag>
+					<el-tag size="small">已完成</el-tag>
 					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.spzz.dzz }}
 					</router-link>
 					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 				</div>
 				<div class="w-50">
-					<el-tag type="success" size="small">已上传</el-tag>
+					<el-tag type="success" size="small">待制作</el-tag>
 					<router-link :to="{ name: 'svMissionManage', params: { videoStatus: '2' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 						{{ statistics.spzz.ywc }}
 					</router-link>
@@ -204,7 +204,7 @@ export default {
 		// 获取统计
 		getStatistics() {
 			dataCenter
-				.fetchStatistics()
+				.fetchStatistics({type:'sh'})
 				.then(res => {
 					if (res.code === 200) {
 						this.statistics = res.home;

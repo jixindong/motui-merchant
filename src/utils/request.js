@@ -3,8 +3,8 @@ import router from '@/router/index';
 import ElementUI from 'element-ui';
 
 const request = axios.create({
-	baseURL: 'http://api.motui.com.cn:8001/',
-	// baseURL: 'http://192.168.1.45:8001/',
+	// baseURL: 'http://api.motui.com.cn:8001/',
+	baseURL: 'http://192.168.1.115:8001/',
 	headers: {
 		'Content-Type': 'application/json; charset=utf-8'
 	},
@@ -39,7 +39,7 @@ request.interceptors.response.use(
 			});
 			localStorage.removeItem('token');
 			router.replace({
-				pathname: 'login'
+				path: 'login'
 			});
 		} else {
 			return response.data;

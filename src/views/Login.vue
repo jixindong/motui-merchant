@@ -81,26 +81,29 @@ export default {
 		// 登录
 		merchantLogin() {
 			this.$refs['loginForm'].validate(valid => {
-				if (valid) {
-					let loginObj = {
-						phone: this.login.account,
-						password: this.login.password,
-						captcha: this.login.valCode,
-						uuid: this.uuid,
-						type: 'sh'
-					};
-					requestLogin(loginObj)
-						.then(res => {
-							if (res.code === 200) {
-								localStorage.setItem('token', res.token);
-								this.$message.success('登陆成功');
-								this.$router.push({ name: 'index' });
-							} else {
-								this.$message.warning(res.msg);
-							}
-						})
-						.catch(() => {});
+				if (!valid) {
+					return false;
 				}
+
+				let loginObj = {
+					phone: this.login.account,
+					password: this.login.password,
+					captcha: this.login.valCode,
+					uuid: this.uuid,
+					type: 'sh'
+				};
+				requestLogin(loginObj)
+					.then(res => {
+						if (res.code === 200) {
+							localStorage.setItem('token', res.token);
+							this.$message.success('登陆成功');
+							this.$router.push({ name: 'index' });
+						} else {
+							this.$message.warning(res.msg);
+							this.acquireValCodeImg(); // 获取验证码图片
+						}
+					})
+					.catch(() => {});
 			});
 		}
 	},

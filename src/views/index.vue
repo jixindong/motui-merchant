@@ -4,7 +4,7 @@
 		<div class="hd">
 			<div class="container d-flex align-items-center">
 				<img src="@/assets/images/logo-1.png" class="logo" onclick="window.open('http://motui.waszn.com/')" />
-				<el-avatar :src="baseMsg.avatar" v-if="baseMsg"></el-avatar>
+				<el-avatar :src="baseMsg.avatar" v-if="baseMsg && baseMsg.avatar"></el-avatar>
 				<el-avatar :src="require('@/assets/images/avatar.png')" v-else></el-avatar>
 				<el-dropdown trigger="click" @command="setting">
 					<img src="@/assets/images/setting.png" class="setting" />
@@ -176,11 +176,7 @@ export default {
 			fetchCommodityClassify()
 				.then(res => {
 					if (res.code === 200) {
-						let commodityClassify = [];
-						res.list.forEach(e => {
-							commodityClassify.push(e.name);
-						});
-						this.$store.commit('handleCommodityClassify', commodityClassify);
+						this.$store.commit('handleCommodityClassify', res.list);
 					} else {
 						this.$message.warning(res.msg);
 					}

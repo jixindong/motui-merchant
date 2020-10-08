@@ -9,19 +9,10 @@ export function fetchCommodityClassify(data) {
 	});
 }
 
-// 商品分类(详情)
-export function fetchCommodityClassifyDtl(data) {
+// 当前商家审核通过商品
+export function fetchCommodityByMerch(data) {
 	return request({
 		url: 'product/listByShForSp',
-		method: 'POST',
-		params: data
-	});
-}
-
-// 根据分类搜索商品
-export function fetchCommodityByClassify(data) {
-	return request({
-		url: 'productclassify/list',
 		method: 'POST',
 		params: data
 	});

@@ -10,8 +10,8 @@
 			<el-select size="medium" class="w-20" v-model="search.status" placeholder="请选择任务状态" clearable>
 				<el-option label="请选择" value=""></el-option>
 				<el-option label="待发货" value="0"></el-option>
-				<el-option label="已发货" value="1"></el-option>
-				<el-option label="已上传" value="2"></el-option>
+				<el-option label="已完成" value="1"></el-option>
+				<el-option label="待制作" value="2"></el-option>
 				<el-option label="任务结束" value="3"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchMission">搜索</el-button>
@@ -92,29 +92,10 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="任务状态" prop="status" required>
-							<el-select v-model="publicMissionForm.status" clearable>
-								<el-option label="请选择" value=""></el-option>
-								<el-option label="待发货" value="0"></el-option>
-								<el-option label="已发货" value="1"></el-option>
-								<el-option label="已上传" value="2"></el-option>
-								<el-option label="任务结束" value="3"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
-						<el-form-item label="宝贝分类" prop="commodityClassify" required>
-							<el-select v-model="publicMissionForm.commodityClassify" clearable>
-								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(v, i) in commodityClassify" :key="i" :label="v.name" :value="v.id"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="8">
 						<el-form-item label="选择宝贝" prop="commodityName" required>
-							<el-select v-model="publicMissionForm.commodityName" filterable clearable>
+							<el-select v-model="publicMissionForm.commodityName" clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(v, i) in commodityList" :key="i" :label="v.name" :value="v.name"></el-option>
+								<el-option v-for="(v, i) in commodityByMerch" :key="i" :label="v.name" :value="v.id"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -162,7 +143,7 @@
 
 <script>
 import * as missionManage from '@/api/shootVideo';
-import { fetchCommodityClassifyDtl, fetchCommodityByClassify } from '@/api/commodity';
+import { fetchCommodityByMerch } from '@/api/commodity';
 
 export default {
 	name: 'MissionManage',
@@ -194,15 +175,11 @@ export default {
 			/* ======================== 发布任务对话框 ======================== */
 			// 显示隐藏
 			publicMissionDV: false,
-			// 商品分类
-			commodityClassify: [],
-			// 商品列表
-			commodityList: [],
+			// 当前商家审核通过商品
+			commodityByMerch: [],
 			// 表单
 			publicMissionForm: {
 				name: null,
-				status: null,
-				commodityClassify: null,
 				commodityName: null,
 				videoNum: 1,
 				commodityMerit: null,
@@ -211,8 +188,6 @@ export default {
 			// 表单校验规则
 			publicMissionRules: {
 				name: [{ required: true, message: '请输入任务名称', trigger: ['blur', 'change'] }],
-				status: [{ required: true, message: '请选择任务状态', trigger: ['blur', 'change'] }],
-				commodityClassify: [{ required: true, message: '请选择宝贝分类', trigger: ['blur', 'change'] }],
 				commodityName: [{ required: true, message: '请选择宝贝', trigger: ['blur', 'change'] }],
 				videoNum: [{ required: true, message: '请输入视频数量', trigger: ['blur', 'change'] }],
 				commodityMerit: [{ required: true, message: '请输入宝贝亮点', trigger: ['blur', 'change'] }],
@@ -247,15 +222,6 @@ export default {
 				status: this.search.status,
 				page: this.missionListPage.currentPage
 			};
-		}
-	},
-	watch: {
-		// 发布任务对话框表单
-		publicMissionForm: {
-			handler(newVal) {
-				this.getCommodityList({ id: newVal.commodityClassify }); // 根据分类搜索商品
-			},
-			deep: true
 		}
 	},
 	methods: {
@@ -323,24 +289,12 @@ export default {
 				})
 				.catch(() => {});
 		},
-		// 获取商品分类(详情)
-		getCommodityClassifyDtl() {
-			fetchCommodityClassifyDtl()
+		// 获取当前商家审核通过商品
+		getCommodityByMerch() {
+			fetchCommodityByMerch()
 				.then(res => {
 					if (res.code === 200) {
-						this.commodityClassify = res.list;
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
-		},
-		// 根据分类搜索商品
-		getCommodityList(data) {
-			fetchCommodityByClassify(data)
-				.then(res => {
-					if (res.code === 200) {
-						this.commodityList = res.list;
+						this.commodityByMerch = res.list;
 					} else {
 						this.$message.warning(res.msg);
 					}
@@ -389,7 +343,6 @@ export default {
 
 				let data = {
 					name: this.publicMissionForm.name,
-					status: this.publicMissionForm.status,
 					proName: this.publicMissionForm.commodityName,
 					number: this.publicMissionForm.videoNum,
 					highlights: this.publicMissionForm.commodityMerit,
@@ -458,7 +411,7 @@ export default {
 	created() {
 		this.searchMissionByStatus(); // 根据状态搜索
 		this.getReceivingMsg(); // 获取收货信息
-		this.getCommodityClassifyDtl(); // 获取商品分类(详情)
+		this.getCommodityByMerch(); // 获取当前商家审核通过商品
 	}
 };
 </script>

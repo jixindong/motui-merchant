@@ -5,7 +5,7 @@ export function fetchStatistics(data) {
 	return request({
 		url: 'home/sjHtList',
 		method: 'POST',
-		data
+		params:data
 	});
 }
 
@@ -14,6 +14,6 @@ export function fetchOrderList(data) {
 	return request({
 		url: 'ordersync/list',
 		method: 'POST',
-		data
+		params:data
 	});
 }

@@ -14,7 +14,7 @@
 			</el-select>
 			<el-select size="medium" class="w-20" v-model="search.classify" placeholder="请选择宝贝分类" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item" :value="item"></el-option>
+				<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item.name" :value="item.id"></el-option>
 			</el-select>
 			<el-select size="medium" class="w-20" v-model="search.status" placeholder="请选择宝贝状态" clearable>
 				<el-option label="请选择" value=""></el-option>
@@ -93,7 +93,7 @@
 				<el-table :data="commodityVideoList" stripe border>
 					<el-table-column label="视频链接" show-overflow-tooltip>
 						<template slot-scope="scope">
-							<video :src="scope.row.video" controls></video>
+							<video :src="scope.row.video" class="mw-100" controls></video>
 						</template>
 					</el-table-column>
 					<el-table-column prop="number" label="播放量" width="100" align="center" show-overflow-tooltip></el-table-column>
@@ -114,9 +114,9 @@
 						<el-form-item label="平台" prop="lx" required>
 							<el-select v-model="commodityAddForm.lx" clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option label="淘宝" value="taobao"></el-option>
-								<el-option label="京东" value="jingdong"></el-option>
-								<el-option label="抖音小店" value="douyin"></el-option>
+								<el-option label="淘宝" value="淘宝"></el-option>
+								<el-option label="京东" value="京东"></el-option>
+								<el-option label="抖音小店" value="抖音小店"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -124,7 +124,7 @@
 						<el-form-item label="分类" prop="typeName" required>
 							<el-select v-model="commodityAddForm.typeName" clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(v, i) in commodityClassify" :key="i" :label="v" :value="v"></el-option>
+								<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item.name" :value="item.id"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -178,6 +178,7 @@
 								action="http://mtht.waszn.com:8001/upload/uploadFile"
 								:headers="requestHeaders"
 								:show-file-list="false"
+								:before-upload="uploadCommodityImgBefore"
 								:on-success="addCommodityImg"
 							>
 								<img :src="commodityAddForm.path" v-if="commodityAddForm.path" />
@@ -217,7 +218,7 @@
 						<el-form-item label="分类" prop="type" required>
 							<el-select v-model="commodityEditForm.type" clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(v, i) in commodityClassify" :key="i" :label="v" :value="v"></el-option>
+								<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item.name" :value="item.id"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -271,6 +272,7 @@
 								action="http://mtht.waszn.com:8001/upload/uploadFile"
 								:headers="requestHeaders"
 								:show-file-list="false"
+								:before-upload="uploadCommodityImgBefore"
 								:on-success="editCommodityImg"
 							>
 								<img :src="commodityEditForm.path" v-if="commodityEditForm.path" />
@@ -400,6 +402,18 @@ export default {
 				return false;
 			}
 		},
+		// 上传商品图片前
+		uploadCommodityImgBefore(file) {
+			let fileSize = file.size / 1024 / 1024 < 5;
+			if (['image/jpg', 'image/jpeg', 'image/png', 'image/gif'].indexOf(file.type) === -1) {
+				this.$message.warning('请上传正确的图片格式');
+				return false;
+			}
+			if (!fileSize) {
+				this.$message.warning('视频大小不能超过5MB');
+				return false;
+			}
+		},
 		/* ======================== 商品 ======================== */
 		// 获取商品列表
 		getCommodityList() {
@@ -484,8 +498,8 @@ export default {
 				type: 'warning'
 			})
 				.then(() => {
-					let data = {ids:[]};
-					data.ids.push(e.id);
+					let data = [];
+					data.push(e.id);
 					commodity
 						.handleCommodityDelete(data)
 						.then(res => {
@@ -513,9 +527,9 @@ export default {
 				type: 'warning'
 			})
 				.then(() => {
-					let data = { ids: [] };
+					let data = [];
 					this.commoditySelected.forEach(e => {
-						data.ids.push(e.id);
+						data.push(e.id);
 					});
 					commodity
 						.handleCommodityDelete(data)
@@ -559,7 +573,7 @@ export default {
 						lx: this.commodityAddForm.lx,
 						type: this.commodityAddForm.typeName,
 						path: this.commodityAddForm.path,
-						urlArr: this.commodityAddForm.videoList,
+						urlArr: this.commodityAddForm.videoList.join(','),
 						price: this.commodityAddForm.price,
 						discount: this.commodityAddForm.discount,
 						profit: this.commodityAddForm.profit,
@@ -638,7 +652,7 @@ export default {
 						discount: this.commodityEditForm.discount,
 						profit: this.commodityEditForm.profit,
 						address: this.commodityEditForm.address,
-						urlArr: this.commodityEditForm.videoList
+						urlArr: this.commodityEditForm.videoList.join(',')
 					};
 					commodity
 						.handleCommodityEdit(data)
