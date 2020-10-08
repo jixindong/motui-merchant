@@ -23,25 +23,26 @@
 		<div>
 			<el-table :data="promoteList" stripe border>
 				<el-table-column prop="productName" label="宝贝名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="pName" label="达人名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="did" label="达人ID" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="dName" label="达人名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="did" label="达人id" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" align="center">
 					<template slot-scope="scope">
-						<span class="text-info" v-if="scope.row.status === '0'">已申请</span>
-						<span class="text-primary" v-else-if="scope.row.status === '1'">申请通过</span>
-						<span class="text-danger" v-else-if="scope.row.status === '2'">申请拒绝</span>
-						<span class="text-primary" v-else-if="scope.row.status === '3'">已上传</span>
-						<span class="text-primary" v-else-if="scope.row.status === '4'">已完成</span>
-						<span class="text-primary" v-else-if="scope.row.status === '5'">已寄样</span>
-						<span class="text-warning" v-else-if="scope.row.status === '6'">投诉</span>
-						<span class="text-success" v-else>已下载</span>
+						<span class="text-info" v-if="scope.row.status === 0">已申请</span>
+						<span class="text-primary" v-else-if="scope.row.status === 1">申请通过</span>
+						<span class="text-danger" v-else-if="scope.row.status === 2">申请拒绝</span>
+						<span class="text-primary" v-else-if="scope.row.status === 3">已上传链接</span>
+						<span class="text-success" v-else-if="scope.row.status === 4">已完成</span>
+						<span class="text-primary" v-else-if="scope.row.status === 5">已寄样</span>
+						<span class="text-warning" v-else-if="scope.row.status === 6">投诉</span>
+						<span class="text-success" v-else-if="scope.row.status === 7">已下载链接</span>
 					</template>
 				</el-table-column>
-				<el-table-column label="操作" width="260" align="center">
+				<el-table-column label="操作" width="240" align="center">
 					<template slot-scope="scope">
-						<el-button type="success" size="mini" icon="el-icon-view" @click="videoCheck(scope.row)" v-if="scope.row.status === '0'">审核</el-button>
-						<el-button type="primary" size="mini" icon="el-icon-truck" @click="shipment(scope.row)" v-else-if="scope.row.status === '4'">发货</el-button>
-						<el-button type="danger" size="mini" icon="el-icon-chat-round" @click="complain(scope.row)" v-else-if="scope.row.status === '6'">申诉</el-button>
+						<el-button type="success" size="mini" icon="el-icon-view" @click="videoCheck(scope.row)" v-if="scope.row.status === 0">审核</el-button>
+						<el-button type="primary" size="mini" icon="el-icon-truck" @click="shipment(scope.row)" v-else-if="scope.row.status === 4">发货</el-button>
+						<el-button type="danger" size="mini" icon="el-icon-chat-round" @click="complain(scope.row)" v-else-if="scope.row.status === 6">申诉</el-button>
+						<el-button type="warning" size="mini" icon="el-icon-warning-outline" plain @click="detail(scope.row)">详情</el-button>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -57,8 +58,41 @@
 			</div>
 		</div>
 
+		<!-- 推广详情对话框 -->
+		<el-dialog title="详情" :visible.sync="promoteDtlDV">
+			<el-row>
+				<el-col :span="12">推广名称：{{ this.promoteDtl.tName }}</el-col>
+				<el-col :span="12">宝贝名称：{{ this.promoteDtl.productName }}</el-col>
+				<el-col :span="12" class="mt-2">达人名称：{{ this.promoteDtl.dName }}</el-col>
+				<el-col :span="12" class="mt-2">达人id：{{ this.promoteDtl.did }}</el-col>
+				<el-col :span="12" class="mt-2">
+					<span>任务状态：</span>
+					<span class="text-info" v-if="this.promoteDtl.status === 0">已申请</span>
+					<span class="text-primary" v-else-if="this.promoteDtl.status === 1">申请通过</span>
+					<span class="text-danger" v-else-if="this.promoteDtl.status === 2">申请拒绝</span>
+					<span class="text-primary" v-else-if="this.promoteDtl.status === 3">已上传链接</span>
+					<span class="text-success" v-else-if="this.promoteDtl.status === 4">已完成</span>
+					<span class="text-primary" v-else-if="this.promoteDtl.status === 5">已寄样</span>
+					<span class="text-warning" v-else-if="this.promoteDtl.status === 6">投诉</span>
+					<span class="text-success" v-else-if="this.promoteDtl.status === 7">已下载链接</span>
+				</el-col>
+				<el-col :span="12" class="mt-2">抖音昵称：{{ this.promoteDtl.dyName }}</el-col>
+				<el-col :span="12" class="mt-2">抖音账号：{{ this.promoteDtl.dyCount }}</el-col>
+				<el-col :span="12" class="mt-2">粉丝数：{{ this.promoteDtl.fans }}</el-col>
+			</el-row>
+		</el-dialog>
+
+		<!-- 审核对话框 -->
+		<el-dialog title="审核" width="360px" :visible.sync="checkDV">
+			<div>确认审核通过？</div>
+			<div class="d-flex justify-content-end mt-4">
+				<el-button size="small" @click="checkReject">拒绝</el-button>
+				<el-button type="primary" size="small" @click="checkPass">通过</el-button>
+			</div>
+		</el-dialog>
+
 		<!-- 发货对话框 -->
-		<el-dialog title="发货" :visible.sync="shipmentDV" :before-close="sDClose">
+		<el-dialog title="发货" :visible.sync="shipmentDV" :before-close="sDClose" :close-on-click-modal="false">
 			<el-form :model="shipmentForm" :rules="shipmentRules" ref="shipmentFormRef" size="medium" label-width="100px" status-icon>
 				<el-row :gutter="20">
 					<el-col :span="12">达人姓名：{{ starMsg.name }}</el-col>
@@ -81,12 +115,13 @@
 				<div class="d-flex justify-content-center">
 					<el-button type="primary" size="medium" @click="shipmentSDF">确认发货</el-button>
 					<el-button type="primary" size="medium" plain @click="resetSDF">重置</el-button>
+					<el-button type="info" size="medium" plain @click="sDClose">取消</el-button>
 				</div>
 			</el-form>
 		</el-dialog>
 
 		<!-- 申诉对话框 -->
-		<el-dialog title="申诉" :visible.sync="complainDV" :before-close="cDClose">
+		<el-dialog title="申诉" :visible.sync="complainDV" :before-close="cDClose" :close-on-click-modal="false">
 			<el-form :model="complainForm" :rules="complainRules" ref="complainFormRef" size="medium" label-width="100px" status-icon>
 				<el-form-item label="申诉内容" prop="content" required>
 					<el-input type="textarea" placeholder="请输入申诉内容" v-model="complainForm.content" clearable></el-input>
@@ -94,6 +129,7 @@
 				<div class="d-flex justify-content-center">
 					<el-button type="primary" size="medium" @click="complainCDF">提交申诉</el-button>
 					<el-button type="primary" size="medium" plain @click="resetCDF">重置</el-button>
+					<el-button type="info" size="medium" plain @click="cDClose">取消</el-button>
 				</div>
 			</el-form>
 		</el-dialog>
@@ -107,6 +143,9 @@ export default {
 	name: 'PromoteList',
 	data() {
 		return {
+			/* ======================== 公共 ======================== */
+			// 当前推广id
+			currentPid: null,
 			/* ======================== 推广列表 ======================== */
 			// 搜索
 			search: {
@@ -121,6 +160,14 @@ export default {
 				totalPage: 1,
 				currentPage: 1
 			},
+			/* ======================== 推广详情对话框 ======================== */
+			// 显示隐藏
+			promoteDtlDV: false,
+			// 推广详情
+			promoteDtl: {},
+			/* ======================== 审核对话框 ======================== */
+			// 显示隐藏
+			checkDV: false,
 			/* ======================== 发货对话框 ======================== */
 			// 显示隐藏
 			shipmentDV: false,
@@ -134,8 +181,6 @@ export default {
 				company: [{ required: true, message: '请选择物流公司', trigger: ['blur', 'change'] }],
 				shipmentID: [{ required: true, message: '请输入物流单号', trigger: ['blur', 'change'] }]
 			},
-			// 当前推广id
-			currentPid: null,
 			// 达人信息
 			starMsg: {
 				name: null,
@@ -189,11 +234,6 @@ export default {
 		},
 		// 搜索
 		searchPromote() {
-			if (!this.search.status) {
-				this.$message.warning('搜索条件不能为空');
-				return false;
-			}
-
 			this.getPromoteList(); // 获取推广列表
 		},
 		// 根据状态搜索
@@ -210,30 +250,13 @@ export default {
 		},
 		// 审核
 		videoCheck(e) {
-			this.$confirm('确认审核通过？', '提示', {
-				confirmButtonText: '确认',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					videoPromote
-						.merchCheck({ id: e.id, status: 1 })
-						.then(res => {
-							if (res.code === 200) {
-								this.$message.success('审核通过');
-								this.getPromoteList(); // 获取推广列表
-							} else {
-								this.$message.warning(res.msg);
-							}
-						})
-						.catch(() => {});
-				})
-				.catch(() => {});
+			this.currentPid = e.id;
+			this.checkDV = true;
 		},
 		// 发货
 		shipment(e) {
-			this.shipmentDV = true;
 			this.currentPid = e.id;
+			this.shipmentDV = true;
 			videoPromote
 				.fetchStarAddress({ id: e.did })
 				.then(res => {
@@ -247,22 +270,50 @@ export default {
 		},
 		// 申诉
 		complain(e) {
-			this.complainDV = true;
 			this.currentPid = e.id;
+			this.complainDV = true;
+		},
+		// 详情
+		detail(e) {
+			this.promoteDtl = e;
+			this.promoteDtlDV = true;
+		},
+		/* ======================== 审核对话框 ======================== */
+		// 审核通过
+		checkPass() {
+			videoPromote
+				.merchCheck({ id: this.currentPid, status: 1 })
+				.then(res => {
+					if (res.code === 200) {
+						this.$message.success('已审核通过');
+						this.checkDV = false;
+						this.getPromoteList(); // 获取推广列表
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
+		},
+		// 审核拒绝
+		checkReject() {
+			videoPromote
+				.merchCheck({ id: this.currentPid, status: 2 })
+				.then(res => {
+					if (res.code === 200) {
+						this.$message.success('已审核拒绝');
+						this.checkDV = false;
+						this.getPromoteList(); // 获取推广列表
+					} else {
+						this.$message.warning(res.msg);
+					}
+				})
+				.catch(() => {});
 		},
 		/* ======================== 发货对话框 ======================== */
 		// 关闭
-		sDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					this.$refs['shipmentFormRef'].resetFields();
-					done();
-				})
-				.catch(() => {});
+		sDClose() {
+			this.$refs['shipmentFormRef'].resetFields();
+			this.shipmentDV = false;
 		},
 		// 确认发货
 		shipmentSDF() {
@@ -294,17 +345,9 @@ export default {
 		},
 		/* ======================== 申诉对话框 ======================== */
 		// 关闭
-		cDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					this.$refs['complainFormRef'].resetFields();
-					done();
-				})
-				.catch(() => {});
+		cDClose() {
+			this.$refs['complainFormRef'].resetFields();
+			this.complainDV = false;
 		},
 		// 提交申诉
 		complainCDF() {

@@ -90,11 +90,6 @@ export default {
 		},
 		// 搜索
 		searchMessage() {
-			if (!this.search.username && !this.search.title && !this.search.content) {
-				this.$message.warning('搜索条件不能为空');
-				return false;
-			}
-
 			this.getMessageList(); // 获取消息列表
 		},
 		// 消息列表当前页切换

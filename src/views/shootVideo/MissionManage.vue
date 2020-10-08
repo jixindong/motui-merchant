@@ -83,7 +83,7 @@
 		</el-dialog>
 
 		<!-- 发布任务对话框 -->
-		<el-dialog title="发布任务" :visible.sync="publicMissionDV" :before-close="pMDClose">
+		<el-dialog title="发布任务" :visible.sync="publicMissionDV" :before-close="pMDClose" :close-on-click-modal="false">
 			<el-form :model="publicMissionForm" :rules="publicMissionRules" ref="publicMissionFormRef" size="medium" label-width="100px" status-icon>
 				<el-row :gutter="20">
 					<el-col :span="12">
@@ -93,7 +93,13 @@
 					</el-col>
 					<el-col :span="12">
 						<el-form-item label="选择宝贝" prop="commodityName" required>
-							<el-select v-model="publicMissionForm.commodityName" :placeholder="commodityByMerch.length === 0 ? '您当前没有宝贝' : '请选择宝贝'" class="w-100" filterable clearable>
+							<el-select
+								v-model="publicMissionForm.commodityName"
+								:placeholder="commodityByMerch.length === 0 ? '您当前没有宝贝' : '请选择宝贝'"
+								class="w-100"
+								filterable
+								clearable
+							>
 								<el-option label="请选择" value=""></el-option>
 								<el-option v-for="(v, i) in commodityByMerch" :key="i" :label="v.name" :value="v.id"></el-option>
 							</el-select>
@@ -116,12 +122,13 @@
 				<div class="d-flex justify-content-center">
 					<el-button type="primary" size="medium" @click="publicPMF">确认发布</el-button>
 					<el-button type="primary" size="medium" plain @click="resetPMF">重置</el-button>
+					<el-button type="info" size="medium" plain @click="pMDClose">取消</el-button>
 				</div>
 			</el-form>
 		</el-dialog>
 
 		<!-- 发货对话框 -->
-		<el-dialog title="发货" width="660px" :visible.sync="shipmentDV" :before-close="sDClose">
+		<el-dialog title="发货" width="660px" :visible.sync="shipmentDV" :before-close="sDClose" :close-on-click-modal="false">
 			<el-form :model="shipmentForm" :rules="shipmentRules" ref="shipmentFormRef" size="medium" label-width="120px" status-icon>
 				<el-form-item label="选择快递公司" prop="expressCompany" required>
 					<el-select v-model="shipmentForm.expressCompany" class="w-100" filterable clearable>
@@ -135,6 +142,7 @@
 				<div class="d-flex justify-content-center">
 					<el-button type="primary" size="medium" @click="publicSF">确认发货</el-button>
 					<el-button type="primary" size="medium" plain @click="resetSF">重置</el-button>
+					<el-button type="info" size="medium" plain @click="sDClose">取消</el-button>
 				</div>
 			</el-form>
 		</el-dialog>
@@ -243,11 +251,6 @@ export default {
 		},
 		// 搜索
 		searchMission() {
-			if (!this.search.missionName && !this.search.commodityName && !this.search.status) {
-				this.$message.warning('搜索条件不能为空');
-				return false;
-			}
-
 			this.getMIssionList(); // 获取任务列表
 		},
 		// 根据状态搜索
@@ -291,7 +294,7 @@ export default {
 		},
 		// 获取当前商家审核通过商品
 		getCommodityByMerch() {
-			fetchCommodityByMerch({type:'1'})
+			fetchCommodityByMerch({ type: '1' })
 				.then(res => {
 					if (res.code === 200) {
 						this.commodityByMerch = res.list;
@@ -309,30 +312,14 @@ export default {
 		/* ======================== 任务详情对话框 ======================== */
 		// 关闭
 		mDDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					this.missionVideoList = []; // 任务视频列表
-					done();
-				})
-				.catch(() => {});
+			this.missionVideoList = []; // 任务视频列表
+			done();
 		},
 		/* ======================== 发布任务对话框 ======================== */
 		// 关闭
-		pMDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					this.$refs['publicMissionFormRef'].resetFields();
-					done();
-				})
-				.catch(() => {});
+		pMDClose() {
+			this.$refs['publicMissionFormRef'].resetFields();
+			this.publicMissionDV = false;
 		},
 		// 确认发布
 		publicPMF() {
@@ -370,17 +357,9 @@ export default {
 		},
 		/* ======================== 发货对话框 ======================== */
 		// 关闭
-		sDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					this.$refs['shipmentFormRef'].resetFields();
-					done();
-				})
-				.catch(() => {});
+		sDClose() {
+			this.$refs['shipmentFormRef'].resetFields();
+			this.shipmentDV = false;
 		},
 		// 确认发货
 		publicSF() {

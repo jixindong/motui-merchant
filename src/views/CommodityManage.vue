@@ -102,7 +102,7 @@
 		</el-dialog>
 
 		<!-- 添加商品对话框 -->
-		<el-dialog title="添加宝贝" width="1000px" :visible.sync="commodityAddDV" :before-close="cADClose">
+		<el-dialog title="添加宝贝" width="1000px" :visible.sync="commodityAddDV" :before-close="cADClose" :close-on-click-modal="false">
 			<el-form :model="commodityAddForm" :rules="commodityAddRules" ref="commodityAddFormRef" label-width="100px" status-icon>
 				<el-row :gutter="20">
 					<el-col :span="8">
@@ -191,12 +191,13 @@
 				<div class="d-flex justify-content-center">
 					<el-button type="primary" size="medium" @click="submitCAF">确认添加</el-button>
 					<el-button type="primary" size="medium" plain @click="resetCAF">重置</el-button>
+					<el-button type="info" size="medium" plain @click="cADClose">取消</el-button>
 				</div>
 			</el-form>
 		</el-dialog>
 
 		<!-- 编辑商品对话框 -->
-		<el-dialog title="编辑宝贝" width="1000px" :visible.sync="commodityEditDV" :before-close="cEDClose">
+		<el-dialog title="编辑宝贝" width="1000px" :visible.sync="commodityEditDV" :before-close="cEDClose" :close-on-click-modal="false">
 			<el-form :model="commodityEditForm" :rules="commodityEditRules" ref="commodityEditFormRef" label-width="100px" status-icon>
 				<el-row :gutter="20">
 					<el-col :span="8">
@@ -285,6 +286,7 @@
 				<div class="d-flex justify-content-center">
 					<el-button type="primary" size="medium" @click="submitCEF">确认修改</el-button>
 					<el-button type="primary" size="medium" plain @click="resetCEF">重置</el-button>
+					<el-button type="info" size="medium" plain @click="cEDClose">取消</el-button>
 				</div>
 			</el-form>
 		</el-dialog>
@@ -432,11 +434,6 @@ export default {
 		},
 		// 搜索商品
 		searchCommodity() {
-			if (!this.search.name && !this.search.platform && !this.search.classify && !this.search.status) {
-				this.$message.warning('搜索条件不能为空');
-				return false;
-			}
-
 			this.getCommodityList(); // 获取商品列表
 		},
 		// 根据状态搜索
@@ -605,19 +602,11 @@ export default {
 			this.$message.success('输入信息已重置');
 		},
 		// 关闭
-		cADClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					this.commodityAddForm.path = null;
-					this.commodityAddForm.videoList = [];
-					this.$refs['commodityAddFormRef'].resetFields();
-					done();
-				})
-				.catch(() => {});
+		cADClose() {
+			this.commodityAddForm.path = null;
+			this.commodityAddForm.videoList = [];
+			this.$refs['commodityAddFormRef'].resetFields();
+			this.commodityAddDV = false;
 		},
 		/* ======================== 编辑商品对话框 ======================== */
 		// 上传视频过程
@@ -678,18 +667,10 @@ export default {
 			this.$message.success('输入信息已重置');
 		},
 		// 关闭
-		cEDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					this.commodityEditForm.path = null;
-					this.$refs['commodityEditFormRef'].resetFields();
-					done();
-				})
-				.catch(() => {});
+		cEDClose() {
+			this.commodityEditForm.path = null;
+			this.$refs['commodityEditFormRef'].resetFields();
+			this.commodityEditDV = false;
 		}
 	},
 	created() {

@@ -59,7 +59,7 @@
 		</div>
 
 		<!-- 发布任务对话框 -->
-		<el-dialog title="发布任务" :visible.sync="publicMissionDV" :before-close="pMDClose">
+		<el-dialog title="发布任务" :visible.sync="publicMissionDV" :before-close="pMDClose" :close-on-click-modal="false">
 			<el-form :model="publicMissionForm" :rules="publicMissionRules" ref="publicMissionFormRef" size="medium" label-width="100px" status-icon>
 				<el-row :gutter="20">
 					<el-col :span="12">
@@ -128,7 +128,6 @@
 								remote
 								clearable
 							>
-								<el-option label="请选择" value=""></el-option>
 								<el-option v-for="(item, index) in starList" :key="index" :label="item.name" :value="item.id"></el-option>
 							</el-select>
 						</el-form-item>
@@ -147,6 +146,7 @@
 				<div class="d-flex justify-content-center">
 					<el-button type="primary" size="medium" @click="publicPMF">确认发布</el-button>
 					<el-button type="primary" size="medium" plain @click="resetPMF">重置</el-button>
+					<el-button type="info" size="medium" plain @click="pMDClose">取消</el-button>
 				</div>
 			</el-form>
 		</el-dialog>
@@ -243,11 +243,6 @@ export default {
 		},
 		// 搜索
 		searchMission() {
-			if (!this.search.name && !this.search.promoteType && !this.search.status) {
-				this.$message.warning('搜索条件不能为空');
-				return false;
-			}
-
 			this.getMIssionList(); // 获取任务列表
 		},
 		// 任务列表当前页切换
@@ -257,17 +252,9 @@ export default {
 		},
 		/* ======================== 发布任务对话框 ======================== */
 		// 关闭
-		pMDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					this.$refs['publicMissionFormRef'].resetFields();
-					done();
-				})
-				.catch(() => {});
+		pMDClose() {
+			this.$refs['publicMissionFormRef'].resetFields();
+			this.publicMissionDV = false;
 		},
 		// 获取当前商家审核通过商品
 		getCommodityByMerch() {
