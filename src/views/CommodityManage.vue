@@ -149,7 +149,23 @@
 						</el-form-item>
 					</el-col>
 					<el-col>
-						<div class="mx-5 mb-3">视频</div>
+						<div class="mx-5 mb-2">图片</div>
+						<div class="px-4">
+							<el-upload
+								class="img-uploader"
+								action="http://mtht.waszn.com:8001/upload/uploadFile"
+								:headers="requestHeaders"
+								:show-file-list="false"
+								:before-upload="uploadCommodityImgBefore"
+								:on-success="addCommodityImg"
+							>
+								<img :src="commodityAddForm.path" v-if="commodityAddForm.path" />
+								<i v-else class="el-icon-plus uploader-icon"></i>
+							</el-upload>
+						</div>
+					</el-col>
+					<el-col>
+						<div class="mx-5 my-2">视频</div>
 						<div class="d-flex flex-wrap px-4">
 							<div class="video-uploader" v-for="(item, index) in commodityAddForm.videoList" :key="index">
 								<video :src="item" width="100%" controls></video>
@@ -167,22 +183,6 @@
 							>
 								<i class="el-icon-plus uploader-icon" v-if="!commodityAddForm.videoUploadPercent"></i>
 								<el-progress type="circle" :percentage="commodityAddForm.videoUploadPercent" v-else></el-progress>
-							</el-upload>
-						</div>
-					</el-col>
-					<el-col>
-						<div class="mx-5 my-3">图片</div>
-						<div class="px-4">
-							<el-upload
-								class="img-uploader"
-								action="http://mtht.waszn.com:8001/upload/uploadFile"
-								:headers="requestHeaders"
-								:show-file-list="false"
-								:before-upload="uploadCommodityImgBefore"
-								:on-success="addCommodityImg"
-							>
-								<img :src="commodityAddForm.path" v-if="commodityAddForm.path" />
-								<i v-else class="el-icon-plus uploader-icon"></i>
 							</el-upload>
 						</div>
 					</el-col>
@@ -244,7 +244,23 @@
 						</el-form-item>
 					</el-col>
 					<el-col>
-						<div class="mx-5 mb-3">视频</div>
+						<div class="mx-5 mb-2">图片</div>
+						<div class="px-4">
+							<el-upload
+								class="img-uploader"
+								action="http://mtht.waszn.com:8001/upload/uploadFile"
+								:headers="requestHeaders"
+								:show-file-list="false"
+								:before-upload="uploadCommodityImgBefore"
+								:on-success="editCommodityImg"
+							>
+								<img :src="commodityEditForm.path" v-if="commodityEditForm.path" />
+								<i class="el-icon-plus uploader-icon" v-else></i>
+							</el-upload>
+						</div>
+					</el-col>
+					<el-col>
+						<div class="mx-5 my-2">视频</div>
 						<div class="d-flex flex-wrap px-4">
 							<div class="video-uploader" v-for="(item, index) in commodityEditForm.videoList" :key="index">
 								<video :src="item" width="100%" controls></video>
@@ -262,22 +278,6 @@
 							>
 								<i class="el-icon-plus uploader-icon" v-if="!commodityEditForm.videoUploadPercent"></i>
 								<el-progress type="circle" :percentage="commodityEditForm.videoUploadPercent" v-else></el-progress>
-							</el-upload>
-						</div>
-					</el-col>
-					<el-col>
-						<div class="mx-5 my-3">图片</div>
-						<div class="px-4">
-							<el-upload
-								class="img-uploader"
-								action="http://mtht.waszn.com:8001/upload/uploadFile"
-								:headers="requestHeaders"
-								:show-file-list="false"
-								:before-upload="uploadCommodityImgBefore"
-								:on-success="editCommodityImg"
-							>
-								<img :src="commodityEditForm.path" v-if="commodityEditForm.path" />
-								<i class="el-icon-plus uploader-icon" v-else></i>
 							</el-upload>
 						</div>
 					</el-col>

@@ -35,13 +35,16 @@
 						<span class="text-primary" v-else-if="scope.row.status === 5">已寄样</span>
 						<span class="text-warning" v-else-if="scope.row.status === 6">投诉</span>
 						<span class="text-success" v-else-if="scope.row.status === 7">已下载链接</span>
+						<span class="text-danger" v-else-if="scope.row.status === 8">有效投诉</span>
 					</template>
 				</el-table-column>
 				<el-table-column label="操作" width="240" align="center">
 					<template slot-scope="scope">
 						<el-button type="success" size="mini" icon="el-icon-view" @click="videoCheck(scope.row)" v-if="scope.row.status === 0">审核</el-button>
-						<el-button type="primary" size="mini" icon="el-icon-truck" @click="shipment(scope.row)" v-else-if="scope.row.status === 4">发货</el-button>
-						<el-button type="danger" size="mini" icon="el-icon-chat-round" @click="complain(scope.row)" v-else-if="scope.row.status === 6">申诉</el-button>
+						<el-button type="primary" size="mini" icon="el-icon-truck" @click="shipment(scope.row)" v-else-if="scope.row.status === 1 && scope.row.type === 'live'">
+							发货
+						</el-button>
+						<el-button type="danger" size="mini" icon="el-icon-chat-round" @click="complain(scope.row)" v-else-if="scope.row.status === 3">申诉</el-button>
 						<el-button type="warning" size="mini" icon="el-icon-warning-outline" plain @click="detail(scope.row)">详情</el-button>
 					</template>
 				</el-table-column>
@@ -96,8 +99,8 @@
 			<el-form :model="shipmentForm" :rules="shipmentRules" ref="shipmentFormRef" size="medium" label-width="100px" status-icon>
 				<el-row :gutter="20">
 					<el-col :span="12">达人姓名：{{ starMsg.name }}</el-col>
-					<el-col :span="12">达人电话：{{ starMsg.tel }}</el-col>
-					<el-col :span="24" class="mt-4 mb-4">达人地址：{{ starMsg.addr }}</el-col>
+					<el-col :span="12">达人电话：{{ starMsg.phone }}</el-col>
+					<el-col :span="24" class="mt-4 mb-4">达人地址：{{ starMsg.address }}</el-col>
 					<el-col :span="12">
 						<el-form-item label="物流公司" prop="company" required>
 							<el-select v-model="shipmentForm.company" class="w-100" filterable clearable>
@@ -261,7 +264,7 @@ export default {
 				.fetchStarAddress({ id: e.did })
 				.then(res => {
 					if (res.code === 200) {
-						this.starMsg = res.data;
+						this.starMsg = res.detail;
 					} else {
 						this.$message.warning(res.msg);
 					}

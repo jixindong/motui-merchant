@@ -157,6 +157,9 @@ body {
 .video-uploader {
 	position: relative;
 	margin: 0 10px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	width: 178px;
 	height: 178px;
 	color: #8c939d;
@@ -185,10 +188,6 @@ body {
 }
 
 .video-uploader {
-	display: flex;
-	justify-content: center;
-	align-items: center;
-
 	&:hover {
 		color: #409eff;
 		border-color: #409eff;

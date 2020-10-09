@@ -48,18 +48,18 @@ export function merchCheck(data) {
 // 商家寄样
 export function merchSend(data) {
 	return request({
-		url: 'taskproduct/send',
+		url: 'talentapply/send',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 
 // 商家申诉
 export function merchComplaint(data) {
 	return request({
-		url: 'taskproduct/examine',
+		url: 'talentapply/examine',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 
