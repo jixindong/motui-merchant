@@ -12,9 +12,9 @@
 			</el-select>
 			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择任务状态" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option label="未开始" value="0"></el-option>
-				<el-option label="进行中" value="1"></el-option>
-				<el-option label="已完成" value="2"></el-option>
+				<el-option label="进行中" value="0"></el-option>
+				<el-option label="已结束" value="1"></el-option>
+				<el-option label="任务终止" value="2"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchMission">搜索</el-button>
 		</div>
@@ -35,14 +35,9 @@
 				<el-table-column prop="content" label="任务要求" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" align="center">
 					<template slot-scope="scope">
-						<span class="text-info" v-if="scope.row.status === 0">已申请</span>
-						<span class="text-primary" v-else-if="scope.row.status === 1">申请通过</span>
-						<span class="text-danger" v-else-if="scope.row.status === 2">申请拒绝</span>
-						<span class="text-primary" v-else-if="scope.row.status === 3">已上传链接</span>
-						<span class="text-success" v-else-if="scope.row.status === 4">已完成</span>
-						<span class="text-primary" v-else-if="scope.row.status === 5">已寄样</span>
-						<span class="text-danger" v-else-if="scope.row.status === 6">投诉</span>
-						<span class="text-success" v-else-if="scope.row.status === 7">已下载链接</span>
+						<span class="text-primary" v-if="scope.row.status === 0">进行中</span>
+						<span class="text-success" v-else-if="scope.row.status === 1">已结束</span>
+						<span class="text-warning" v-else-if="scope.row.status === 2">任务终止</span>
 					</template>
 				</el-table-column>
 			</el-table>

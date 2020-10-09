@@ -204,7 +204,7 @@ export default {
 		// 获取统计
 		getStatistics() {
 			dataCenter
-				.fetchStatistics({type:'sh'})
+				.fetchStatistics({ type: 'sh' })
 				.then(res => {
 					if (res.code === 200) {
 						this.statistics = res.home;
