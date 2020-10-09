@@ -13,7 +13,16 @@
 		<div>
 			<el-table :data="recordList" stripe border>
 				<el-table-column prop="tName" label="套餐名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="price" label="价格" show-overflow-tooltip></el-table-column>
+				<el-table-column label="价格" show-overflow-tooltip>
+					<template slot-scope="scope">
+						<span>{{ scope.row.price }}元</span>
+					</template>
+				</el-table-column>
+				<el-table-column label="原价" show-overflow-tooltip>
+					<template slot-scope="scope">
+						<span>{{ scope.row.price_total }}元</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop="create_time" label="开通时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="支付方式">
 					<template slot-scope="scope">
@@ -89,11 +98,6 @@ export default {
 		},
 		// 搜索
 		// searchRecord() {
-		// 	if (!this.search.name) {
-		// 		this.$message.warning('搜索条件不能为空');
-		// 		return false;
-		// 	}
-
 		// 	this.getSetmealRecord();// 获取开通记录列表
 		// },
 		// 开通记录列表当前页切换

@@ -374,6 +374,7 @@ export default {
 					.then(res => {
 						if (res.code === 200) {
 							this.$message.success('发货成功');
+							this.shipmentDV = false;
 							this.getMIssionList(); // 获取任务列表
 						} else {
 							this.$message.warning(res.msg);
