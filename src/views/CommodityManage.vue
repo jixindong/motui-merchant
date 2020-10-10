@@ -39,7 +39,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="lx" label="平台" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="type" label="分类" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="typeName" label="分类" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="price" label="价格" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="discount" label="优惠券" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="profit" label="佣金比例" show-overflow-tooltip></el-table-column>
@@ -74,7 +74,7 @@
 			<el-row>
 				<el-col :span="8">名称：{{ this.commodityDetail.name }}</el-col>
 				<el-col :span="8">平台：{{ this.commodityDetail.lx }}</el-col>
-				<el-col :span="8">分类：{{ this.commodityDetail.type }}</el-col>
+				<el-col :span="8">分类：{{ this.commodityDetail.typeName }}</el-col>
 				<el-col :span="8" class="my-4">价格：{{ this.commodityDetail.price }}</el-col>
 				<el-col :span="8" class="my-4">优惠券：{{ this.commodityDetail.discount }}</el-col>
 				<el-col :span="8" class="my-4">佣金比例：{{ this.commodityDetail.profit }}</el-col>
@@ -188,7 +188,7 @@
 					</el-col>
 				</el-row>
 
-				<div class="d-flex justify-content-center">
+				<div class="d-flex justify-content-center mt-2">
 					<el-button type="primary" size="medium" @click="submitCAF">确认添加</el-button>
 					<el-button type="primary" size="medium" plain @click="resetCAF">重置</el-button>
 					<el-button type="info" size="medium" plain @click="cADClose">取消</el-button>
@@ -216,8 +216,8 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="分类" prop="type" required>
-							<el-select v-model="commodityEditForm.type" clearable>
+						<el-form-item label="分类" prop="typeName" required>
+							<el-select v-model="commodityEditForm.typeName" clearable>
 								<el-option label="请选择" value=""></el-option>
 								<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item.name" :value="item.id"></el-option>
 							</el-select>
@@ -283,7 +283,7 @@
 					</el-col>
 				</el-row>
 
-				<div class="d-flex justify-content-center">
+				<div class="d-flex justify-content-center mt-2">
 					<el-button type="primary" size="medium" @click="submitCEF">确认修改</el-button>
 					<el-button type="primary" size="medium" plain @click="resetCEF">重置</el-button>
 					<el-button type="info" size="medium" plain @click="cEDClose">取消</el-button>
@@ -361,7 +361,7 @@ export default {
 			commodityEditRules: {
 				name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
 				lx: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
-				type: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
+				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
 				discount: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
 				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }],
@@ -473,8 +473,8 @@ export default {
 		},
 		// 编辑商品
 		commodityEdit(e) {
-			let { id, name, lx, type, path, price, discount, profit, address } = e;
-			this.commodityEditForm = { id, name, lx, type, path, price, discount, profit, address, videoUploadPercent: 0, videoList: [] };
+			let { id, name, lx, typeName, path, price, discount, profit, address } = e;
+			this.commodityEditForm = { id, name, lx, typeName, path, price, discount, profit, address, videoUploadPercent: 0, videoList: [] };
 			commodity
 				.fetchCommodityVideoList({ id: e.id })
 				.then(res => {

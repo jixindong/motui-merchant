@@ -6,9 +6,11 @@
 				<img :src="baseMsg.avatar" class="avatar" v-if="baseMsg && baseMsg.avatar" />
 				<img src="@/assets/images/avatar.png" class="avatar" v-else />
 				<div>
-					<div class="d-flex align-items-center">
-						<span class="mr-2 text-2" v-if="baseMsg">{{ baseMsg.name }}</span>
-						<span class="nameplate" v-if="baseMsg">{{ baseMsg.talent || '未开通' }}</span>
+					<div class="d-flex align-items-start">
+						<span class="mr-4 text-2" v-if="baseMsg && baseMsg.name">{{ baseMsg.name }}</span>
+						<span class="mr-4 text-2" v-else>未知商家</span>
+						<span class="nameplate" v-if="baseMsg && baseMsg.talent">{{ baseMsg.talent }}</span>
+						<span class="nameplate-gray" v-else>未开通</span>
 					</div>
 					<div class="mt-3">
 						<span class="mr-4">
@@ -32,25 +34,23 @@
 		<div class="d-flex flex-wrap my-4 p-4 card">
 			<div class="headline mb-4 w-100">推广统计</div>
 			<div class="w-33">
-				<el-tag type="warning" size="small">已申请</el-tag>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '0' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
-					{{ statistics.tgtj.dff }}
-				</router-link>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '0' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+				<el-tag type="warning" size="small">待分发</el-tag>
+				<div class="mt-4 text-info text-2 text-center" v-if="statistics">{{ statistics.tgtj.dff }}</div>
+				<div class="mt-4 text-info text-2 text-center" v-else>0</div>
 			</div>
 			<div class="w-33">
-				<el-tag size="small">申请通过</el-tag>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+				<el-tag size="small">待审核</el-tag>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 0 } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 					{{ statistics.tgtj.dsh }}
 				</router-link>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '1' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 0 } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 			</div>
 			<div class="w-33">
-				<el-tag type="success" size="small">已寄样</el-tag>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '5' } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
+				<el-tag type="success" size="small">分发完成</el-tag>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 4 } }" class="d-block mt-4 text-info text-2 text-center" v-if="statistics">
 					{{ statistics.tgtj.ffwc }}
 				</router-link>
-				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: '5' } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
+				<router-link :to="{ name: 'vpPromoteList', params: { promoteStatus: 4 } }" class="d-block mt-4 text-info text-2 text-center" v-else>0</router-link>
 			</div>
 		</div>
 
@@ -266,6 +266,13 @@ export default {
 		border: 1px solid;
 		border-radius: 2px;
 		animation: hue 12s infinite linear;
+	}
+	.nameplate-gray {
+		padding: 1px 3px;
+		color: #666;
+		font-size: 14px;
+		border: 1px solid;
+		border-radius: 2px;
 	}
 }
 </style>

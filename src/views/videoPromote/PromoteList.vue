@@ -7,14 +7,15 @@
 		<div class="d-flex my-4">
 			<el-select size="medium" class="mr-4 w-25" v-model="search.status" placeholder="请选择推广状态" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option label="已申请" value="0"></el-option>
-				<el-option label="申请通过" value="1"></el-option>
-				<el-option label="申请拒绝" value="2"></el-option>
-				<el-option label="已上传链接" value="3"></el-option>
-				<el-option label="已完成" value="4"></el-option>
-				<el-option label="已寄样" value="5"></el-option>
-				<el-option label="投诉" value="6"></el-option>
-				<el-option label="已下载链接" value="7"></el-option>
+				<el-option label="待审核" :value="0"></el-option>
+				<el-option label="申请通过" :value="1"></el-option>
+				<el-option label="申请拒绝" :value="2"></el-option>
+				<el-option label="已上传链接" :value="3"></el-option>
+				<el-option label="分发完成" :value="4"></el-option>
+				<el-option label="已寄样" :value="5"></el-option>
+				<el-option label="投诉" :value="6"></el-option>
+				<el-option label="已下载链接" :value="7"></el-option>
+				<el-option label="有效投诉" :value="8"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchPromote">搜索</el-button>
 		</div>
@@ -27,11 +28,11 @@
 				<el-table-column prop="did" label="达人id" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" align="center">
 					<template slot-scope="scope">
-						<span class="text-info" v-if="scope.row.status === 0">已申请</span>
+						<span class="text-info" v-if="scope.row.status === 0">待审核</span>
 						<span class="text-primary" v-else-if="scope.row.status === 1">申请通过</span>
 						<span class="text-danger" v-else-if="scope.row.status === 2">申请拒绝</span>
 						<span class="text-primary" v-else-if="scope.row.status === 3">已上传链接</span>
-						<span class="text-success" v-else-if="scope.row.status === 4">已完成</span>
+						<span class="text-success" v-else-if="scope.row.status === 4">分发完成</span>
 						<span class="text-primary" v-else-if="scope.row.status === 5">已寄样</span>
 						<span class="text-warning" v-else-if="scope.row.status === 6">投诉</span>
 						<span class="text-success" v-else-if="scope.row.status === 7">已下载链接</span>
@@ -70,11 +71,11 @@
 				<el-col :span="12" class="mt-2">达人id：{{ this.promoteDtl.did }}</el-col>
 				<el-col :span="12" class="mt-2">
 					<span>任务状态：</span>
-					<span class="text-info" v-if="this.promoteDtl.status === 0">已申请</span>
+					<span class="text-info" v-if="this.promoteDtl.status === 0">待审核</span>
 					<span class="text-primary" v-else-if="this.promoteDtl.status === 1">申请通过</span>
 					<span class="text-danger" v-else-if="this.promoteDtl.status === 2">申请拒绝</span>
 					<span class="text-primary" v-else-if="this.promoteDtl.status === 3">已上传链接</span>
-					<span class="text-success" v-else-if="this.promoteDtl.status === 4">已完成</span>
+					<span class="text-success" v-else-if="this.promoteDtl.status === 4">分发完成</span>
 					<span class="text-primary" v-else-if="this.promoteDtl.status === 5">已寄样</span>
 					<span class="text-warning" v-else-if="this.promoteDtl.status === 6">投诉</span>
 					<span class="text-success" v-else-if="this.promoteDtl.status === 7">已下载链接</span>
@@ -241,7 +242,7 @@ export default {
 		},
 		// 根据状态搜索
 		searchPromoteByStatus() {
-			if (this.$route.params.promoteStatus) {
+			if (this.$route.params.promoteStatus !== '') {
 				this.search.status = this.$route.params.promoteStatus;
 			}
 			this.getPromoteList(); // 获取推广列表

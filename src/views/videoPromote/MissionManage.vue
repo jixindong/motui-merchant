@@ -253,7 +253,7 @@ export default {
 		},
 		// 获取当前商家审核通过商品
 		getCommodityByMerch() {
-			fetchCommodityByMerch({ type: '1' })
+			fetchCommodityByMerch()
 				.then(res => {
 					if (res.code === 200) {
 						this.commodityByMerch = res.list;

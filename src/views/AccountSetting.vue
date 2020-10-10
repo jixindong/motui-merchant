@@ -7,9 +7,11 @@
 		<div class="baseMsg">
 			<img :src="baseMsg.avatar" class="avatar" v-if="baseMsg.avatar" />
 			<div>
-				<div class="d-flex align-items-center">
-					<span class="mr-2 text-2">{{ baseMsg.name }}</span>
-					<span class="nameplate">{{ baseMsg.talent || '未开通' }}</span>
+				<div class="d-flex align-items-start">
+					<span class="mr-4 text-2" v-if="baseMsg && baseMsg.name">{{ baseMsg.name }}</span>
+					<span class="mr-4 text-2" v-else>未知商家</span>
+					<span class="nameplate" v-if="baseMsg && baseMsg.talent">{{ baseMsg.talent }}</span>
+					<span class="nameplate-gray" v-else>未开通</span>
 				</div>
 				<div class="mt-3">
 					<span class="mr-4">
@@ -68,6 +70,13 @@ export default {
 		border: 1px solid;
 		border-radius: 2px;
 		animation: hue 12s infinite linear;
+	}
+	.nameplate-gray {
+		padding: 1px 3px;
+		color: #666;
+		font-size: 14px;
+		border: 1px solid;
+		border-radius: 2px;
 	}
 }
 </style>
