@@ -134,7 +134,7 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="优惠券" prop="discount" required>
+						<el-form-item label="优惠券" prop="discount">
 							<el-input type="text" placeholder="请输入优惠券" v-model="commodityAddForm.discount" clearable></el-input>
 						</el-form-item>
 					</el-col>
@@ -144,7 +144,7 @@
 						</el-form-item>
 					</el-col>
 					<el-col>
-						<el-form-item label="宝贝链接" prop="address" required>
+						<el-form-item label="宝贝链接" prop="address">
 							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityAddForm.address" clearable></el-input>
 						</el-form-item>
 					</el-col>
@@ -229,7 +229,7 @@
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
-						<el-form-item label="优惠券" prop="discount" required>
+						<el-form-item label="优惠券" prop="discount">
 							<el-input type="text" placeholder="请输入优惠券" v-model="commodityEditForm.discount" clearable></el-input>
 						</el-form-item>
 					</el-col>
@@ -239,7 +239,7 @@
 						</el-form-item>
 					</el-col>
 					<el-col>
-						<el-form-item label="宝贝链接" prop="address" required>
+						<el-form-item label="宝贝链接" prop="address">
 							<el-input type="text" placeholder="请输入宝贝链接" v-model="commodityEditForm.address" clearable></el-input>
 						</el-form-item>
 					</el-col>
@@ -348,9 +348,7 @@ export default {
 				lx: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
 				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
-				discount: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
-				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }],
-				address: [{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }]
+				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
 			},
 			/* ======================== 编辑商品对话框 ======================== */
 			// 显示隐藏
@@ -363,9 +361,7 @@ export default {
 				lx: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
 				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
-				discount: [{ required: true, message: '请输入优惠券', trigger: ['blur', 'change'] }],
-				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }],
-				address: [{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }]
+				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
 			}
 		};
 	},
