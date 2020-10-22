@@ -24,9 +24,14 @@
 		<div>
 			<el-table :data="promoteList" stripe border>
 				<el-table-column prop="productName" label="宝贝名称" show-overflow-tooltip></el-table-column>
+				<el-table-column label="宝贝视频" show-overflow-tooltip>
+					<template slot-scope="scope">
+						<el-link type="primary" :href="scope.row.video | videoUrl" target="_blank">{{ scope.row.video | videoTitle }}</el-link>
+					</template>
+				</el-table-column>
 				<el-table-column prop="dName" label="达人名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="did" label="达人id" show-overflow-tooltip></el-table-column>
-				<el-table-column label="状态" align="center">
+				<el-table-column label="状态" width="120" align="center">
 					<template slot-scope="scope">
 						<span class="text-info" v-if="scope.row.status === 0">待审核</span>
 						<span class="text-primary" v-else-if="scope.row.status === 1">申请通过</span>
@@ -39,7 +44,7 @@
 						<span class="text-danger" v-else-if="scope.row.status === 8">有效投诉</span>
 					</template>
 				</el-table-column>
-				<el-table-column label="操作" width="240" align="center">
+				<el-table-column label="操作" width="120" align="center">
 					<template slot-scope="scope">
 						<el-button type="success" size="mini" icon="el-icon-view" @click="videoCheck(scope.row)" v-if="scope.row.status === 0">审核</el-button>
 						<el-button type="primary" size="mini" icon="el-icon-truck" @click="shipment(scope.row)" v-else-if="scope.row.status === 1 && scope.row.type === 'live'">
@@ -217,6 +222,22 @@ export default {
 				page: this.promoteListPage.currentPage,
 				limit: this.promoteListPage.pageSize
 			};
+		}
+	},
+	filters: {
+		videoTitle(value) {
+			if (!value) {
+				return '';
+			}
+
+			return value.slice(0, value.indexOf('http'));
+		},
+		videoUrl(value) {
+			if (!value) {
+				return '';
+			}
+
+			return value.slice(value.indexOf('http'), value.lastIndexOf('/') + 1);
 		}
 	},
 	methods: {

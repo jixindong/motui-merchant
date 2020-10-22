@@ -48,17 +48,27 @@
 
 		<!-- 消息详情对话框 -->
 		<el-dialog title="详情" :visible="messageDetailDV" :before-close="mDDClose">
-			<el-row>
-				<el-col>标题：{{ messageDetail.title }}</el-col>
-				<el-col :span="10" class="my-2">发件人：{{ messageDetail.createName }}</el-col>
-				<el-col :span="8" class="my-2">发件时间：{{ messageDetail.createTime }}</el-col>
-				<el-col :span="6" class="my-2">
-					<span>消息类型：</span>
-					<span class="text-primary" v-if="messageDetail.type === 'pt'">平台消息</span>
-					<span class="text-success" v-else>个人消息</span>
-				</el-col>
-				<el-col>内容：{{ messageDetail.content }}</el-col>
-			</el-row>
+			<table class="detailTable">
+				<tr>
+					<th>标题</th>
+					<td>{{ messageDetail.title }}</td>
+					<th>发件人</th>
+					<td>{{ messageDetail.createName }}</td>
+				</tr>
+				<tr>
+					<th>发件时间</th>
+					<td>{{ messageDetail.createTime }}</td>
+					<th>消息类型</th>
+					<td>
+						<span class="text-primary" v-if="messageDetail.type === 'pt'">平台消息</span>
+						<span class="text-success" v-else>个人消息</span>
+					</td>
+				</tr>
+				<tr>
+					<th>内容</th>
+					<td colspan="3">{{ messageDetail.content }}</td>
+				</tr>
+			</table>
 		</el-dialog>
 	</div>
 </template>

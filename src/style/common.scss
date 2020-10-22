@@ -1,9 +1,9 @@
 /* ======================== Default Style ======================== */
+
 * {
 	margin: 0;
 	padding: 0;
 	box-sizing: border-box;
-
 	&::selection {
 		color: #fff;
 		background-color: #f0c9cf;
@@ -12,7 +12,6 @@
 
 a {
 	text-decoration: none;
-
 	&:hover {
 		opacity: 0.9;
 	}
@@ -35,14 +34,16 @@ body {
 
 ::-webkit-scrollbar-thumb {
 	background-color: #49b1f5;
-	background-image: -webkit-linear-gradient(45deg,
-			rgba(255, 255, 255, 0.4) 25%,
-			transparent 25%,
-			transparent 50%,
-			rgba(255, 255, 255, 0.4) 50%,
-			rgba(255, 255, 255, 0.4) 75%,
-			transparent 75%,
-			transparent);
+	background-image: -webkit-linear-gradient(
+		45deg,
+		rgba(255, 255, 255, 0.4) 25%,
+		transparent 25%,
+		transparent 50%,
+		rgba(255, 255, 255, 0.4) 50%,
+		rgba(255, 255, 255, 0.4) 75%,
+		transparent 75%,
+		transparent
+	);
 	border-radius: 32px;
 }
 
@@ -51,6 +52,7 @@ body {
 }
 
 /* ======================== Defined Style ======================== */
+
 // 文字颜色
 .text-primary {
 	color: #409eff;
@@ -86,7 +88,6 @@ body {
 	from {
 		filter: hue-rotate(0);
 	}
-
 	to {
 		filter: hue-rotate(360deg);
 	}
@@ -136,7 +137,6 @@ body {
 	color: #333;
 	font-size: 20px;
 	transition: margin 0.5s ease-in-out;
-
 	&::before {
 		position: absolute;
 		left: 0;
@@ -145,10 +145,26 @@ body {
 		content: '';
 		background-color: #0094ff;
 	}
-
 	&:hover {
 		margin-left: 24px;
 		opacity: 0.7;
+	}
+}
+
+// 详情表格
+.detailTable {
+	width: 100%;
+	border-collapse: collapse;
+	th {
+		padding: 12px 4px;
+		color: #909399;
+		white-space: nowrap;
+		background-color: #f6fbff;
+		border: 1px solid #ebeef5;
+	}
+	td {
+		padding: 12px 6px;
+		border: 1px solid #ebeef5;
 	}
 }
 
@@ -156,7 +172,7 @@ body {
 .img-uploader,
 .video-uploader {
 	position: relative;
-	margin: 0 10px;
+	margin: 10px;
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -166,57 +182,45 @@ body {
 	border: 1px dashed #d9d9d9;
 	border-radius: 6px;
 	cursor: pointer;
-
+	&:hover .delete-icon {
+		visibility: visible;
+	}
+	img,
+	video {
+		width: 100%;
+		max-height: 100%;
+	}
 	.uploader-icon {
 		width: 178px;
 		line-height: 178px;
 		font-size: 28px;
 		text-align: center;
 	}
-}
-
-.img-uploader {
-	&:hover {
-		color: #67c23a;
-		border-color: #67c23a;
-	}
-
-	img {
-		width: 100%;
-		max-width: 100%;
-	}
-}
-
-.video-uploader {
-	&:hover {
-		color: #409eff;
-		border-color: #409eff;
-
-		.delete-icon {
-			visibility: visible;
-		}
-	}
-
-	video {
-		width: 100%;
-		max-height: 100%;
-	}
-
 	.delete-icon {
 		position: absolute;
 		top: -5px;
 		right: -5px;
 		visibility: hidden;
-		color: #666;
+		color: #cef8ff;
 		font-size: 24px;
-
 		&:hover {
 			color: #f56c6c;
 		}
 	}
 }
 
+.img-uploader:hover {
+	color: #67c23a;
+	border-color: #67c23a;
+}
+
+.video-uploader:hover {
+	color: #409eff;
+	border-color: #409eff;
+}
+
 /* ======================== Tool Class ======================== */
+
 // Display
 .d-none {
 	display: none !important;

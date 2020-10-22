@@ -77,6 +77,6 @@ export function fetchCommodityDetailByLink(data) {
 	return request({
 		url: 'product/sync',
 		method: 'POST',
-		data
+		params: data
 	});
 }

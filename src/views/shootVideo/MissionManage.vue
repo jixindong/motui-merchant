@@ -56,20 +56,18 @@
 
 		<!-- 任务详情对话框 -->
 		<el-dialog title="任务详情" :visible.sync="missionDetailDV" :before-close="mDDClose">
-			<el-row :gutter="20">
-				<el-col :span="12">
-					<span>收货人姓名：</span>
-					<span v-if="receivingMsg">{{ receivingMsg.shr_name }}</span>
-				</el-col>
-				<el-col :span="12">
-					<span>收货人电话：</span>
-					<span v-if="receivingMsg">{{ receivingMsg.shr_phone }}</span>
-				</el-col>
-				<el-col class="my-2">
-					<span>收货人地址：</span>
-					<span v-if="receivingMsg">{{ receivingMsg.shr_address }}</span>
-				</el-col>
-			</el-row>
+			<table class="detailTable">
+				<tr>
+					<th>收货人姓名</th>
+					<td>{{ receivingMsg.shr_name }}</td>
+					<th>收货人电话</th>
+					<td>{{ receivingMsg.shr_phone }}</td>
+				</tr>
+				<tr>
+					<th>收货人地址</th>
+					<td colspan="3">{{ receivingMsg.shr_address }}</td>
+				</tr>
+			</table>
 
 			<div class="mt-2">
 				<el-table :data="missionVideoList" stripe border>
