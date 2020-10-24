@@ -44,7 +44,7 @@
 						<span class="text-danger" v-else-if="scope.row.status === 8">有效投诉</span>
 					</template>
 				</el-table-column>
-				<el-table-column label="操作" width="120" align="center">
+				<el-table-column label="操作" width="200" align="center">
 					<template slot-scope="scope">
 						<el-button type="success" size="mini" icon="el-icon-view" @click="videoCheck(scope.row)" v-if="scope.row.status === 0">审核</el-button>
 						<el-button type="primary" size="mini" icon="el-icon-truck" @click="shipment(scope.row)" v-else-if="scope.row.status === 1 && scope.row.type === 'live'">
