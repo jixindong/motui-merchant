@@ -509,7 +509,7 @@ export default {
 		},
 		// 商品列表当前页切换
 		commodityListCurrentChange(currentPage) {
-			this.missionListPage.currentPage = currentPage;
+			this.commodityListPage.currentPage = currentPage;
 			this.getCommodityList(); // 获取商品列表
 		},
 		// 查看商品详情
@@ -685,6 +685,7 @@ export default {
 		// 重置
 		resetCAF() {
 			this.commodityAddForm.path = null;
+			this.commodityAddForm.imgList = [];
 			this.commodityAddForm.videoList = [];
 			this.$refs['commodityAddFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
@@ -692,6 +693,7 @@ export default {
 		// 关闭
 		cADClose() {
 			this.commodityAddForm.path = null;
+			this.commodityAddForm.imgList = [];
 			this.commodityAddForm.videoList = [];
 			this.$refs['commodityAddFormRef'].resetFields();
 			this.commodityAddDV = false;
@@ -778,13 +780,11 @@ export default {
 		},
 		// 重置
 		resetCEF() {
-			this.commodityEditForm.path = null;
 			this.$refs['commodityEditFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
 		},
 		// 关闭
 		cEDClose() {
-			this.commodityEditForm.path = null;
 			this.$refs['commodityEditFormRef'].resetFields();
 			this.commodityEditDV = false;
 		}
