@@ -203,31 +203,21 @@ export default {
 	methods: {
 		// 获取统计
 		getStatistics() {
-			dataCenter
-				.fetchStatistics({ type: 'sh' })
-				.then(res => {
-					if (res.code === 200) {
-						this.statistics = res.home;
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			dataCenter.fetchStatistics({ type: 'sh' }).then(res => {
+				if (res.code === 200) {
+					this.statistics = res.home;
+				}
+			});
 		},
 		// 获取订单列表
 		getOrderList() {
-			dataCenter
-				.fetchOrderList({ type: 'sh' })
-				.then(res => {
-					if (res.code === 200) {
-						this.orderList = res.page.list; // 订单列表
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.page;
-						this.orderListPage = { total, pageSize, totalPage, currentPage }; // 订单列表分页
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			dataCenter.fetchOrderList({ type: 'sh' }).then(res => {
+				if (res.code === 200) {
+					this.orderList = res.page.list; // 订单列表
+					let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.page;
+					this.orderListPage = { total, pageSize, totalPage, currentPage }; // 订单列表分页
+				}
+			});
 		},
 		// 订单列表当前页切换
 		orderListCurrentChange(currentPage) {

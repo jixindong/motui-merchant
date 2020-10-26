@@ -160,40 +160,27 @@ export default {
 	methods: {
 		// 获取基本信息
 		getBaseMsg() {
-			merch
-				.fetchMerchBaseMsg({ id: '' })
-				.then(res => {
-					if (res.code === 200) {
-						this.$store.commit('handleBaseMsg', res.detail);
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			merch.fetchMerchBaseMsg({ id: '' }).then(res => {
+				if (res.code === 200) {
+					this.$store.commit('handleBaseMsg', res.detail);
+				}
+			});
 		},
 		// 获取商品分类
 		getCommodityClassify() {
-			fetchCommodityClassify()
-				.then(res => {
-					if (res.code === 200) {
-						this.$store.commit('handleCommodityClassify', res.list);
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			fetchCommodityClassify().then(res => {
+				if (res.code === 200) {
+					this.$store.commit('handleCommodityClassify', res.list);
+				}
+			});
 		},
 		// 获取快递公司列表
 		getExpressCompany() {
-			fetchExpressCompany()
-				.then(res => {
-					if (res.code === 200) {
-						this.$store.commit('handleExpressCompany', res.list);
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+			fetchExpressCompany().then(res => {
+				if (res.code === 200) {
+					this.$store.commit('handleExpressCompany', res.list);
+				}
+			});
 		},
 		// 设置
 		setting(e) {
@@ -226,19 +213,16 @@ export default {
 						password: this.iPassword.iOPassword,
 						newPassword: this.iPassword.iNPassword
 					};
-					merch
-						.handlePassword(data)
-						.then(res => {
-							if (res.code === 200) {
-								localStorage.removeItem('token');
-								this.modifyPasswordDV = false; // 修改密码对话框 隐藏
-								this.$message.success('修改密码成功，请重新登录');
-								this.$router.push({ name: 'login' });
-							} else {
-								this.$message.warning(res.msg);
-							}
-						})
-						.catch(() => {});
+					merch.handlePassword(data).then(res => {
+						if (res.code === 200) {
+							localStorage.removeItem('token');
+							this.modifyPasswordDV = false; // 修改密码对话框 隐藏
+							this.$message.success('修改密码成功，请重新登录');
+							this.$router.push({ name: 'login' });
+						} else {
+							this.$message.warning(res.msg);
+						}
+					});
 				}
 			});
 		},
@@ -253,12 +237,10 @@ export default {
 				confirmButtonText: '关闭',
 				cancelButtonText: '取消',
 				type: 'info'
-			})
-				.then(() => {
-					this.$refs['passwordRef'].resetFields();
-					done();
-				})
-				.catch(() => {});
+			}).then(() => {
+				this.$refs['passwordRef'].resetFields();
+				done();
+			});
 		}
 	},
 	created() {

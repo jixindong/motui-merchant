@@ -59,13 +59,19 @@
 			<table class="detailTable">
 				<tr>
 					<th>收货人姓名</th>
-					<td>{{ receivingMsg.shr_name }}</td>
+					<td>
+						<span v-if="receivingMsg">{{ receivingMsg.shr_name }}</span>
+					</td>
 					<th>收货人电话</th>
-					<td>{{ receivingMsg.shr_phone }}</td>
+					<td>
+						<span v-if="receivingMsg">{{ receivingMsg.shr_phone }}</span>
+					</td>
 				</tr>
 				<tr>
 					<th>收货人地址</th>
-					<td colspan="3">{{ receivingMsg.shr_address }}</td>
+					<td colspan="3">
+						<span v-if="receivingMsg">{{ receivingMsg.shr_address }}</span>
+					</td>
 				</tr>
 			</table>
 

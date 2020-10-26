@@ -39,7 +39,7 @@ export function fetchPromoteList(data) {
 // 商家审核
 export function merchCheck(data) {
 	return request({
-		url: 'talentapply/examine',
+		url: 'talentapply/pass',
 		method: 'POST',
 		params: data
 	});
