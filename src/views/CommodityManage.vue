@@ -81,7 +81,7 @@
 			<table class="detailTable">
 				<tr>
 					<th>名称</th>
-					<td colspan="9">{{ this.commodityDetail.name }}</td>
+					<td colspan="5">{{ this.commodityDetail.name }}</td>
 				</tr>
 				<tr>
 					<th>平台</th>
@@ -95,10 +95,14 @@
 					<td>{{ this.commodityDetail.typeName }}</td>
 					<th>价格</th>
 					<td>{{ this.commodityDetail.price }}</td>
+				</tr>
+				<tr>
 					<th>优惠券</th>
 					<td>{{ this.commodityDetail.discount }}</td>
 					<th>佣金比例</th>
 					<td>{{ this.commodityDetail.profit }}</td>
+					<th>添加时间</th>
+					<td>{{ this.commodityDetail.createTime }}</td>
 				</tr>
 				<tr>
 					<th>图片</th>
@@ -119,10 +123,10 @@
 				<el-table :data="commodityVideoList" stripe border>
 					<el-table-column label="视频链接" show-overflow-tooltip>
 						<template slot-scope="scope">
-							<video :src="scope.row.video" class="mw-100" controls></video>
+							<video :src="scope.row.video" class="commodityVideo" controls></video>
 						</template>
 					</el-table-column>
-					<el-table-column prop="number" label="播放量" width="100" align="center" show-overflow-tooltip></el-table-column>
+					<el-table-column prop="number" label="下载次数" width="100" align="center" show-overflow-tooltip></el-table-column>
 				</el-table>
 			</div>
 		</el-dialog>
@@ -794,3 +798,11 @@ export default {
 	}
 };
 </script>
+
+<style scoped>
+/* 商品视频 */
+.commodityVideo {
+	width: 100%;
+	height: 400px;
+}
+</style>

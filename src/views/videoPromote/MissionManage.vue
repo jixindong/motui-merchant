@@ -33,6 +33,7 @@
 				</el-table-column>
 				<el-table-column prop="number" label="推广数量" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="content" label="任务要求" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="createTime" label="时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" align="center">
 					<template slot-scope="scope">
 						<span class="text-primary" v-if="scope.row.status === 0">进行中</span>

@@ -42,8 +42,16 @@
 		<div>
 			<el-table :data="setmealList" stripe border>
 				<el-table-column prop="name" label="套餐名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="priceTotal" label="原价" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="price" label="优惠价" show-overflow-tooltip></el-table-column>
+				<el-table-column label="原价">
+					<template slot-scope="scope">
+						<span>{{ scope.row.priceTotal }}元</span>
+					</template>
+				</el-table-column>
+				<el-table-column label="优惠价">
+					<template slot-scope="scope">
+						<span>{{ scope.row.price }}元</span>
+					</template>
+				</el-table-column>
 				<el-table-column prop="video" label="短视频推广数"></el-table-column>
 				<el-table-column prop="shot" label="视频制作数"></el-table-column>
 				<el-table-column prop="live" label="直播场次"></el-table-column>
@@ -57,7 +65,28 @@
 
 		<!-- 支付方式对话框 -->
 		<el-dialog title="支付方式" :visible.sync="choicePayTypeDV" :before-close="choicePayTypeDClose">
-			<div class="text-1">选择支付方式：{{ payType }}</div>
+			<table class="detailTable">
+				<tr>
+					<th>已选套餐名称</th>
+					<td colspan="5">{{ currentSeatmeal.name }}</td>
+				</tr>
+				<tr>
+					<th>原价</th>
+					<td colspan="2">{{ currentSeatmeal.priceTotal }}元</td>
+					<th>优惠价</th>
+					<td colspan="2">{{ currentSeatmeal.price }}元</td>
+				</tr>
+				<tr>
+					<th>短视频推广数</th>
+					<td>{{ currentSeatmeal.video }}</td>
+					<th>视频制作数</th>
+					<td>{{ currentSeatmeal.shot }}</td>
+					<th>直播场次</th>
+					<td>{{ currentSeatmeal.live }}</td>
+				</tr>
+			</table>
+
+			<div class="mt-4 text-1">选择支付方式：{{ payType }}</div>
 			<div class="payTab">
 				<div :class="['item', { active: payTypeSign === 'zfb' }]" @click="payTypeSign = 'zfb'">
 					<img src="@/assets/images/Alipay.png" />
@@ -75,8 +104,29 @@
 		<el-dialog title="支付宝支付" width="360px" :visible.sync="AlipayDV" :before-close="AlipayDClose"><div class="text-1">正在支付...</div></el-dialog>
 
 		<!-- 微信支付对话框 -->
-		<el-dialog title="微信支付" width="360px" :visible.sync="WeChatPayDV" :before-close="WeChatPayDClose">
-			<qriously class="d-flex justify-content-center" :size="200" :value="WeChatPayLink"></qriously>
+		<el-dialog title="微信支付" width="720px" :visible.sync="WeChatPayDV" :before-close="WeChatPayDClose">
+			<table class="detailTable">
+				<tr>
+					<th>已选套餐名称</th>
+					<td colspan="5">{{ currentSeatmeal.name }}</td>
+				</tr>
+				<tr>
+					<th>原价</th>
+					<td colspan="2">{{ currentSeatmeal.priceTotal }}元</td>
+					<th>优惠价</th>
+					<td colspan="2">{{ currentSeatmeal.price }}元</td>
+				</tr>
+				<tr>
+					<th>短视频推广数</th>
+					<td>{{ currentSeatmeal.video }}</td>
+					<th>视频制作数</th>
+					<td>{{ currentSeatmeal.shot }}</td>
+					<th>直播场次</th>
+					<td>{{ currentSeatmeal.live }}</td>
+				</tr>
+			</table>
+
+			<qriously class="d-flex justify-content-center mt-4" :size="240" :value="WeChatPayLink"></qriously>
 		</el-dialog>
 	</div>
 </template>
@@ -105,7 +155,7 @@ export default {
 			// 显示隐藏
 			choicePayTypeDV: false,
 			// 当前选择套餐
-			currentSeatmeal: null,
+			currentSeatmeal: {},
 			// 支付方式标识
 			payTypeSign: '',
 			// 支付标识

@@ -58,6 +58,31 @@
 		<el-dialog title="任务详情" :visible.sync="missionDetailDV" :before-close="mDDClose">
 			<table class="detailTable">
 				<tr>
+					<th>任务名称</th>
+					<td>{{ missionDetail.name }}</td>
+					<th>任务状态</th>
+					<td>
+						<span class="text-warning" v-if="missionDetail.status === '0'">待发货</span>
+						<span class="text-primary" v-else-if="missionDetail.status === '1'">已发货</span>
+						<span class="text-primary" v-else-if="missionDetail.status === '2'">已上传</span>
+						<span class="text-success" v-else>任务结束</span>
+					</td>
+				</tr>
+				<tr>
+					<th>任务发布时间</th>
+					<td>{{ missionDetail.createTime }}</td>
+					<th>发货时间</th>
+					<td>{{ missionDetail.updateTime }}</td>
+				</tr>
+				<tr>
+					<th>宝贝名称</th>
+					<td colspan="3">{{ missionDetail.productName }}</td>
+				</tr>
+				<tr>
+					<th>拍摄要求</th>
+					<td colspan="3">{{ missionDetail.content }}</td>
+				</tr>
+				<tr>
 					<th>收货人姓名</th>
 					<td>
 						<span v-if="receivingMsg">{{ receivingMsg.shr_name }}</span>
@@ -79,7 +104,7 @@
 				<el-table :data="missionVideoList" stripe border>
 					<el-table-column label="视频地址" show-overflow-tooltip>
 						<template slot-scope="scope">
-							<el-link :href="scope.row.video" type="primary">{{ scope.row.video }}</el-link>
+							<el-link :href="scope.row.video" type="primary" target="_blank">{{ scope.row.video }}</el-link>
 						</template>
 					</el-table-column>
 				</el-table>
@@ -182,6 +207,8 @@ export default {
 			/* ======================== 任务详情对话框 ======================== */
 			// 显示隐藏
 			missionDetailDV: false,
+			// 任务详情
+			missionDetail: {},
 			// 任务视频列表
 			missionVideoList: [],
 			/* ======================== 发布任务对话框 ======================== */
@@ -265,18 +292,16 @@ export default {
 			this.getMIssionList(); // 获取任务列表
 		},
 		// 查看任务详情
-		viewMissionDetail(e) {
-			missionManage
-				.fetchVideoByMission({ id: e.id })
-				.then(res => {
-					if (res.code === 200) {
-						this.missionVideoList = res.list; // 任务视频列表
-						this.missionDetailDV = true;
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+		async viewMissionDetail(e) {
+			this.missionDetail = e;
+			let res = await missionManage.fetchVideoByMission({ id: e.id });
+
+			if (res.code !== 200) {
+				return this.$message.warning(res.msg);
+			}
+
+			this.missionVideoList = res.list; // 任务视频列表
+			this.missionDetailDV = true;
 		},
 		// 任务列表当前页切换
 		missionListCurrentChange(currentPage) {

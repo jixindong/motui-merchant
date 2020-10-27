@@ -39,7 +39,7 @@ request.interceptors.response.use(
 			});
 			localStorage.removeItem('token');
 			router.replace({
-				path: 'login'
+				path: '/login'
 			});
 		} else {
 			return response.data;
