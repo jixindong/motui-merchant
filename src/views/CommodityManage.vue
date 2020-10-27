@@ -77,7 +77,7 @@
 		</div>
 
 		<!-- 商品详情对话框 -->
-		<el-dialog title="宝贝详情" width="1000px" :visible.sync="commodityDetailDV">
+		<el-dialog title="宝贝详情" width="1000px" :visible.sync="commodityDetailDV" :before-close="cDDClose">
 			<table class="detailTable">
 				<tr>
 					<th>名称</th>
@@ -480,6 +480,13 @@ export default {
 				return false;
 			}
 		},
+		// 暂停播放所有视频
+		pauseAllVideo() {
+			let videos = document.querySelectorAll('video');
+			for (let i = 0; i < videos.length; i++) {
+				videos[i].pause();
+			}
+		},
 		/* ======================== 商品 ======================== */
 		// 获取商品列表
 		getCommodityList() {
@@ -605,6 +612,12 @@ export default {
 				})
 				.catch(() => {});
 		},
+		/* ======================== 商品详情对话框 ======================== */
+		// 关闭
+		cDDClose() {
+			this.pauseAllVideo(); // 暂停播放所有视频
+			this.commodityDetailDV = false;
+		},
 		/* ======================== 添加商品对话框 ======================== */
 		// 根据链接查询商品详情
 		async addCommodityGetDtl() {
@@ -671,6 +684,7 @@ export default {
 					commodity
 						.handleCommodityAdd(data)
 						.then(res => {
+							this.pauseAllVideo(); // 暂停播放所有视频
 							if (res.code === 200) {
 								this.commodityAddDV = false; // 添加商品对话框 隐藏
 								this.$message.success('添加宝贝成功');
@@ -688,6 +702,7 @@ export default {
 		},
 		// 重置
 		resetCAF() {
+			this.pauseAllVideo(); // 暂停播放所有视频
 			this.commodityAddForm.path = null;
 			this.commodityAddForm.imgList = [];
 			this.commodityAddForm.videoList = [];
@@ -696,6 +711,7 @@ export default {
 		},
 		// 关闭
 		cADClose() {
+			this.pauseAllVideo(); // 暂停播放所有视频
 			this.commodityAddForm.path = null;
 			this.commodityAddForm.imgList = [];
 			this.commodityAddForm.videoList = [];
@@ -769,6 +785,7 @@ export default {
 					commodity
 						.handleCommodityEdit(data)
 						.then(res => {
+							this.pauseAllVideo(); // 暂停播放所有视频
 							if (res.code === 200) {
 								this.commodityEditDV = false; // 编辑商品对话框 隐藏
 								this.$message.success('宝贝信息修改成功');
@@ -784,11 +801,13 @@ export default {
 		},
 		// 重置
 		resetCEF() {
+			this.pauseAllVideo(); // 暂停播放所有视频
 			this.$refs['commodityEditFormRef'].resetFields();
 			this.$message.success('输入信息已重置');
 		},
 		// 关闭
 		cEDClose() {
+			this.pauseAllVideo(); // 暂停播放所有视频
 			this.$refs['commodityEditFormRef'].resetFields();
 			this.commodityEditDV = false;
 		}
