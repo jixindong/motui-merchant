@@ -159,34 +159,25 @@ export default {
 	},
 	methods: {
 		// 获取基本信息
-		getBaseMsg() {
-			merch.fetchMerchBaseMsg({ id: '' }).then(res => {
-				if(res.code !== 200){
-					return false;
-				}
-				
+		async getBaseMsg() {
+			let res = await merch.fetchMerchBaseMsg({ id: '' });
+			if (res.code === 200) {
 				this.$store.commit('handleBaseMsg', res.detail);
-			});
+			}
 		},
 		// 获取商品分类
-		getCommodityClassify() {
-			fetchCommodityClassify().then(res => {
-				if(res.code !== 200){
-					return false;
-				}
-				
+		async getCommodityClassify() {
+			let res = await fetchCommodityClassify();
+			if (res.code === 200) {
 				this.$store.commit('handleCommodityClassify', res.list);
-			});
+			}
 		},
 		// 获取快递公司列表
-		getExpressCompany() {
-			fetchExpressCompany().then(res => {
-				if(res.code !== 200){
-					return false;
-				}
-				
+		async getExpressCompany() {
+			let res = await fetchExpressCompany();
+			if (res.code === 200) {
 				this.$store.commit('handleExpressCompany', res.list);
-			});
+			}
 		},
 		// 设置
 		setting(e) {

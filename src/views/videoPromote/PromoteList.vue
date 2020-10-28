@@ -23,6 +23,7 @@
 		<!-- 推广列表 -->
 		<div>
 			<el-table :data="promoteList" stripe border>
+				<el-table-column prop="tName" label="推广名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="productName" label="宝贝名称" show-overflow-tooltip></el-table-column>
 				<el-table-column label="宝贝视频" show-overflow-tooltip>
 					<template slot-scope="scope">
@@ -30,7 +31,6 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="dName" label="达人名称" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="did" label="达人id" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" width="120" align="center">
 					<template slot-scope="scope">
 						<span class="text-info" v-if="scope.row.status === 0">待审核</span>
@@ -69,26 +69,49 @@
 
 		<!-- 推广详情对话框 -->
 		<el-dialog title="详情" :visible.sync="promoteDtlDV">
-			<el-row>
-				<el-col :span="12">推广名称：{{ this.promoteDtl.tName }}</el-col>
-				<el-col :span="12">宝贝名称：{{ this.promoteDtl.productName }}</el-col>
-				<el-col :span="12" class="mt-2">达人名称：{{ this.promoteDtl.dName }}</el-col>
-				<el-col :span="12" class="mt-2">达人id：{{ this.promoteDtl.did }}</el-col>
-				<el-col :span="12" class="mt-2">
-					<span>任务状态：</span>
-					<span class="text-info" v-if="this.promoteDtl.status === 0">待审核</span>
-					<span class="text-primary" v-else-if="this.promoteDtl.status === 1">申请通过</span>
-					<span class="text-danger" v-else-if="this.promoteDtl.status === 2">申请拒绝</span>
-					<span class="text-primary" v-else-if="this.promoteDtl.status === 3">已上传链接</span>
-					<span class="text-success" v-else-if="this.promoteDtl.status === 4">分发完成</span>
-					<span class="text-primary" v-else-if="this.promoteDtl.status === 5">已寄样</span>
-					<span class="text-warning" v-else-if="this.promoteDtl.status === 6">投诉</span>
-					<span class="text-success" v-else-if="this.promoteDtl.status === 7">已下载链接</span>
-				</el-col>
-				<el-col :span="12" class="mt-2">抖音昵称：{{ this.promoteDtl.dyName }}</el-col>
-				<el-col :span="12" class="mt-2">抖音账号：{{ this.promoteDtl.dyCount }}</el-col>
-				<el-col :span="12" class="mt-2">粉丝数：{{ this.promoteDtl.fans }}</el-col>
-			</el-row>
+			<table class="detailTable">
+				<tr>
+					<th>推广名称</th>
+					<td>{{ promoteDtl.tName }}</td>
+					<th>任务状态</th>
+					<td>
+						<span class="text-info" v-if="promoteDtl.status === 0">待审核</span>
+						<span class="text-primary" v-else-if="promoteDtl.status === 1">申请通过</span>
+						<span class="text-danger" v-else-if="promoteDtl.status === 2">申请拒绝</span>
+						<span class="text-primary" v-else-if="promoteDtl.status === 3">已上传链接</span>
+						<span class="text-success" v-else-if="promoteDtl.status === 4">分发完成</span>
+						<span class="text-primary" v-else-if="promoteDtl.status === 5">已寄样</span>
+						<span class="text-warning" v-else-if="promoteDtl.status === 6">投诉</span>
+						<span class="text-success" v-else-if="promoteDtl.status === 7">已下载链接</span>
+					</td>
+				</tr>
+				<tr>
+					<th>宝贝名称</th>
+					<td colspan="3">{{ promoteDtl.productName }}</td>
+				</tr>
+				<tr>
+					<th>宝贝视频</th>
+					<td colspan="3">
+						<el-link type="primary" :href="promoteDtl.video | videoUrl" target="_blank">{{ promoteDtl.video | videoTitle }}</el-link>
+					</td>
+				</tr>
+				<tr>
+					<th>达人名称</th>
+					<td>{{ promoteDtl.dName }}</td>
+					<th>达人id</th>
+					<td>{{ promoteDtl.did }}</td>
+				</tr>
+				<tr>
+					<th>抖音昵称</th>
+					<td colspan="3">{{ promoteDtl.dyName }}</td>
+				</tr>
+				<tr>
+					<th>抖音账号</th>
+					<td>{{ promoteDtl.dyCount }}</td>
+					<th>粉丝数</th>
+					<td>{{ promoteDtl.fans }}</td>
+				</tr>
+			</table>
 		</el-dialog>
 
 		<!-- 审核对话框 -->
