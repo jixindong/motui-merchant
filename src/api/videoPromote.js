@@ -5,7 +5,7 @@ export function fetchMissionList(data) {
 	return request({
 		url: 'task/listBySh',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 

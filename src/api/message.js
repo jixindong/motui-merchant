@@ -5,7 +5,7 @@ export function fetchMessageList(data) {
 	return request({
 		url: 'information/listSj',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 

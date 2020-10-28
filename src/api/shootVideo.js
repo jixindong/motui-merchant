@@ -5,7 +5,7 @@ export function fetchMissionList(data) {
 	return request({
 		url: 'businessvideo/list',
 		method: 'POST',
-		data
+		params: data
 	});
 }
 
