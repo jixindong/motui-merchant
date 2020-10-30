@@ -64,7 +64,7 @@
 		</div>
 
 		<!-- 支付方式对话框 -->
-		<el-dialog title="支付方式" :visible.sync="choicePayTypeDV" :before-close="choicePayTypeDClose">
+		<el-dialog title="支付方式" :visible="choicePayTypeDV" :before-close="choicePayTypeDClose">
 			<table class="detailTable">
 				<tr>
 					<th>已选套餐名称</th>
@@ -266,18 +266,10 @@ export default {
 				.catch(() => {});
 		},
 		// 关闭
-		choicePayTypeDClose(done) {
-			this.$confirm('确认关闭？', '提示', {
-				confirmButtonText: '关闭',
-				cancelButtonText: '取消',
-				type: 'info'
-			})
-				.then(() => {
-					this.currentSeatmeal = null; // 当前选择套餐
-					this.payTypeSign = ''; // 支付方式标识
-					done();
-				})
-				.catch(() => {});
+		choicePayTypeDClose() {
+			this.choicePayTypeDV = false;
+			this.currentSeatmeal = {}; // 当前选择套餐
+			this.payTypeSign = ''; // 支付方式标识
 		},
 		/* ======================== 支付宝对话框 ======================== */
 		// 支付宝支付
