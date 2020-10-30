@@ -3,7 +3,7 @@ import request from '@/utils/request';
 // 登录
 export function requestLogin(data) {
 	return request({
-		url: 'sys/login',
+		url: 'sh/login',
 		method: 'POST',
 		data
 	});
