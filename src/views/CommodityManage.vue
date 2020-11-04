@@ -48,8 +48,7 @@
 				</el-table-column>
 				<el-table-column prop="typeName" label="分类" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="price" label="价格" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="discount" label="优惠券" show-overflow-tooltip></el-table-column>
-				<el-table-column prop="profit" label="佣金比例" width="80"></el-table-column>
+				<el-table-column prop="createTime" label="添加时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态">
 					<template slot-scope="scope">
 						<span class="text-primary" v-if="scope.row.status === '0'">待审核</span>
@@ -66,8 +65,7 @@
 			</el-table>
 			<div class="d-flex justify-content-center mt-4">
 				<el-pagination
-					layout="prev, pager, next"
-					hide-on-single-page
+					layout="total, prev, pager, next"
 					:total="commodityListPage.total"
 					:page-size="commodityListPage.pageSize"
 					:current-page="commodityListPage.currentPage"
@@ -172,12 +170,12 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="价格" prop="price">
-							<el-input type="text" placeholder="请输入宝贝价格" v-model="commodityAddForm.price" clearable></el-input>
+							<el-input type="number" min="0" placeholder="请输入宝贝价格" v-model="commodityAddForm.price" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="优惠券" prop="discount">
-							<el-input type="text" placeholder="请输入优惠券" v-model="commodityAddForm.discount" clearable></el-input>
+							<el-input type="number" placeholder="请输入优惠券" v-model="commodityAddForm.discount" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
@@ -280,12 +278,12 @@
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="价格" prop="price">
-							<el-input type="text" placeholder="请输入宝贝价格" v-model="commodityEditForm.price" clearable></el-input>
+							<el-input type="number" min="0" placeholder="请输入宝贝价格" v-model="commodityEditForm.price" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
 						<el-form-item label="优惠券" prop="discount">
-							<el-input type="text" placeholder="请输入优惠券" v-model="commodityEditForm.discount" clearable></el-input>
+							<el-input type="number" placeholder="请输入优惠券" v-model="commodityEditForm.discount" clearable></el-input>
 						</el-form-item>
 					</el-col>
 					<el-col :span="8">
@@ -355,6 +353,16 @@ import * as commodity from '@/api/commodity';
 export default {
 	name: 'CommodityManage',
 	data() {
+		// 链接校验规则
+		let websiteCheckout = (rule, value, callback) => {
+			if (value === '') {
+				callback(new Error('请输入链接'));
+			} else if (!/(http|https):\/\/([\w.]+\/?)\S*/.test(value)) {
+				callback(new Error('请输入格式正确的链接'));
+			} else {
+				callback();
+			}
+		};
 		return {
 			/* ======================== 商品 ======================== */
 			// 搜索
@@ -404,7 +412,7 @@ export default {
 			commodityAddRules: {
 				name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
 				lx: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
-				address: [{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }],
+				address: [{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }, { validator: websiteCheckout, trigger: 'blur' }],
 				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
 				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]
@@ -418,7 +426,7 @@ export default {
 			commodityEditRules: {
 				name: [{ required: true, message: '请输入名称', trigger: ['blur', 'change'] }],
 				lx: [{ required: true, message: '请选择平台', trigger: ['blur', 'change'] }],
-				address: [{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }],
+				address: [{ required: true, message: '请输入宝贝链接', trigger: ['blur', 'change'] }, { validator: websiteCheckout, trigger: 'blur' }],
 				typeName: [{ required: true, message: '请选择分类', trigger: ['blur', 'change'] }],
 				price: [{ required: true, message: '请输入价格', trigger: ['blur', 'change'] }],
 				profit: [{ required: true, message: '请输入佣金比例', trigger: ['blur', 'change'] }]

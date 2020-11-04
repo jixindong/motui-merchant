@@ -3,7 +3,7 @@ import router from '@/router/index';
 import ElementUI from 'element-ui';
 
 const request = axios.create({
-	// baseURL: 'http://192.168.1.177:8001/',
+	// baseURL: 'http://192.168.1.151:8001/',
 	baseURL: 'http://api.motui.com.cn:8001/',
 	headers: {
 		'Content-Type': 'application/json; charset=utf-8'

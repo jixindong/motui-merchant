@@ -31,6 +31,7 @@
 					</template>
 				</el-table-column>
 				<el-table-column prop="dName" label="达人名称" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="update_time" label="时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="状态" width="120" align="center">
 					<template slot-scope="scope">
 						<span class="text-info" v-if="scope.row.status === 0">待审核</span>
@@ -57,8 +58,7 @@
 			</el-table>
 			<div class="d-flex justify-content-center mt-4">
 				<el-pagination
-					layout="prev, pager, next"
-					hide-on-single-page
+					layout="total, prev, pager, next"
 					:total="promoteListPage.total"
 					:page-size="promoteListPage.pageSize"
 					:current-page="promoteListPage.currentPage"

@@ -36,8 +36,7 @@
 			</el-table>
 			<div class="d-flex justify-content-center mt-4">
 				<el-pagination
-					layout="prev, pager, next"
-					hide-on-single-page
+					layout="total, prev, pager, next"
 					:total="messageListPage.total"
 					:page-size="messageListPage.pageSize"
 					:current-page="messageListPage.currentPage"

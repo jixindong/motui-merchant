@@ -36,6 +36,7 @@
 				</el-table-column>
 				<el-table-column prop="productName" label="宝贝名称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="content" label="拍摄要求" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="createTime" label="发布时间" show-overflow-tooltip></el-table-column>
 				<el-table-column label="操作" align="center">
 					<template slot-scope="scope">
 						<el-button type="primary" size="mini" icon="el-icon-truck" plain :disabled="scope.row.status !== '0'" @click="shipment(scope.row)">发货</el-button>
@@ -44,8 +45,7 @@
 			</el-table>
 			<div class="d-flex justify-content-center mt-4">
 				<el-pagination
-					layout="prev, pager, next"
-					hide-on-single-page
+					layout="total, prev, pager, next"
 					:total="missionListPage.total"
 					:page-size="missionListPage.pageSize"
 					:current-page="missionListPage.currentPage"

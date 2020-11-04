@@ -4,21 +4,30 @@
 		<div class="headline mb-4">订单列表</div>
 
 		<!-- 功能区域 -->
-		<!-- <div class="d-flex justify-content-between my-4">
-			<el-input type="text" size="medium" class="w-25" v-model="search.starID" placeholder="请输入达人ID"></el-input>
-			<el-input type="text" size="medium" class="w-25" v-model="search.commodityName" placeholder="请输入宝贝名称"></el-input>
+		<div class="d-flex justify-content-between my-4">
 			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择订单状态" clearable>
 				<el-option label="请选择" value=""></el-option>
 				<el-option label="未支付" value="0"></el-option>
 				<el-option label="已支付" value="1"></el-option>
 			</el-select>
-			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchOrder">搜索</el-button>
-		</div> -->
+			<el-input type="text" size="medium" class="w-25" v-model="search.starName" placeholder="请输入达人名称"></el-input>
+			<el-date-picker
+				type="daterange"
+				size="medium"
+				value-format="yyyy-MM-dd HH:mm:ss"
+				v-model="search.date"
+				range-separator="-"
+				start-placeholder="开始日期"
+				end-placeholder="结束日期"
+				class="w-25"
+			></el-date-picker>
+			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="getOrderList">搜索</el-button>
+		</div>
 
 		<!-- 订单列表 -->
 		<div>
 			<el-table :data="orderList" stripe border>
-				<el-table-column prop="did" label="达人ID" show-overflow-tooltip></el-table-column>
+				<el-table-column prop="didName" label="达人昵称" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="item_title" label="宝贝标题" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="pay_price" label="付款金额" show-overflow-tooltip></el-table-column>
 				<el-table-column prop="tb_paid_time" label="付款时间" show-overflow-tooltip></el-table-column>
@@ -33,8 +42,7 @@
 			</el-table>
 			<el-pagination
 				class="mt-4 text-center"
-				layout="prev, pager, next"
-				hide-on-single-page
+				layout="total, prev, pager, next"
 				:total="orderListPage.total"
 				:page-size="orderListPage.pageSize"
 				:current-page="orderListPage.currentPage"
@@ -53,7 +61,11 @@ export default {
 		return {
 			/* ======================== 订单列表 ======================== */
 			// 搜素
-			search: {},
+			search: {
+				status: null,
+				starName: '',
+				date: ['', '']
+			},
 			// 列表
 			orderList: [],
 			// 分页
@@ -65,21 +77,32 @@ export default {
 			}
 		};
 	},
+	computed: {
+		// 搜索条件
+		searchData() {
+			return {
+				page: this.orderListPage.currentPage,
+				limit: this.orderListPage.pageSize,
+				type: 'sh',
+				status: this.search.status || '',
+				name: this.search.starName,
+				start_time: this.search.date[0],
+				end_time: this.search.date[1]
+			};
+		}
+	},
 	methods: {
 		/* ======================== 订单列表 ======================== */
 		// 获取订单列表
-		getOrderList() {
-			fetchOrderList({ type: 'sh' })
-				.then(res => {
-					if (res.code === 200) {
-						this.orderList = res.page.list; // 订单列表
-						let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.page;
-						this.orderListPage = { total, pageSize, totalPage, currentPage }; // 订单列表分页
-					} else {
-						this.$message.warning(res.msg);
-					}
-				})
-				.catch(() => {});
+		async getOrderList() {
+			let res = await fetchOrderList(this.searchData);
+			if (res.code !== 200) {
+				return this.$message.warning(res.msg);
+			}
+
+			this.orderList = res.page.list; // 订单列表
+			let { totalCount: total, pageSize, totalPage, currPage: currentPage } = res.page;
+			this.orderListPage = { total, pageSize, totalPage, currentPage }; // 订单列表分页
 		},
 		// 订单列表当前页切换
 		orderListCurrentChange(currentPage) {
