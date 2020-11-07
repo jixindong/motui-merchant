@@ -272,7 +272,7 @@
 						<el-form-item label="分类" prop="typeName">
 							<el-select v-model="commodityEditForm.typeName" clearable>
 								<el-option label="请选择" value=""></el-option>
-								<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item.name" :value="item.id"></el-option>
+								<el-option v-for="(item, index) in commodityClassify" :key="index" :label="item.name" :value="item.name"></el-option>
 							</el-select>
 						</el-form-item>
 					</el-col>
@@ -774,38 +774,37 @@ export default {
 			this.commodityEditForm.imgList.splice(index, 1);
 		},
 		// 确认修改
-		submitCEF() {
+		async submitCEF() {
 			this.$refs['commodityEditFormRef'].validate(valid => {
-				if (valid) {
-					let data = {
-						id: this.commodityEditForm.id,
-						name: this.commodityEditForm.name,
-						lx: this.commodityEditForm.lx,
-						type: this.commodityEditForm.typeName,
-						path: this.commodityEditForm.imgList.join(','),
-						urlArr: this.commodityEditForm.videoList.join(','),
-						price: this.commodityEditForm.price,
-						discount: this.commodityEditForm.discount,
-						profit: this.commodityEditForm.profit,
-						address: this.commodityEditForm.address,
-						num_iids: this.commodityEditForm.num_iids
-					};
-					commodity
-						.handleCommodityEdit(data)
-						.then(res => {
-							this.pauseAllVideo(); // 暂停播放所有视频
-							if (res.code === 200) {
-								this.commodityEditDV = false; // 编辑商品对话框 隐藏
-								this.$message.success('宝贝信息修改成功');
-								this.$refs['commodityEditFormRef'].resetFields();
-								this.getCommodityList(); // 获取商品列表
-							} else {
-								this.$message.warning(res.msg);
-							}
-						})
-						.catch(() => {});
+				if (!valid) {
+					return false;
 				}
 			});
+
+			let type = this.commodityClassify.find(e => e.name === this.commodityEditForm.typeName);
+			let data = {
+				id: this.commodityEditForm.id,
+				name: this.commodityEditForm.name,
+				lx: this.commodityEditForm.lx,
+				type: type.id,
+				path: this.commodityEditForm.imgList.join(','),
+				urlArr: this.commodityEditForm.videoList.join(','),
+				price: this.commodityEditForm.price,
+				discount: this.commodityEditForm.discount,
+				profit: this.commodityEditForm.profit,
+				address: this.commodityEditForm.address,
+				num_iids: this.commodityEditForm.num_iids
+			};
+			let res = await commodity.handleCommodityEdit(data);
+			this.pauseAllVideo(); // 暂停播放所有视频
+			if (res.code !== 200) {
+				return this.$message.warning(res.msg);
+			}
+
+			this.commodityEditDV = false; // 编辑商品对话框 隐藏
+			this.$message.success('宝贝信息修改成功');
+			this.$refs['commodityEditFormRef'].resetFields();
+			this.getCommodityList(); // 获取商品列表
 		},
 		// 重置
 		resetCEF() {
