@@ -7,8 +7,8 @@
 		<div class="d-flex justify-content-between my-4">
 			<el-select size="medium" class="w-25" v-model="search.status" placeholder="请选择订单状态" clearable>
 				<el-option label="请选择" value=""></el-option>
-				<el-option label="未支付" value="0"></el-option>
-				<el-option label="已支付" value="1"></el-option>
+				<el-option label="未支付" value="13"></el-option>
+				<el-option label="已支付" value="14"></el-option>
 			</el-select>
 			<el-input type="text" size="medium" class="w-25" v-model="search.starName" placeholder="请输入达人名称"></el-input>
 			<el-date-picker
@@ -71,7 +71,7 @@ export default {
 			// 分页
 			orderListPage: {
 				total: 1,
-				pageSize: 1,
+				pageSize: 10,
 				totalPage: 1,
 				currentPage: 1
 			}
@@ -89,6 +89,14 @@ export default {
 				start_time: this.search.date[0],
 				end_time: this.search.date[1]
 			};
+		}
+	},
+	watch: {
+		// 搜索条件.时间 解决清空时间选择组件时会报错问题
+		'search.date'(value) {
+			if (value === null) {
+				this.search.date = ['', ''];
+			}
 		}
 	},
 	methods: {

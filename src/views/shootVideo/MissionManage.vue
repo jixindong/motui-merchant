@@ -10,8 +10,8 @@
 			<el-select size="medium" class="w-20" v-model="search.status" placeholder="请选择任务状态" clearable>
 				<el-option label="请选择" value=""></el-option>
 				<el-option label="待发货" value="0"></el-option>
-				<el-option label="已完成" value="1"></el-option>
-				<el-option label="待制作" value="2"></el-option>
+				<el-option label="已发货" value="1"></el-option>
+				<el-option label="已上传" value="2"></el-option>
 				<el-option label="任务结束" value="3"></el-option>
 			</el-select>
 			<el-button type="primary" size="medium" icon="el-icon-search" plain @click="searchMission">搜索</el-button>
